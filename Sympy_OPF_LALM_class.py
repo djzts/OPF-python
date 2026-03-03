@@ -755,6 +755,244 @@ class SympyACOPFModel:
         self.Lagrange_linear_ALM = L
         return L, self.variable_list, self.Var_bound_list
 
+    def build_h_symbolic(self, ref_bus_id=None):
+        """
+        构造符号形式的约束列表 h_sym(x)，顺序必须和 build_h_func 完全一致：
+        [ c_i^P (∀ buses),
+          c_i^Q (∀ buses),
+          c_{ij}^{P,flow} (∀ lines),
+          c_{ij}^{Q,flow} (∀ lines),
+          c_i^{Vsq} (∀ buses),
+          c_{ij}^S (∀ lines),
+          c^{ref} ].
+        """
+        nb = self.n_buses
+        nl = self.n_lines
+        ng = self.n_gens
+        buses_range = range(nb)
+
+        # 符号变量别名
+        P_G  = self.P_G
+        Q_G  = self.Q_G
+        V_R  = self.V_R
+        V_I  = self.V_I
+        V_sq = self.V_sq
+        P_ij = self.P_ij
+        Q_ij = self.Q_ij
+        S_tot_sq = self.S_tot_sq
+
+        # 数据别名
+        G_mat = self.G_mat
+        B_mat = self.B_mat
+        g_series = self.g_series
+        b_series = self.b_series
+        line_collection = self.line_collection
+
+        P_D = self.P_D
+        Q_D = self.Q_D
+
+        # bus -> gen 索引 (0..ng-1)
+        gen_sym_index_by_bus_idx = {}
+        for bus_id, gen_idx in self.gen_index_by_bus.items():
+            bus_idx = self.bus_index[bus_id]
+            gen_sym_index_by_bus_idx[bus_idx] = gen_idx
+
+        if ref_bus_id is None:
+            ref_bus_id = self.bus_ids[0]
+        ref_idx = self.bus_index[ref_bus_id]
+
+        residuals = []
+
+        # 1) Active power balance c_i^P
+        for i in buses_range:
+            ViR = V_R[i]
+            ViI = V_I[i]
+
+            sum_GR_BI = 0
+            sum_GI_BR = 0
+            for j in buses_range:
+                VjR = V_R[j]
+                VjI = V_I[j]
+                Gij = G_mat[i, j]
+                Bij = B_mat[i, j]
+                sum_GR_BI += Gij * VjR - Bij * VjI
+                sum_GI_BR += Gij * VjI + Bij * VjR
+
+            P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
+
+            if i in gen_sym_index_by_bus_idx:
+                gi = gen_sym_index_by_bus_idx[i]
+                cP = P_G[gi] - P_D[i] - P_inj
+            else:
+                cP = - P_D[i] - P_inj
+
+            residuals.append(cP)
+
+        # 2) Reactive power balance c_i^Q
+        for i in buses_range:
+            ViR = V_R[i]
+            ViI = V_I[i]
+
+            sum_GR_BI = 0
+            sum_GI_BR = 0
+            for j in buses_range:
+                VjR = V_R[j]
+                VjI = V_I[j]
+                Gij = G_mat[i, j]
+                Bij = B_mat[i, j]
+                sum_GR_BI += Gij * VjR - Bij * VjI
+                sum_GI_BR += Gij * VjI + Bij * VjR
+
+            Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
+
+            if i in gen_sym_index_by_bus_idx:
+                gi = gen_sym_index_by_bus_idx[i]
+                cQ = Q_G[gi] - Q_D[i] - Q_inj
+            else:
+                cQ = - Q_D[i] - Q_inj
+
+            residuals.append(cQ)
+
+        # 3) Branch power-flow definitions: c_{ij}^{P,flow}, c_{ij}^{Q,flow}
+        for ell, (i, j) in enumerate(line_collection):
+            ViR = V_R[i]
+            ViI = V_I[i]
+            VjR = V_R[j]
+            VjI = V_I[j]
+
+            g_ij = g_series[ell]
+            b_ij = b_series[ell]
+
+            P_expr = (
+                ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+            )
+            Q_expr = (
+                ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+            )
+
+            cP_flow = P_ij[ell] - P_expr
+            cQ_flow = Q_ij[ell] - Q_expr
+
+            residuals.append(cP_flow)
+            residuals.append(cQ_flow)
+
+        # 4) Voltage magnitude definition c_i^{Vsq}
+        for i in buses_range:
+            cV = V_sq[i] - (V_R[i] ** 2 + V_I[i] ** 2)
+            residuals.append(cV)
+
+        # 5) Branch S_tot_sq definition c_{ij}^S
+        for ell in range(nl):
+            cS = S_tot_sq[ell] - (P_ij[ell] ** 2 + Q_ij[ell] ** 2)
+            residuals.append(cS)
+
+        # 6) Reference bus constraint c^{ref} = V_I[ref_idx]
+        c_ref = V_I[ref_idx]
+        residuals.append(c_ref)
+
+        return residuals
+
+    def build_linear_ALM_Lagrangian_syms(self, x_center, rho, ref_bus_id=None, mu_prox=0.0):
+        """
+        构造一次“线性化增广拉格朗日” L^(k)(x)：
+            L^(k)(x) = f(x)
+                    + λ^T [ h(x^k) + J(x^k)(x - x^k) ]
+                    + (rho/2) * || h(x^k) + J(x^k)(x - x^k) ||^2
+                    + (mu_prox/2) * ||x - x^k||^2
+
+        这里 J(x^k) 用 SymPy 的解析求导得到，而不是数值差分。
+        """
+        import numpy as np
+        import sympy as sp
+
+        x_syms = self.variable_list
+        nvar = len(x_syms)
+
+        x0 = np.asarray(x_center, dtype=float).flatten()
+        if x0.size != nvar:
+            raise ValueError(f"x_center length mismatch: expected {nvar}, got {x0.size}")
+
+        rho = float(rho)
+
+        # 当前 λ 向量（扁平）
+        lam = np.asarray(self.lambda_vec, dtype=float).flatten()
+
+        # ---------- 1) 构造目标函数 f(x) ----------
+        nb = self.n_buses
+        ng = self.n_gens
+
+        a_cost = []
+        b_cost = []
+        c_cost = []
+        for gid in self.gen_ids:
+            gdata = self.gens[gid]
+            a_cost.append(gdata[5])
+            b_cost.append(gdata[6])
+            c_cost.append(gdata[7])
+
+        obj = 0
+        for gi in range(ng):
+            PGi = self.P_G[gi]
+            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
+
+        L = obj
+
+        # ---------- 2) 符号构造 h(x) & J(x) ----------
+        h_sym_list = self.build_h_symbolic(ref_bus_id=ref_bus_id)
+        mcon = len(h_sym_list)
+
+        if lam.size != mcon:
+            raise ValueError(f"lambda size {lam.size} != number of constraints {mcon}")
+
+        h_vec = sp.Matrix(h_sym_list)
+        J_sym = h_vec.jacobian(x_syms)  # (mcon, nvar)
+
+        # ---------- 3) 在 x_center 处代值得到 h(x^k) 和 J(x^k) ----------
+        subs_dict = {sym: sp.Float(val) for sym, val in zip(x_syms, x0)}
+
+        # h(x^k)
+        h0_sym = h_vec.subs(subs_dict)
+        h0 = np.array([float(h0_sym[i]) for i in range(mcon)], dtype=float)
+
+        # J(x^k)
+        J_num = np.zeros((mcon, nvar), dtype=float)
+        J_eval = J_sym.subs(subs_dict)
+        for i in range(mcon):
+            for j in range(nvar):
+                J_num[i, j] = float(J_eval[i, j])
+
+        # ---------- 4) 构造线性化约束 \tilde h_i(x) ----------
+        h_lin_exprs = []
+        for i in range(mcon):
+            expr = sp.Float(h0[i])
+            for j in range(nvar):
+                coef = J_num[i, j]
+                if coef != 0.0:
+                    expr += sp.Float(coef) * (x_syms[j] - sp.Float(x0[j]))
+            h_lin_exprs.append(expr)
+
+        # ---------- 5) 线性 Lagrange 项 λ^T \tilde h(x) ----------
+        for i in range(mcon):
+            if lam[i] != 0.0:
+                L += sp.Float(lam[i]) * h_lin_exprs[i]
+
+        # ---------- 6) 二次惩罚项 (rho/2) * ||\tilde h(x)||^2 ----------
+        if rho > 0.0:
+            rho_half = sp.Float(rho) / 2.0
+            for expr in h_lin_exprs:
+                L += rho_half * (expr ** 2)
+
+        # ---------- 7) proximal 项 (mu_prox/2) * ||x - x0||^2 ----------
+        if mu_prox > 0.0:
+            mu_half = sp.Float(mu_prox) / 2.0
+            for j in range(nvar):
+                L += mu_half * (x_syms[j] - sp.Float(x0[j])) ** 2
+
+        self.Lagrange_linear_ALM = L
+        return L, self.variable_list, self.Var_bound_list
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
