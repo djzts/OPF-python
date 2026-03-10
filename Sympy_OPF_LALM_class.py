@@ -51,6 +51,7 @@ class SympyACOPFModel:
         self.buses = dict(buses)
         self.lines = dict(lines)
         self.gens = dict(gens)
+        self.linear_jacobian = None  # will be built later
 
         # basic sets and mappings
         self._build_index_sets()
@@ -635,125 +636,6 @@ class SympyACOPFModel:
 
         self.Lagrange = L
         return L
-    
-    def build_linear_ALM_Lagrangian(self, x_center, rho, ref_bus_id=None, eps=1e-6, mu_prox=0.0):
-        """
-        构造一次“线性化增广拉格朗日” L^(k)(x)：
-            L^(k)(x) = f(x)
-                    + λ^T [ h(x^k) + J(x^k)(x - x^k) ]
-                    + (rho/2) * || h(x^k) + J(x^k)(x - x^k) ||^2
-
-        这里:
-        - x_center: 当前线性化点 x^k (1D array), 顺序与 self.variable_list 一致
-        - rho:      惩罚参数 ρ_k
-        - eps:      数值差分步长基准，用于近似 J(x^k)
-        返回:
-        -------
-        L_linALM : sympy.Expr
-            线性化 ALM Lagrangian（纯二次，多项式里没有 3 次以上项）
-        variable_list : list[sympy.Symbol]
-            与原模型相同的变量列表
-        Var_bound_list : list[[lb, ub]]
-            变量 box 约束，与原模型相同
-        """
-        import numpy as np
-        import sympy as sp
-
-        # --- 准备基本量 ---
-        x_syms = self.variable_list
-        nvar = len(x_syms)
-
-        x0 = np.asarray(x_center, dtype=float).flatten()
-        if x0.size != nvar:
-            raise ValueError(f"x_center length mismatch: expected {nvar}, got {x0.size}")
-
-        # 惩罚参数
-        rho = float(rho)
-
-        # 当前 λ（扁平），长度 = 约束个数
-        lam = np.asarray(self.lambda_vec, dtype=float).flatten()
-
-        # --- 1) 构造目标函数 f(x)（和 _build_lagrangian 里一样） ---
-        nb = self.n_buses
-        ng = self.n_gens
-
-        # 用和 _build_lagrangian 相同的成本系数
-        a_cost = []
-        b_cost = []
-        c_cost = []
-        for gid in self.gen_ids:
-            gdata = self.gens[gid]
-            a_cost.append(gdata[5])
-            b_cost.append(gdata[6])
-            c_cost.append(gdata[7])
-
-        # f(x) = sum_g 0.5 a P^2 + b P + c
-        obj = 0
-        for gi in range(ng):
-            PGi = self.P_G[gi]
-            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
-
-        L = obj
-
-        # --- 2) 数值 h(x^k) 与 J(x^k)，这里改成中心差分 ---
-        h_func = self.build_h_func(ref_bus_id=ref_bus_id)
-        h0 = np.asarray(h_func(x0), dtype=float).flatten()
-        mcon = h0.size
-
-        if lam.size != mcon:
-            raise ValueError(f"lambda size {lam.size} != number of constraints {mcon}")
-
-        # 数值 Jacobian J(x^k) ≈ (h(x^k+dx e_j)-h(x^k-dx e_j))/(2*dx)
-        J = np.zeros((mcon, nvar), dtype=float)
-
-        for j in range(nvar):
-            # 自适应步长 + 下限，防止 dx 太小
-            dx = eps * max(1.0, abs(x0[j]))
-            dx = max(dx, 1e-8)
-
-            x_plus = x0.copy()
-            x_minus = x0.copy()
-
-            x_plus[j] += dx
-            x_minus[j] -= dx
-
-            h_plus = np.asarray(h_func(x_plus), dtype=float).flatten()
-            h_minus = np.asarray(h_func(x_minus), dtype=float).flatten()
-
-            J[:, j] = (h_plus - h_minus) / (2.0 * dx)
-
-        # --- 3) 构造线性化约束 \tilde h_i(x) = h_i(x^k) + J_i (x - x^k) ---
-        h_lin_exprs = []
-        for i in range(mcon):
-            # 起始是常数项 h_i(x^k)
-            expr = sp.Float(h0[i])
-            # 加上 Σ_j J_ij * (x_j - x0_j)
-            for j in range(nvar):
-                coef = J[i, j]
-                if abs(coef) > 0.0:
-                    expr += sp.Float(coef) * (x_syms[j] - sp.Float(x0[j]))
-            h_lin_exprs.append(expr)
-
-        # --- 4) 线性 Lagrange 项 λ^T * \tilde h(x) ---
-        for i in range(mcon):
-            if abs(lam[i]) > 0.0:
-                L += sp.Float(lam[i]) * h_lin_exprs[i]
-
-        # --- 5) 二次惩罚项 (rho/2) * || \tilde h(x) ||^2 ---
-        if rho > 0.0:
-            rho_half = sp.Float(rho) / 2.0
-            for expr in h_lin_exprs:
-                L += rho_half * (expr ** 2)
-
-        # --- 6) proximal term: (mu/2) * ||x - xk||^2 ---
-        if mu_prox > 0.0:
-            mu_half = sp.Float(mu_prox) / 2.0
-            for j in range(nvar):
-                L += mu_half * (x_syms[j] - sp.Float(x0[j]))**2
-
-        # 把结果挂在对象上，也可以像 get_Lagrangian 一样返回
-        self.Lagrange_linear_ALM = L
-        return L, self.variable_list, self.Var_bound_list
 
     def build_h_symbolic(self, ref_bus_id=None):
         """
@@ -948,6 +830,8 @@ class SympyACOPFModel:
 
         h_vec = sp.Matrix(h_sym_list)
         J_sym = h_vec.jacobian(x_syms)  # (mcon, nvar)
+
+        self.linear_jacobian = J_sym
 
         # ---------- 3) 在 x_center 处代值得到 h(x^k) 和 J(x^k) ----------
         subs_dict = {sym: sp.Float(val) for sym, val in zip(x_syms, x0)}
