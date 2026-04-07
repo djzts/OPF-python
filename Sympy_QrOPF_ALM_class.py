@@ -172,6 +172,7 @@ class SympyACOPFModel:
         # (lid, -1): to_bus   -> from_bus
         self.arc_ids = []
         self.arc_collection = []
+        self.arc_collection_single = []
         self.arc_to_line = []
 
         for lid in self.line_ids:
@@ -182,6 +183,7 @@ class SympyACOPFModel:
             # forward arc
             self.arc_ids.append((lid, +1))
             self.arc_collection.append((i, j))
+            self.arc_collection_single.append((i, j))
             self.arc_to_line.append(lid)
 
             # reverse arc
@@ -192,25 +194,26 @@ class SympyACOPFModel:
         self.n_arcs = len(self.arc_collection)
         self.arc_index = {arc_id: k for k, arc_id in enumerate(self.arc_ids)}
 
-
     def build_initial_x0(self):
         """
-        构造一个简单、通用的初始点 x^0，顺序与 self.variable_list 一致：
-        [P_G (ng), Q_G (ng), V_R (nb), V_I (nb), V_sq (nb),
-         P_ij (na), Q_ij (na), S_tot_sq (na)].
+        Construct a simple and general initial point x^0, following the order in self.variable_list:
+        [P_G (ng), Q_G (ng), Wii_RR(nb), Wii_RI(nb), Wii_II(nb), 
+        Wij_RR, Wij_RI, Wij_IR, Wij_II, V_sq (nb), P_ij (na), Q_ij (na), S_tot_sq (na)].
 
-        设计原则：
-        - P_G: 按 Pmax 比例分担总有功负荷 sum(P_D)，再剪裁到 [Pmin, Pmax]
-        - Q_G: 按 P_G 比例分担总无功负荷 sum(Q_D)，再剪裁到 [Qmin, Qmax]
-        - V_R, V_I: 按 bus 中给的 Vm, Va 转矩形坐标
+        Design principles:
+        - P_G: Allocate the total active power load sum(P_D) in proportion to Pmax,
+        then clip it to [Pmin, Pmax]
+        - Q_G: Allocate the total reactive power load sum(Q_D) in proportion to P_G,
+        then clip it to [Qmin, Qmax]
+        - V_R, V_I: Convert the given Vm and Va in bus into rectangular coordinates
         - V_sq: = V_R^2 + V_I^2
-        - P_ij, Q_ij, S_tot_sq: 全部初始化为 0
+        - P_ij, Q_ij, S_tot_sq: Initialize all to 0
         """
 
         nb = self.n_buses
-        nl = self.n_lines
         ng = self.n_gens
         na = self.n_arcs
+        ncross = self.n_cross_pairs
 
         # -------- 1) Generators: P_G 初值 --------
         # 总有功负荷
@@ -254,36 +257,36 @@ class SympyACOPFModel:
             Q_G0 = np.zeros(ng)
             Q_G0 = np.minimum(np.maximum(Q_G0, Qmin), Qmax)
 
-        # -------- 3) Bus voltages: V_R, V_I, V_sq --------
-        V_R0 = np.zeros(nb)
-        V_I0 = np.zeros(nb)
-        V_sq0 = np.zeros(nb)
-
+        # -------- 3) Bus voltages: Wii_RR, Wii_RI, Wii_II --------
+        V_R_seed = np.zeros(nb)
+        V_I_seed = np.zeros(nb)
         for bid in self.bus_ids:
             bdata = self.buses[bid]
             bus_idx = self.bus_index[bid]
-
-            Vm = float(bdata[2])  # 电压幅值
-            Va_deg = float(bdata[3])  # 相角（一般是度）
+            Vm = float(bdata[2])
+            Va_deg = float(bdata[3])
             Va_rad = Va_deg * np.pi / 180.0
+            V_R_seed[bus_idx] = Vm * np.cos(Va_rad)
+            V_I_seed[bus_idx] = Vm * np.sin(Va_rad)
 
-            Vr = Vm * np.cos(Va_rad)
-            Vi = Vm * np.sin(Va_rad)
+        Wii_RR0 = V_R_seed ** 2
+        Wii_RI0 = V_R_seed * V_I_seed
+        Wii_II0 = V_I_seed ** 2
 
-            V_R0[bus_idx] = Vr
-            V_I0[bus_idx] = Vi
-            V_sq0[bus_idx] = Vr**2 + Vi**2
+        Wij_RR0 = np.zeros(ncross)
+        Wij_RI0 = np.zeros(ncross)
+        Wij_IR0 = np.zeros(ncross)
+        Wij_II0 = np.zeros(ncross)
+        for (i, j), p in self.cross_pair_index.items():
+            Wij_RR0[p] = V_R_seed[i] * V_R_seed[j]
+            Wij_RI0[p] = V_R_seed[i] * V_I_seed[j]
+            Wij_IR0[p] = V_I_seed[i] * V_R_seed[j]
+            Wij_II0[p] = V_I_seed[i] * V_I_seed[j]
 
         # 剪裁到变量给定的 box bounds（防止数据比较奇怪时越界）
-        V_R_lb = np.array([b[0] for b in [[-1.1, 1.1]] * nb])
-        V_R_ub = np.array([b[1] for b in [[-1.1, 1.1]] * nb])
-        V_I_lb = V_R_lb.copy()
-        V_I_ub = V_R_ub.copy()
-        V_sq_lb = np.array([0.9**2] * nb)
-        V_sq_ub = np.array([1.1**2] * nb)
-
-        V_R0 = np.minimum(np.maximum(V_R0, V_R_lb), V_R_ub)
-        V_I0 = np.minimum(np.maximum(V_I0, V_I_lb), V_I_ub)
+        V_sq0 = Wii_RR0 + Wii_II0
+        V_sq_lb = np.array([0.9 ** 2] * nb)
+        V_sq_ub = np.array([1.1 ** 2] * nb)
         V_sq0 = np.minimum(np.maximum(V_sq0, V_sq_lb), V_sq_ub)
 
         # -------- 4) Branch flows: P_ij, Q_ij, S_tot_sq --------
@@ -293,27 +296,30 @@ class SympyACOPFModel:
 
         # S_tot_sq 上界来自每条线的 rate^2
         Ssq_lb = np.zeros(na)
-        Ssq_ub = np.array([self.lines[lid][6]**2 for lid in self.arc_to_line], dtype=float)
+        Ssq_ub = np.array([self.lines[lid][6] ** 2 for lid in self.arc_to_line], dtype=float)
         S_tot_sq0 = np.minimum(np.maximum(S_tot_sq0, Ssq_lb), Ssq_ub)
 
         # -------- 5) 按 variable_list 顺序拼接成 x0 --------
         x0 = np.concatenate([
-            P_G0,       # ng
-            Q_G0,       # ng
-            V_R0,       # nb
-            V_I0,       # nb
-            V_sq0,      # nb
-            P_ij0,      # na
-            Q_ij0,      # na
-            S_tot_sq0   # na
+            P_G0,
+            Q_G0,
+            Wii_RR0,
+            Wii_RI0,
+            Wii_II0,
+            Wij_RR0,
+            Wij_RI0,
+            Wij_IR0,
+            Wij_II0,
+            V_sq0,
+            P_ij0,
+            Q_ij0,
+            S_tot_sq0,
         ])
 
-        assert x0.size == len(self.variable_list), \
-            f"构造的 x0 长度 {x0.size} 与 variable_list 长度 {len(self.variable_list)} 不一致"
-
-        return x0
-
-        
+        assert x0.size == len(self.variable_list), (
+            f"Constructed x0 length {x0.size} != variable_list length {len(self.variable_list)}"
+        )
+        return x0     
 
     def _build_network_matrices(self):
         nb = self.n_buses
@@ -370,17 +376,105 @@ class SympyACOPFModel:
     # ------------------------------------------------------------------
     # variables & bounds
     # ------------------------------------------------------------------
+    def _build_cross_pair_sets(self):
+        """
+        Build the sparse set of bus pairs (i,j) that actually need lifted variables.
+
+        We include:
+          1) directed arc pairs from branch-flow equations,
+          2) directed nonzero Ybus off-diagonal pairs from bus-balance equations.
+        """
+        nb = self.n_buses
+        cross_pair_set = set()
+        
+        # (A) directed arc pairs used in branch-flow equations
+        for (i, j) in self.arc_collection:
+            if i != j:
+                cross_pair_set.add((i, j))
+        
+        # (C) nonzero Ybus pairs used in bus-balance equations
+        for i in range(nb):
+            for j in range(nb):
+                if abs(self.G_mat[i, j]) > 1e-12 or abs(self.B_mat[i, j]) > 1e-12:
+                    cross_pair_set.add((i, j))
+
+        self.cross_pairs = sorted(cross_pair_set)
+        self.n_cross_pairs = len(self.cross_pairs)
+        self.cross_pair_index = {
+            pair: k for k, pair in enumerate(self.cross_pairs)
+        }
+
+        # optional: per-bus neighbor list for faster balance loops
+        self.power_balance_pairs_by_bus = {i: [] for i in range(nb)}
+        for (i, j) in self.cross_pairs:
+            if abs(self.G_mat[i, j]) > 1e-12 or abs(self.B_mat[i, j]) > 1e-12:
+                self.power_balance_pairs_by_bus[i].append(j)
+        for i in range(nb):
+            if i not in self.power_balance_pairs_by_bus:
+                self.power_balance_pairs_by_bus[i] = []
+
     @staticmethod
     def _var_list_insert(var_list, bound_list, variable_list, Var_bound_list):
         for v, bnd in zip(var_list, bound_list):
             variable_list.append(v)
             Var_bound_list.append(list(bnd))
         return variable_list, Var_bound_list
+    
+    # ------------------------------------------------------------------
+    # pair helper / unpack
+    # ------------------------------------------------------------------
+    def _cross_flat(self, i, j):
+        return self.cross_pair_index[(i, j)]
+
+    def _unpack_x(self, x):
+        x = np.asarray(x, dtype=float).flatten()
+
+        nb = self.n_buses
+        ng = self.n_gens
+        na = self.n_arcs
+        ncross = self.n_cross_pairs
+
+        idx = 0
+        P_G = x[idx:idx + ng]; idx += ng
+        Q_G = x[idx:idx + ng]; idx += ng
+
+        Wii_RR = x[idx:idx + nb]; idx += nb
+        Wii_RI = x[idx:idx + nb]; idx += nb
+        Wii_II = x[idx:idx + nb]; idx += nb
+
+        Wij_RR = x[idx:idx + ncross]; idx += ncross
+        Wij_RI = x[idx:idx + ncross]; idx += ncross
+        Wij_IR = x[idx:idx + ncross]; idx += ncross
+        Wij_II = x[idx:idx + ncross]; idx += ncross
+
+        V_sq = x[idx:idx + nb]; idx += nb
+        P_ij = x[idx:idx + na]; idx += na
+        Q_ij = x[idx:idx + na]; idx += na
+        S_tot_sq = x[idx:idx + na]; idx += na
+
+        return {
+            "P_G": P_G,
+            "Q_G": Q_G,
+            "Wii_RR": Wii_RR,
+            "Wii_RI": Wii_RI,
+            "Wii_II": Wii_II,
+            "Wij_RR": Wij_RR,
+            "Wij_RI": Wij_RI,
+            "Wij_IR": Wij_IR,
+            "Wij_II": Wij_II,
+            "V_sq": V_sq,
+            "P_ij": P_ij,
+            "Q_ij": Q_ij,
+            "S_tot_sq": S_tot_sq,
+        }
 
     def _build_variables(self):
         nb = self.n_buses
-        na = self.n_arcs
         ng = self.n_gens
+        na = self.n_arcs
+
+        self._build_cross_pair_sets()
+        ncross = self.n_cross_pairs
 
         self.variable_list = []
         self.Var_bound_list = []
@@ -405,18 +499,41 @@ class SympyACOPFModel:
             self.Q_G, Q_G_bound, self.variable_list, self.Var_bound_list
         )
 
-        # Bus voltages: V_R, V_I
-        self.V_R = sp.symbols(f'V_R0:{nb}')
-        # simple rectangular bounds derived from magnitude in [0.9, 1.1]
-        V_R_bound = [[-1.1, 1.1] for _ in range(nb)]
+        # Diagonal lifted terms: only 3 per bus
+        self.Wii_RR = sp.symbols(f'Wii_RR0:{nb}')
+        self.Wii_RI = sp.symbols(f'Wii_RI0:{nb}')
+        self.Wii_II = sp.symbols(f'Wii_II0:{nb}')
+
+        diag_bound_sq = [[0, 1.21] for _ in range(nb)]
+        diag_bound_bi_linear = [[-1.21, 1.21] for _ in range(nb)]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
-            self.V_R, V_R_bound, self.variable_list, self.Var_bound_list
+            self.Wii_RR, diag_bound_sq, self.variable_list, self.Var_bound_list
+        )
+        self.variable_list, self.Var_bound_list = self._var_list_insert(
+            self.Wii_RI, diag_bound_bi_linear, self.variable_list, self.Var_bound_list
+        )
+        self.variable_list, self.Var_bound_list = self._var_list_insert(
+            self.Wii_II, diag_bound_sq, self.variable_list, self.Var_bound_list
         )
 
-        self.V_I = sp.symbols(f'V_I0:{nb}')
-        V_I_bound = [[-1.1, 1.1] for _ in range(nb)]
+        # Directed cross lifted terms: 4 per cross pair
+        self.Wij_RR = sp.symbols(f'Wij_RR0:{ncross}')
+        self.Wij_RI = sp.symbols(f'Wij_RI0:{ncross}')
+        self.Wij_IR = sp.symbols(f'Wij_IR0:{ncross}')
+        self.Wij_II = sp.symbols(f'Wij_II0:{ncross}')
+
+        cross_bound = [[-1.21, 1.21] for _ in range(ncross)]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
-            self.V_I, V_I_bound, self.variable_list, self.Var_bound_list
+            self.Wij_RR, cross_bound, self.variable_list, self.Var_bound_list
+        )
+        self.variable_list, self.Var_bound_list = self._var_list_insert(
+            self.Wij_RI, cross_bound, self.variable_list, self.Var_bound_list
+        )
+        self.variable_list, self.Var_bound_list = self._var_list_insert(
+            self.Wij_IR, cross_bound, self.variable_list, self.Var_bound_list
+        )
+        self.variable_list, self.Var_bound_list = self._var_list_insert(
+            self.Wij_II, cross_bound, self.variable_list, self.Var_bound_list
         )
 
         # Voltage magnitude squared: V_sq
@@ -426,32 +543,20 @@ class SympyACOPFModel:
             self.V_sq, V_sq_bound, self.variable_list, self.Var_bound_list
         )
 
-
-        
-        # Branch flows on arcs: P_ij, Q_ij, S_tot_sq
-        na = self.n_arcs
-
         # thermal limit (per-unit MVA) from line data
         self.P_ij = sp.symbols(f'P_ij0:{na}')
-        P_ij_bound = []
-        for arc_k, lid in enumerate(self.arc_to_line):
-            rate = self.lines[lid][6]
-            P_ij_bound.append([-rate, rate])
+        P_ij_bound = [[-self.lines[lid][6], self.lines[lid][6]] for lid in self.arc_to_line]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
             self.P_ij, P_ij_bound, self.variable_list, self.Var_bound_list
         )
 
         self.Q_ij = sp.symbols(f'Q_ij0:{na}')
-        Q_ij_bound = P_ij_bound.copy()
         self.variable_list, self.Var_bound_list = self._var_list_insert(
-            self.Q_ij, Q_ij_bound, self.variable_list, self.Var_bound_list
+            self.Q_ij, P_ij_bound.copy(), self.variable_list, self.Var_bound_list
         )
 
         self.S_tot_sq = sp.symbols(f'S_tot_sq0:{na}')
-        S_tot_sq_bound = []
-        for arc_k, lid in enumerate(self.arc_to_line):
-            rate = self.lines[lid][6]
-            S_tot_sq_bound.append([0.0, rate ** 2])
+        S_tot_sq_bound = [[0.0, self.lines[lid][6] ** 2] for lid in self.arc_to_line]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
             self.S_tot_sq, S_tot_sq_bound, self.variable_list, self.Var_bound_list
         )
@@ -481,7 +586,7 @@ class SympyACOPFModel:
         na = self.n_arcs
 
         # total number of multipliers
-        total_dim = 2 * nb + 2 * na + nb + na + 1
+        total_dim = nb + nb + na + na + nb + na + 1
         # = P_bal(nb) + Q_bal(nb)
         # + P_flow(nl) + Q_flow(nl)
         # + Vsq(nb)
@@ -492,72 +597,34 @@ class SympyACOPFModel:
         # CASE 1: value is None → set all to 0
         # ---------------------------------------------------
         if value is None:
-            scalar = 0.0
-
-            self.lambda_P_bal = [scalar] * nb
-            self.lambda_Q_bal = [scalar] * nb
-            self.lambda_P_flow = [scalar] * na
-            self.lambda_Q_flow = [scalar] * na
-            self.lambda_Vsq = [scalar] * nb
-            self.lambda_Ssq = [scalar] * na
-            self.lambda_ref = scalar
+            vec = np.zeros(total_dim, dtype=float)
 
         # ---------------------------------------------------
         # CASE 2: value is scalar
         # ---------------------------------------------------
         elif isinstance(value, (int, float)):
-            scalar = float(value)
-
-            self.lambda_P_bal = [scalar] * nb
-            self.lambda_Q_bal = [scalar] * nb
-            self.lambda_P_flow = [scalar] * na
-            self.lambda_Q_flow = [scalar] * na
-            self.lambda_Vsq = [scalar] * nb
-            self.lambda_Ssq = [scalar] * na
-            self.lambda_ref = scalar
+            vec = np.full(total_dim, float(value), dtype=float)
 
         # ---------------------------------------------------
         # CASE 3: value is vector
         # ---------------------------------------------------
         else:
             vec = np.asarray(value, dtype=float).flatten()
-
             if len(vec) != total_dim:
-                raise ValueError(
-                    f"Lambda vector length mismatch. "
-                    f"Expected {total_dim}, got {len(vec)}."
-                )
-
-            idx = 0
-
-            # Bus power balance
-            self.lambda_P_bal = vec[idx:idx + nb].tolist()
-            idx += nb
-
-            self.lambda_Q_bal = vec[idx:idx + nb].tolist()
-            idx += nb
-
-            # Branch flow definitions
-            self.lambda_P_flow = vec[idx:idx + na].tolist()
-            idx += na
-
-            self.lambda_Q_flow = vec[idx:idx + na].tolist()
-            idx += na
-
-            # Voltage magnitude definition
-            self.lambda_Vsq = vec[idx:idx + nb].tolist()
-            idx += nb
-
-            # Branch S_sq definition
-            self.lambda_Ssq = vec[idx:idx + na].tolist()
-            idx += na   
-
-            # Reference bus
-            self.lambda_ref = float(vec[idx])
+                raise ValueError(f"Lambda vector length mismatch. Expected {total_dim}, got {len(vec)}.")
 
         # ---------------------------------------------------
         # rebuild lambda_vec in correct order
         # ---------------------------------------------------
+        idx = 0
+        self.lambda_P_bal = vec[idx:idx + nb].tolist(); idx += nb
+        self.lambda_Q_bal = vec[idx:idx + nb].tolist(); idx += nb
+        self.lambda_P_flow = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
+        self.lambda_Q_flow = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
+        self.lambda_Vsq = vec[idx:idx + nb].tolist(); idx += nb
+        self.lambda_Ssq = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
+        self.lambda_ref = float(vec[idx]); idx += 1
+
         self.lambda_vec = [
             *self.lambda_P_bal,
             *self.lambda_Q_bal,
@@ -565,13 +632,44 @@ class SympyACOPFModel:
             *self.lambda_Q_flow,
             *self.lambda_Vsq,
             *self.lambda_Ssq,
-            self.lambda_ref
+            self.lambda_ref,
         ]
 
                         
     # ------------------------------------------------------------------
     # Build Lagrangian (without quadratic penalty)
     # ------------------------------------------------------------------
+    def build_objective_expr(self):
+        obj = 0
+        for gi, gid in enumerate(self.gen_ids):
+            a = self.gens[gid][5]
+            b = self.gens[gid][6]
+            c = self.gens[gid][7]
+            obj += 0.5 * a * self.P_G[gi] ** 2 + b * self.P_G[gi] + c
+        self.objective = obj
+        return obj
+
+    def _diag_RR(self, i, vals):
+        return vals[i]
+
+    def _diag_RI(self, i, vals):
+        return vals[i]
+
+    def _diag_II(self, i, vals):
+        return vals[i]
+
+    def _cross_RR(self, i, j, vals):
+        return vals[self._cross_flat(i, j)]
+
+    def _cross_RI(self, i, j, vals):
+        return vals[self._cross_flat(i, j)]
+
+    def _cross_IR(self, i, j, vals):
+        return vals[self._cross_flat(i, j)]
+
+    def _cross_II(self, i, j, vals):
+        return vals[self._cross_flat(i, j)]
+    
     def _build_lagrangian(self, ref_bus_id=None):
         """
         Build the (classical) Lagrangian:
@@ -581,37 +679,24 @@ class SympyACOPFModel:
         using the current values of the Lagrange multipliers stored in the object.
         """
         nb = self.n_buses
-        #nl = self.n_lines
         na = self.n_arcs
         ng = self.n_gens
 
-        buses_range = range(nb)
-
-        # generator cost: C(P) = a P^2 + b P + c, aligned with gen_ids
-        a_cost = []
-        b_cost = []
-        c_cost = []
-        for gid in self.gen_ids:
-            gdata = self.gens[gid]
-            a_cost.append(gdata[5])
-            b_cost.append(gdata[6])
-            c_cost.append(gdata[7])
-
-        # objective
-        obj = 0
-        for gi in range(ng):
-            PGi = self.P_G[gi]
-            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
-
-        L = obj
+        L = self.build_objective_expr()
 
         # Convenience aliases
-        V_R = self.V_R
-        V_I = self.V_I
+        Wii_RR = self.Wii_RR
+        Wii_RI = self.Wii_RI
+        Wii_II = self.Wii_II
+        Wij_RR = self.Wij_RR
+        Wij_RI = self.Wij_RI
+        Wij_IR = self.Wij_IR
+        Wij_II = self.Wij_II
         V_sq = self.V_sq
         P_ij = self.P_ij
         Q_ij = self.Q_ij
         S_tot_sq = self.S_tot_sq
+
 
         G_mat = self.G_mat
         B_mat = self.B_mat
@@ -628,120 +713,80 @@ class SympyACOPFModel:
         # ---------------------------
         # (1) Active power balance constraints
         # ---------------------------
-        for i in buses_range:
-            ViR = V_R[i]
-            ViI = V_I[i]
-
-            # sum_j ( G_ij VjR - B_ij VjI ), sum_j ( G_ij VjI + B_ij VjR )
-            sum_GR_BI = 0
-            sum_GI_BR = 0
-            for j in buses_range:
-                VjR = V_R[j]
-                VjI = V_I[j]
-                Gij = G_mat[i, j]
-                Bij = B_mat[i, j]
-                sum_GR_BI += Gij * VjR - Bij * VjI
-                sum_GI_BR += Gij * VjI + Bij * VjR
-
-            P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
-
-            # if bus i has generator
+        for i in range(nb):
             PG_sum = 0
             if i in gen_sym_indices_by_bus_idx:
                 for gi in gen_sym_indices_by_bus_idx[i]:
                     PG_sum += self.P_G[gi]
-
-            h_P = PG_sum - P_D[i] - P_inj
-
+            h_P = PG_sum - self.P_D[i]
+            # diagonal Y_ii contribution
+            Gii = self.G_mat[i, i]
+            Bii = self.B_mat[i, i]
+            h_P -= Gii * Wii_RR[i] + Gii * Wii_II[i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                p = self._cross_flat(i, j)
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                h_P -= Gij * Wij_RR[p] - Bij * Wij_RI[p] + Gij * Wij_II[p] + Bij * Wij_IR[p]
             L += self.lambda_P_bal[i] * h_P
 
         # ---------------------------
         # (2) Reactive power balance constraints
         # ---------------------------
-        for i in buses_range:
-            ViR = V_R[i]
-            ViI = V_I[i]
-
-            sum_GR_BI = 0
-            sum_GI_BR = 0
-            for j in buses_range:
-                VjR = V_R[j]
-                VjI = V_I[j]
-                Gij = G_mat[i, j]
-                Bij = B_mat[i, j]
-                sum_GR_BI += Gij * VjR - Bij * VjI
-                sum_GI_BR += Gij * VjI + Bij * VjR
-
-            Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
-
+        for i in range(nb):
             QG_sum = 0
             if i in gen_sym_indices_by_bus_idx:
                 for gi in gen_sym_indices_by_bus_idx[i]:
                     QG_sum += self.Q_G[gi]
-
-            h_Q = QG_sum - Q_D[i] - Q_inj
-
+            h_Q = QG_sum - self.Q_D[i]
+            Gii = self.G_mat[i, i]
+            Bii = self.B_mat[i, i]
+            h_Q -= 2.0 * Gii * Wii_RI[i] - Bii * Wii_II[i] - Bii * Wii_RR[i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                p = self._cross_flat(i, j)
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                h_Q -= Gij * Wij_IR[p] - Bij * Wij_II[p] - Gij * Wij_RI[p] - Bij * Wij_RR[p]
             L += self.lambda_Q_bal[i] * h_Q
 
         # ---------------------------
         # (3) Branch power-flow definition constraints
         # ---------------------------
-        for a, (i, j) in enumerate(arc_collection):
-            ViR = V_R[i]
-            ViI = V_I[i]
-            VjR = V_R[j]
-            VjI = V_I[j]
-
+        for a, (i, j) in enumerate(self.arc_collection):
             lid = self.arc_to_line[a]
             ell = self.line_pos[lid]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
+            p = self._cross_flat(i, j)
 
-            g_ij = g_series[ell]
-            b_ij = b_series[ell]
+            P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR[p] - Wij_II[p]) + b_ij * (Wij_RI[p] - Wij_IR[p])
+            Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR[p] + Wij_II[p]) + g_ij * (Wij_RI[p] - Wij_IR[p])
 
-            # P_ij definition (rectangular form)
-            P_expr = (
-                ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
-                + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
-            )
-
-            # Q_ij definition (rectangular form)
-            Q_expr = (
-                ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
-                - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
-            )
-
-            h_P_flow = self.P_ij[a] - P_expr
-            h_Q_flow = self.Q_ij[a] - Q_expr
-
-            L += self.lambda_P_flow[a] * h_P_flow
-            L += self.lambda_Q_flow[a] * h_Q_flow
+            L += self.lambda_P_flow[a] * (P_ij[a] - P_expr)
+            L += self.lambda_Q_flow[a] * (Q_ij[a] - Q_expr)
 
         # ---------------------------
         # (4) Voltage magnitude definition
         # ---------------------------
-        for i in buses_range:
-            h_Vsq = V_sq[i] - (V_R[i] ** 2 + V_I[i] ** 2)
-            L += self.lambda_Vsq[i] * h_Vsq
+        for i in range(nb):
+            L += self.lambda_Vsq[i] * (V_sq[i] - (Wii_RR[i] + Wii_II[i]))
 
         # ---------------------------
         # (5) Branch S_tot_sq definition
         # ---------------------------
         for a in range(na):
-            h_Ssq = S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2)
-            L += self.lambda_Ssq[a] * h_Ssq
+            L += self.lambda_Ssq[a] * (S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
         # ---------------------------
         # (6) Reference bus constraint: V_ref^I = 0
         # ---------------------------
         if ref_bus_id is None:
-            # default: first bus id
             ref_bus_id = self.bus_ids[0]
         ref_idx = self.bus_index[ref_bus_id]
-        h_ref = V_I[ref_idx]
-        L += self.lambda_ref * h_ref
+        L += self.lambda_ref * self.Wii_II[ref_idx]
 
-        self.Lagrange = L
-        return L
+        self.Lagrange = sp.expand(L)
+        return self.Lagrange
 
     def build_h_symbolic(self, ref_bus_id=None):
         """
@@ -756,35 +801,22 @@ class SympyACOPFModel:
         """
         nb = self.n_buses
         na = self.n_arcs
-        ng = self.n_gens
-        nl = self.n_lines
         buses_range = range(nb)
 
         # 符号变量别名
-        P_G  = self.P_G
-        Q_G  = self.Q_G
-        V_R  = self.V_R
-        V_I  = self.V_I
+        P_G = self.P_G
+        Q_G = self.Q_G
+        Wii_RR = self.Wii_RR
+        Wii_RI = self.Wii_RI
+        Wii_II = self.Wii_II
+        Wij_RR = self.Wij_RR
+        Wij_RI = self.Wij_RI
+        Wij_IR = self.Wij_IR
+        Wij_II = self.Wij_II
         V_sq = self.V_sq
         P_ij = self.P_ij
         Q_ij = self.Q_ij
         S_tot_sq = self.S_tot_sq
-
-        # 数据别名
-        G_mat = self.G_mat
-        B_mat = self.B_mat
-        g_series = self.g_series
-        b_series = self.b_series
-        arc_collection = self.arc_collection
-
-        P_D = self.P_D
-        Q_D = self.Q_D
-
-        # bus -> gen 索引 (0..ng-1)
-        gen_sym_index_by_bus_idx = {}
-        for bus_id, gen_idx in self.gen_index_by_bus.items():
-            bus_idx = self.bus_index[bus_id]
-            gen_sym_index_by_bus_idx[bus_idx] = gen_idx
 
         if ref_bus_id is None:
             ref_bus_id = self.bus_ids[0]
@@ -792,77 +824,56 @@ class SympyACOPFModel:
 
         residuals = []
 
+        # bus -> gen 索引 (0..ng-1)
+
+
         # 1) Active power balance c_i^P
-        for i in buses_range:
-            ViR = V_R[i]
-            ViI = V_I[i]
-
-            sum_GR_BI = 0
-            sum_GI_BR = 0
-            for j in buses_range:
-                VjR = V_R[j]
-                VjI = V_I[j]
-                Gij = G_mat[i, j]
-                Bij = B_mat[i, j]
-                sum_GR_BI += Gij * VjR - Bij * VjI
-                sum_GI_BR += Gij * VjI + Bij * VjR
-
-            P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
-
-            if i in gen_sym_index_by_bus_idx:
-                gi = gen_sym_index_by_bus_idx[i]
-                cP = P_G[gi] - P_D[i] - P_inj
-            else:
-                cP = - P_D[i] - P_inj
-
+        for i in range(nb):
+            PG_sum = 0
+            # bus -> gen 索引 (0..ng-1)
+            for bid, idx_list in self.gen_indices_by_bus.items():
+                if self.bus_index[bid] == i:
+                    for gi in idx_list:
+                        PG_sum += P_G[gi]
+            cP = PG_sum - self.P_D[i]
+            Gii = self.G_mat[i, i]
+            Bii = self.B_mat[i, i]
+            cP -= Gii * Wii_RR[i] + Gii * Wii_II[i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                p = self._cross_flat(i, j)
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                cP -= Gij * Wij_RR[p] - Bij * Wij_RI[p] + Gij * Wij_II[p] + Bij * Wij_IR[p]
             residuals.append(cP)
 
         # 2) Reactive power balance c_i^Q
-        for i in buses_range:
-            ViR = V_R[i]
-            ViI = V_I[i]
-
-            sum_GR_BI = 0
-            sum_GI_BR = 0
-            for j in buses_range:
-                VjR = V_R[j]
-                VjI = V_I[j]
-                Gij = G_mat[i, j]
-                Bij = B_mat[i, j]
-                sum_GR_BI += Gij * VjR - Bij * VjI
-                sum_GI_BR += Gij * VjI + Bij * VjR
-
-            Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
-
-            if i in gen_sym_index_by_bus_idx:
-                gi = gen_sym_index_by_bus_idx[i]
-                cQ = Q_G[gi] - Q_D[i] - Q_inj
-            else:
-                cQ = - Q_D[i] - Q_inj
-
+        for i in range(nb):
+            QG_sum = 0
+            for bid, idx_list in self.gen_indices_by_bus.items():
+                if self.bus_index[bid] == i:
+                    for gi in idx_list:
+                        QG_sum += Q_G[gi]
+            cQ = QG_sum - self.Q_D[i]
+            Gii = self.G_mat[i, i]
+            Bii = self.B_mat[i, i]
+            cQ -= 2.0 * Gii * Wii_RI[i] - Bii * Wii_II[i] - Bii * Wii_RR[i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                p = self._cross_flat(i, j)
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                cQ -= Gij * Wij_IR[p] - Bij * Wij_II[p] - Gij * Wij_RI[p] - Bij * Wij_RR[p]
             residuals.append(cQ)
 
         # 3) Branch power-flow definitions: c_{ij}^{P,flow}, c_{ij}^{Q,flow}
-        for a, (i, j) in enumerate(arc_collection):
-            ViR = V_R[i]
-            ViI = V_I[i]
-            VjR = V_R[j]
-            VjI = V_I[j]
-            
+        for a, (i, j) in enumerate(self.arc_collection):
             lid = self.arc_to_line[a]
             ell = self.line_pos[lid]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
+            p = self._cross_flat(i, j)
 
-            g_ij = g_series[ell]
-            b_ij = b_series[ell]
-
-            P_expr = (
-                ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
-                + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
-            )
-            Q_expr = (
-                ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
-                - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
-            )
+            P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR[p] - Wij_II[p]) + b_ij * (Wij_RI[p] - Wij_IR[p])
+            Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR[p] + Wij_II[p]) + g_ij * (Wij_RI[p] - Wij_IR[p])
 
             cP_flow = P_ij[a] - P_expr
             cQ_flow = Q_ij[a] - Q_expr
@@ -871,17 +882,15 @@ class SympyACOPFModel:
             residuals.append(cQ_flow)
 
         # 4) Voltage magnitude definition c_i^{Vsq}
-        for i in buses_range:
-            cV = V_sq[i] - (V_R[i] ** 2 + V_I[i] ** 2)
-            residuals.append(cV)
+        for i in range(nb):
+            residuals.append(V_sq[i] - (Wii_RR[i] + Wii_II[i]))
 
         # 5) Branch S_tot_sq definition c_{ij}^S
         for a in range(na):
-            cS = S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2)
-            residuals.append(cS)
+            residuals.append(S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
         # 6) Reference bus constraint c^{ref} = V_I[ref_idx]
-        c_ref = V_I[ref_idx]
+        c_ref = Wii_II[ref_idx]
         residuals.append(c_ref)
 
         return residuals
@@ -909,35 +918,17 @@ class SympyACOPFModel:
         lam = np.asarray(self.lambda_vec, dtype=float).flatten()
 
         # ---------- 1) 构造目标函数 f(x) ----------
-        nb = self.n_buses
-        ng = self.n_gens
-
-        a_cost = []
-        b_cost = []
-        c_cost = []
-        for gid in self.gen_ids:
-            gdata = self.gens[gid]
-            a_cost.append(gdata[5])
-            b_cost.append(gdata[6])
-            c_cost.append(gdata[7])
-
-        obj = 0
-        for gi in range(ng):
-            PGi = self.P_G[gi]
-            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
-
+        obj = self.build_objective_expr()
         L = obj
 
         # ---------- 2) 符号构造 h(x) & J(x) ----------
         h_sym_list = self.build_h_symbolic(ref_bus_id=ref_bus_id)
         mcon = len(h_sym_list)
-
         if lam.size != mcon:
             raise ValueError(f"lambda size {lam.size} != number of constraints {mcon}")
 
         h_vec = sp.Matrix(h_sym_list)
         J_sym = h_vec.jacobian(x_syms)  # (mcon, nvar)
-
         self.linear_jacobian = J_sym
 
         # ---------- 3) 在 x_center 处代值得到 h(x^k) 和 J(x^k) ----------
@@ -962,7 +953,7 @@ class SympyACOPFModel:
                 coef = J_num[i, j]
                 if coef != 0.0:
                     expr += sp.Float(coef) * (x_syms[j] - sp.Float(x0[j]))
-            h_lin_exprs.append(expr)
+            h_lin_exprs.append(sp.expand(expr))
 
         # ---------- 5) 线性 Lagrange 项 λ^T \tilde h(x) ----------
         for i in range(mcon):
@@ -981,8 +972,8 @@ class SympyACOPFModel:
             for j in range(nvar):
                 L += mu_half * (x_syms[j] - sp.Float(x0[j])) ** 2
 
-        self.Lagrange_linear_ALM = L
-        return L, self.variable_list, self.Var_bound_list
+        self.Lagrange_linear_ALM = sp.expand(L)
+        return self.Lagrange_linear_ALM, self.variable_list, self.Var_bound_list
 
     # ------------------------------------------------------------------
     # Public API
@@ -1032,130 +1023,73 @@ class SympyACOPFModel:
          S_tot_sq (na)].
         """
         nb = self.n_buses
-        nl = self.n_lines
         na = self.n_arcs
-        ng = self.n_gens
-        buses_range = range(nb)
-
-        # bus -> gen index mapping (in 0..ng-1)
-        gen_sym_index_by_bus_idx = {}
-        for bus_id, gen_idx in self.gen_index_by_bus.items():
-            bus_idx = self.bus_index[bus_id]
-            gen_sym_index_by_bus_idx[bus_idx] = gen_idx
-
-        G_mat = self.G_mat
-        B_mat = self.B_mat
-        g_series = self.g_series
-        b_series = self.b_series
-        line_collection = self.line_collection
-        arc_collection = self.arc_collection
-        line_pos = {lid: k for k, lid in enumerate(self.line_ids)}
-        
-
-        P_D = self.P_D
-        Q_D = self.Q_D
-
-        if ref_bus_id is None:
-            ref_bus_id = self.bus_ids[0]
-        ref_idx = self.bus_index[ref_bus_id]
+        ng = self.n_gens    
 
         def h_func(x):
-            x = np.asarray(x, dtype=float)
-            # unpack x according to variable_list structure
-            idx = 0
-            P_G = x[idx:idx + ng]
-            idx += ng
-            Q_G = x[idx:idx + ng]
-            idx += ng
-            V_R = x[idx:idx + nb]
-            idx += nb
-            V_I = x[idx:idx + nb]
-            idx += nb
-            V_sq = x[idx:idx + nb]
-            idx += nb
-            P_ij = x[idx:idx + na]
-            idx += na
-            Q_ij = x[idx:idx + na]
-            idx += na
-            S_tot_sq = x[idx:idx + na]
-            # idx += na   # not needed afterwards
+            vals = self._unpack_x(x)
+
+            P_G = vals["P_G"]
+            Q_G = vals["Q_G"]
+            Wii_RR = vals["Wii_RR"]
+            Wii_RI = vals["Wii_RI"]
+            Wii_II = vals["Wii_II"]
+            Wij_RR = vals["Wij_RR"]
+            Wij_RI = vals["Wij_RI"]
+            Wij_IR = vals["Wij_IR"]
+            Wij_II = vals["Wij_II"]
+            V_sq = vals["V_sq"]
+            P_ij = vals["P_ij"]
+            Q_ij = vals["Q_ij"]
+            S_tot_sq = vals["S_tot_sq"]
 
             residuals = []
 
             # 1) Active power balance c_i^P
-            for i in buses_range:
-                ViR = V_R[i]
-                ViI = V_I[i]
-
-                sum_GR_BI = 0.0
-                sum_GI_BR = 0.0
-                for j in buses_range:
-                    VjR = V_R[j]
-                    VjI = V_I[j]
-                    Gij = G_mat[i, j]
-                    Bij = B_mat[i, j]
-                    sum_GR_BI += Gij * VjR - Bij * VjI
-                    sum_GI_BR += Gij * VjI + Bij * VjR
-
-                P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
-
-                if i in gen_sym_index_by_bus_idx:
-                    gi = gen_sym_index_by_bus_idx[i]
-                    cP = P_G[gi] - P_D[i] - P_inj
-                else:
-                    cP = - P_D[i] - P_inj
-
+            for i in range(nb):
+                PG_sum = 0.0
+                for bid, idx_list in self.gen_indices_by_bus.items():
+                    if self.bus_index[bid] == i:
+                        for gi in idx_list:
+                            PG_sum += P_G[gi]
+                cP = PG_sum - self.P_D[i]
+                Gii = self.G_mat[i, i]
+                cP -= Gii * Wii_RR[i] + Gii * Wii_II[i]
+                for j in self.power_balance_pairs_by_bus[i]:
+                    p = self._cross_flat(i, j)
+                    Gij = self.G_mat[i, j]
+                    Bij = self.B_mat[i, j]
+                    cP -= Gij * Wij_RR[p] - Bij * Wij_RI[p] + Gij * Wij_II[p] + Bij * Wij_IR[p]
                 residuals.append(cP)
 
             # 2) Reactive power balance c_i^Q
-            for i in buses_range:
-                ViR = V_R[i]
-                ViI = V_I[i]
-
-                sum_GR_BI = 0.0
-                sum_GI_BR = 0.0
-                for j in buses_range:
-                    VjR = V_R[j]
-                    VjI = V_I[j]
-                    Gij = G_mat[i, j]
-                    Bij = B_mat[i, j]
-                    sum_GR_BI += Gij * VjR - Bij * VjI
-                    sum_GI_BR += Gij * VjI + Bij * VjR
-
-                Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
-
-                if i in gen_sym_index_by_bus_idx:
-                    gi = gen_sym_index_by_bus_idx[i]
-                    cQ = Q_G[gi] - Q_D[i] - Q_inj
-                else:
-                    cQ = - Q_D[i] - Q_inj
-
+            for i in range(nb):
+                QG_sum = 0.0
+                for bid, idx_list in self.gen_indices_by_bus.items():
+                    if self.bus_index[bid] == i:
+                        for gi in idx_list:
+                            QG_sum += Q_G[gi]
+                cQ = QG_sum - self.Q_D[i]
+                Gii = self.G_mat[i, i]
+                Bii = self.B_mat[i, i]
+                cQ -= 2.0 * Gii * Wii_RI[i] - Bii * Wii_II[i] - Bii * Wii_RR[i]
+                for j in self.power_balance_pairs_by_bus[i]:
+                    p = self._cross_flat(i, j)
+                    Gij = self.G_mat[i, j]
+                    Bij = self.B_mat[i, j]
+                    cQ -= Gij * Wij_IR[p] - Bij * Wij_II[p] - Gij * Wij_RI[p] - Bij * Wij_RR[p]
                 residuals.append(cQ)
 
             # 3) Branch power-flow definition constraints
-            for a, (i, j) in enumerate(arc_collection):
-                ViR = V_R[i]
-                ViI = V_I[i]
-                VjR = V_R[j]
-                VjI = V_I[j]
-
+            for a, (i, j) in enumerate(self.arc_collection):
                 lid = self.arc_to_line[a]
-                ell = line_pos[lid]
+                ell = self.line_pos[lid]
+                g_ij = self.g_series[ell]
+                b_ij = self.b_series[ell]
+                p = self._cross_flat(i, j)
 
-                g_ij = g_series[ell]
-                b_ij = b_series[ell]
-
-                # P_ij definition
-                P_expr = (
-                    ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
-                    + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
-                )
-                # Q_ij definition
-                Q_expr = (
-                    ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
-                    - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
-                )
-
+                P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR[p] - Wij_II[p]) + b_ij * (Wij_RI[p] - Wij_IR[p])
+                Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR[p] + Wij_II[p]) + g_ij * (Wij_RI[p] - Wij_IR[p])
                 cP_flow = P_ij[a] - P_expr
                 cQ_flow = Q_ij[a] - Q_expr
 
@@ -1163,8 +1097,8 @@ class SympyACOPFModel:
                 residuals.append(cQ_flow)
 
             # 4) Voltage magnitude definition c_i^{Vsq}
-            for i in buses_range:
-                cV = V_sq[i] - (V_R[i] ** 2 + V_I[i] ** 2)
+            for i in range(nb):
+                cV = V_sq[i] - (Wii_RR[i] + Wii_II[i])
                 residuals.append(cV)
 
             # 5) Branch S_tot_sq definition c_{ij}^S
@@ -1173,28 +1107,28 @@ class SympyACOPFModel:
                 residuals.append(cS)
 
             # 6) Reference bus constraint c^{ref} = V_I[ref_idx]
-            c_ref = V_I[ref_idx]
+            c_ref = Wii_II[ref_idx]
             residuals.append(c_ref)
-
             return np.asarray(residuals, dtype=float)
 
         return h_func
     
     def update_lambda(self, x, alpha, h_func):
         """
-        单步对偶更新: λ^{k+1} = λ^k + α h(x^{k+1}),
-        并把新的 λ 写回到对象内部 (lambda_P_bal, lambda_Q_bal, ...).
+        Single-step dual update: λ^{k+1} = λ^k + α h(x^{k+1}),
+        and write the updated λ back into the object
+        (lambda_P_bal, lambda_Q_bal, ...).
 
-        参数
-        ----
-        x       : list 或 1D array, 当前的 primal 解 x^{k+1}
-        alpha   : float 或 1D array, 对偶步长 α_k
-        h_func  : callable, 接受 x, 返回 1D array h(x)
+        Parameters
+        ----------
+        x       : list or 1D array, the current primal solution x^{k+1}
+        alpha   : float or 1D array, the dual step size α_k
+        h_func  : callable, takes x as input and returns a 1D array h(x)
 
-        返回
-        ----
-        lambda_new  : 1D array, 更新后的 λ^{k+1} (扁平形式)
-        h_x         : 1D array, 当前约束残差 h(x^{k+1})
+        Returns
+        -------
+        lambda_new  : 1D array, the updated λ^{k+1} (flattened form)
+        h_x         : 1D array, the current constraint residual h(x^{k+1})
         """
         x_vec = np.asarray(x, dtype=float)
 
@@ -1203,7 +1137,7 @@ class SympyACOPFModel:
         h_x = np.asarray(h_func(x_vec), dtype=float)
 
         # 维度检查
-        assert lam.shape == h_x.shape, f"lambda 维度 {lam.shape} 与 h(x) 维度 {h_x.shape} 不一致"
+        assert lam.shape == h_x.shape, f"Dimension mismatch: lambda has shape {lam.shape}, while h(x) has shape {h_x.shape}"
 
         # 对偶更新
         lambda_new = lam + alpha * h_x
@@ -1214,32 +1148,24 @@ class SympyACOPFModel:
 
         idx = 0
         # λ_P_bal (nb)
-        self.lambda_P_bal = lambda_new[idx:idx + nb].tolist()
-        idx += nb
+        self.lambda_P_bal = lambda_new[idx:idx + nb].tolist(); idx += nb
         # λ_Q_bal (nb)
-        self.lambda_Q_bal = lambda_new[idx:idx + nb].tolist()
-        idx += nb
+        self.lambda_Q_bal = lambda_new[idx:idx + nb].tolist(); idx += nb
         # λ_P_flow (nl)
-        self.lambda_P_flow = lambda_new[idx:idx + na].tolist()
-        idx += na
+        self.lambda_P_flow = lambda_new[idx:idx + na].tolist(); idx += na
         # λ_Q_flow (nl)
-        self.lambda_Q_flow = lambda_new[idx:idx + na].tolist()
-        idx += na
+        self.lambda_Q_flow = lambda_new[idx:idx + na].tolist(); idx += na
         # λ_Vsq (nb)
-        self.lambda_Vsq = lambda_new[idx:idx + nb].tolist()
-        idx += nb
+        self.lambda_Vsq = lambda_new[idx:idx + nb].tolist(); idx += nb
         # λ_Ssq (nl)
-        self.lambda_Ssq = lambda_new[idx:idx + na].tolist()
-        idx += na
+        self.lambda_Ssq = lambda_new[idx:idx + na].tolist(); idx += na
         # λ_ref (1)
-        self.lambda_ref = float(lambda_new[idx])
-        idx += 1
+        self.lambda_ref = float(lambda_new[idx]); idx += 1
 
-        assert idx == len(lambda_new), "lambda_new 拆分时长度对不上，检查顺序是否和 h_func 一致"
+        assert idx == len(lambda_new), "Failed to split lambda_new: length mismatch. Check whether the variable order is consistent with h_func."
 
         # 更新扁平 lambda_vec，保证下一次用的是最新 λ
         self.lambda_vec = lambda_new.tolist()
-
         return lambda_new, h_x
 
     def check_constraints(self, solution, ref_bus_id=None, tol_eq=1e-6, tol_ineq=1e-9):
@@ -1274,8 +1200,6 @@ class SympyACOPFModel:
         all_ok : bool
             True if all constraints are satisfied.
         """
-        import numpy as np
-
         x = np.asarray(solution, dtype=float).flatten()
 
         # ---- dimension check ----
@@ -1284,7 +1208,6 @@ class SympyACOPFModel:
             raise ValueError(f"solution length mismatch: expected {nvar}, got {x.size}")
 
         ok_list = []
-
         # ---- (A) equality constraints: h(x) == 0 ----
         h_func = self.build_h_func(ref_bus_id=ref_bus_id)
         h = np.asarray(h_func(x), dtype=float).flatten()
@@ -1300,21 +1223,22 @@ class SympyACOPFModel:
 
 def create_qhd_acopf_log_file(model, folder="."):
     """
-    创建日志文件：
-    命名规则：
-        Buses-n-HH-MM-SS-MM-DD-YYYY.txt
+Create a log file.
 
-    其中：
-        n = 总线数
-        HH-MM-SS = 文件创建时间
-        MM-DD-YYYY = 当天日期
-    """
+Naming convention:
+    Buses_<n>_<HH>-<MM>-<SS>_<MM>-<DD>-<YYYY>.txt
+
+where:
+    n = number of buses
+    HH-MM-SS = file creation time
+    MM-DD-YYYY = current date
+""" 
     now = datetime.now()
     n = model.n_buses
     time_str = now.strftime("%H-%M-%S")
     date_str = now.strftime("%m-%d-%Y")
 
-    filename = f"Buses-{n}-{time_str}-{date_str}.txt"
+    filename = f"Buses_{n}_{time_str}_{date_str}.txt"
     filepath = os.path.join(folder, filename)
 
     with open(filepath, "w", encoding="utf-8") as f:

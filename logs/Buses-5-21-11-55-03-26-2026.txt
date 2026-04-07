@@ -1,0 +1,7 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-03-26 21:11:55
+Number of buses: 5
+Number of lines: 6
+Number of generators: 5
+========================================================================================================================
+
