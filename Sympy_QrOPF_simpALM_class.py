@@ -1484,6 +1484,523 @@ class SympyACOPFModel:
 
         return h_func
 
+def _simp_make_symbol_list(prefix, count):
+    if count <= 0:
+        return []
+    syms = sp.symbols(f"{prefix}0:{count}")
+    if count == 1:
+        return [syms]
+    return list(syms)
+
+
+def _simp_resolve_ref_bus(self, ref_bus_id=None):
+    if not hasattr(self, "ref_bus_id_fixed"):
+        self.ref_bus_id_fixed = self.bus_ids[0]
+        self.ref_bus_idx_fixed = self.bus_index[self.ref_bus_id_fixed]
+    if ref_bus_id is None:
+        return self.ref_bus_id_fixed, self.ref_bus_idx_fixed
+    if ref_bus_id != self.ref_bus_id_fixed:
+        raise ValueError(
+            f"This simplified model fixes the reference bus at {self.ref_bus_id_fixed}, "
+            f"but received ref_bus_id={ref_bus_id}."
+        )
+    return ref_bus_id, self.ref_bus_idx_fixed
+
+
+def _simp_build_variables(self):
+    nb = self.n_buses
+    ng = self.n_gens
+    na = self.n_arcs
+
+    self._build_cross_pair_sets()
+    ncross = self.n_cross_pairs
+
+    self.ref_bus_id_fixed = self.bus_ids[0]
+    self.ref_bus_idx_fixed = self.bus_index[self.ref_bus_id_fixed]
+    ref = self.ref_bus_idx_fixed
+
+    self.Wii_RI_active_bus_indices = [i for i in range(nb) if i != ref]
+    self.Wii_II_active_bus_indices = [i for i in range(nb) if i != ref]
+
+    self.Wij_RR_active_pairs = list(self.cross_pairs)
+    self.Wij_RI_active_pairs = [pair for pair in self.cross_pairs if pair[1] != ref]
+    self.Wij_IR_active_pairs = [pair for pair in self.cross_pairs if pair[0] != ref]
+    self.Wij_II_active_pairs = [
+        pair for pair in self.cross_pairs if pair[0] != ref and pair[1] != ref
+    ]
+
+    self.Wij_RR_active_pos = [self.cross_pair_index[pair] for pair in self.Wij_RR_active_pairs]
+    self.Wij_RI_active_pos = [self.cross_pair_index[pair] for pair in self.Wij_RI_active_pairs]
+    self.Wij_IR_active_pos = [self.cross_pair_index[pair] for pair in self.Wij_IR_active_pairs]
+    self.Wij_II_active_pos = [self.cross_pair_index[pair] for pair in self.Wij_II_active_pairs]
+
+    self.variable_list = []
+    self.Var_bound_list = []
+
+    self.P_G = _simp_make_symbol_list("P_G", ng)
+    P_G_bound = [[self.gens[gid][1], self.gens[gid][2]] for gid in self.gen_ids]
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.P_G, P_G_bound, self.variable_list, self.Var_bound_list
+    )
+
+    self.Q_G = _simp_make_symbol_list("Q_G", ng)
+    Q_G_bound = [[self.gens[gid][3], self.gens[gid][4]] for gid in self.gen_ids]
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Q_G, Q_G_bound, self.variable_list, self.Var_bound_list
+    )
+
+    self.Wii_RR = _simp_make_symbol_list("Wii_RR", nb)
+    self.Wii_RR_free = list(self.Wii_RR)
+    diag_bound_sq = [[0.0, 1.21] for _ in range(nb)]
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wii_RR_free, diag_bound_sq, self.variable_list, self.Var_bound_list
+    )
+
+    self.Wii_RI_free = _simp_make_symbol_list("Wii_RI", len(self.Wii_RI_active_bus_indices))
+    self.Wii_RI = [sp.Integer(0) for _ in range(nb)]
+    for sym, i in zip(self.Wii_RI_free, self.Wii_RI_active_bus_indices):
+        self.Wii_RI[i] = sym
+    diag_bound_bilinear = [[-1.21, 1.21] for _ in self.Wii_RI_free]
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wii_RI_free, diag_bound_bilinear, self.variable_list, self.Var_bound_list
+    )
+
+    self.Wii_II_free = _simp_make_symbol_list("Wii_II", len(self.Wii_II_active_bus_indices))
+    self.Wii_II = [sp.Integer(0) for _ in range(nb)]
+    for sym, i in zip(self.Wii_II_free, self.Wii_II_active_bus_indices):
+        self.Wii_II[i] = sym
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wii_II_free, [[0.0, 1.21] for _ in self.Wii_II_free], self.variable_list, self.Var_bound_list
+    )
+
+    cross_bound = [[-1.21, 1.21] for _ in range(ncross)]
+    self.Wij_RR_free = _simp_make_symbol_list("Wij_RR", len(self.Wij_RR_active_pairs))
+    self.Wij_RR = [sp.Integer(0) for _ in range(ncross)]
+    for sym, pos in zip(self.Wij_RR_free, self.Wij_RR_active_pos):
+        self.Wij_RR[pos] = sym
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wij_RR_free, cross_bound[:len(self.Wij_RR_free)], self.variable_list, self.Var_bound_list
+    )
+
+    self.Wij_RI_free = _simp_make_symbol_list("Wij_RI", len(self.Wij_RI_active_pairs))
+    self.Wij_RI = [sp.Integer(0) for _ in range(ncross)]
+    for sym, pos in zip(self.Wij_RI_free, self.Wij_RI_active_pos):
+        self.Wij_RI[pos] = sym
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wij_RI_free, [[-1.21, 1.21] for _ in self.Wij_RI_free], self.variable_list, self.Var_bound_list
+    )
+
+    self.Wij_IR_free = _simp_make_symbol_list("Wij_IR", len(self.Wij_IR_active_pairs))
+    self.Wij_IR = [sp.Integer(0) for _ in range(ncross)]
+    for sym, pos in zip(self.Wij_IR_free, self.Wij_IR_active_pos):
+        self.Wij_IR[pos] = sym
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wij_IR_free, [[-1.21, 1.21] for _ in self.Wij_IR_free], self.variable_list, self.Var_bound_list
+    )
+
+    self.Wij_II_free = _simp_make_symbol_list("Wij_II", len(self.Wij_II_active_pairs))
+    self.Wij_II = [sp.Integer(0) for _ in range(ncross)]
+    for sym, pos in zip(self.Wij_II_free, self.Wij_II_active_pos):
+        self.Wij_II[pos] = sym
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Wij_II_free, [[-1.21, 1.21] for _ in self.Wij_II_free], self.variable_list, self.Var_bound_list
+    )
+
+    self.V_sq = _simp_make_symbol_list("V_sq", nb)
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.V_sq, [[0.9 ** 2, 1.1 ** 2] for _ in range(nb)], self.variable_list, self.Var_bound_list
+    )
+
+    self.P_ij = _simp_make_symbol_list("P_ij", na)
+    P_ij_bound = [[-self.lines[lid][6], self.lines[lid][6]] for lid in self.arc_to_line]
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.P_ij, P_ij_bound, self.variable_list, self.Var_bound_list
+    )
+
+    self.Q_ij = _simp_make_symbol_list("Q_ij", na)
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.Q_ij, P_ij_bound.copy(), self.variable_list, self.Var_bound_list
+    )
+
+    self.S_tot_sq = _simp_make_symbol_list("S_tot_sq", na)
+    S_tot_sq_bound = [[0.0, self.lines[lid][6] ** 2] for lid in self.arc_to_line]
+    self.variable_list, self.Var_bound_list = self._var_list_insert(
+        self.S_tot_sq, S_tot_sq_bound, self.variable_list, self.Var_bound_list
+    )
+
+
+def _simp_unpack_x(self, x):
+    x = np.asarray(x, dtype=float).flatten()
+
+    nb = self.n_buses
+    ng = self.n_gens
+    na = self.n_arcs
+    ncross = self.n_cross_pairs
+
+    idx = 0
+    P_G = x[idx:idx + ng]; idx += ng
+    Q_G = x[idx:idx + ng]; idx += ng
+
+    Wii_RR = x[idx:idx + nb]; idx += nb
+
+    Wii_RI = np.zeros(nb, dtype=float)
+    n = len(self.Wii_RI_active_bus_indices)
+    Wii_RI_active = x[idx:idx + n]; idx += n
+    for val, i in zip(Wii_RI_active, self.Wii_RI_active_bus_indices):
+        Wii_RI[i] = val
+
+    Wii_II = np.zeros(nb, dtype=float)
+    n = len(self.Wii_II_active_bus_indices)
+    Wii_II_active = x[idx:idx + n]; idx += n
+    for val, i in zip(Wii_II_active, self.Wii_II_active_bus_indices):
+        Wii_II[i] = val
+
+    Wij_RR = np.zeros(ncross, dtype=float)
+    n = len(self.Wij_RR_active_pos)
+    Wij_RR_active = x[idx:idx + n]; idx += n
+    for val, pos in zip(Wij_RR_active, self.Wij_RR_active_pos):
+        Wij_RR[pos] = val
+
+    Wij_RI = np.zeros(ncross, dtype=float)
+    n = len(self.Wij_RI_active_pos)
+    Wij_RI_active = x[idx:idx + n]; idx += n
+    for val, pos in zip(Wij_RI_active, self.Wij_RI_active_pos):
+        Wij_RI[pos] = val
+
+    Wij_IR = np.zeros(ncross, dtype=float)
+    n = len(self.Wij_IR_active_pos)
+    Wij_IR_active = x[idx:idx + n]; idx += n
+    for val, pos in zip(Wij_IR_active, self.Wij_IR_active_pos):
+        Wij_IR[pos] = val
+
+    Wij_II = np.zeros(ncross, dtype=float)
+    n = len(self.Wij_II_active_pos)
+    Wij_II_active = x[idx:idx + n]; idx += n
+    for val, pos in zip(Wij_II_active, self.Wij_II_active_pos):
+        Wij_II[pos] = val
+
+    V_sq = x[idx:idx + nb]; idx += nb
+    P_ij = x[idx:idx + na]; idx += na
+    Q_ij = x[idx:idx + na]; idx += na
+    S_tot_sq = x[idx:idx + na]; idx += na
+
+    return {
+        "P_G": P_G,
+        "Q_G": Q_G,
+        "Wii_RR": Wii_RR,
+        "Wii_RI": Wii_RI,
+        "Wii_II": Wii_II,
+        "Wij_RR": Wij_RR,
+        "Wij_RI": Wij_RI,
+        "Wij_IR": Wij_IR,
+        "Wij_II": Wij_II,
+        "V_sq": V_sq,
+        "P_ij": P_ij,
+        "Q_ij": Q_ij,
+        "S_tot_sq": S_tot_sq,
+    }
+
+
+def _simp_build_initial_x0(self):
+    nb = self.n_buses
+    ng = self.n_gens
+    na = self.n_arcs
+
+    total_Pd = float(np.sum(self.P_D))
+    Pmin = np.array([self.gens[gid][1] for gid in self.gen_ids], dtype=float)
+    Pmax = np.array([self.gens[gid][2] for gid in self.gen_ids], dtype=float)
+    if total_Pd > 1e-8:
+        weights = Pmax / np.sum(Pmax)
+        P_G0 = np.clip(total_Pd * weights, Pmin, Pmax)
+    else:
+        P_G0 = Pmin.copy()
+
+    total_Qd = float(np.sum(self.Q_D))
+    Qmin = np.array([self.gens[gid][3] for gid in self.gen_ids], dtype=float)
+    Qmax = np.array([self.gens[gid][4] for gid in self.gen_ids], dtype=float)
+    if abs(total_Qd) > 1e-8:
+        weights_Q = P_G0 / np.sum(P_G0) if np.sum(P_G0) > 1e-8 else np.ones(ng) / ng
+        Q_G0 = np.clip(total_Qd * weights_Q, Qmin, Qmax)
+    else:
+        Q_G0 = np.clip(np.zeros(ng), Qmin, Qmax)
+
+    V_R_seed = np.zeros(nb)
+    V_I_seed = np.zeros(nb)
+    for bid in self.bus_ids:
+        Vm = float(self.buses[bid][2])
+        Va_rad = float(self.buses[bid][3]) * np.pi / 180.0
+        bus_idx = self.bus_index[bid]
+        V_R_seed[bus_idx] = Vm * np.cos(Va_rad)
+        V_I_seed[bus_idx] = Vm * np.sin(Va_rad)
+
+    ref = self.ref_bus_idx_fixed
+    V_I_seed[ref] = 0.0
+
+    Wii_RR0 = V_R_seed ** 2
+    Wii_RI0 = V_R_seed * V_I_seed
+    Wii_II0 = V_I_seed ** 2
+
+    Wij_RR0 = np.zeros(self.n_cross_pairs)
+    Wij_RI0 = np.zeros(self.n_cross_pairs)
+    Wij_IR0 = np.zeros(self.n_cross_pairs)
+    Wij_II0 = np.zeros(self.n_cross_pairs)
+    for (i, j), p in self.cross_pair_index.items():
+        Wij_RR0[p] = V_R_seed[i] * V_R_seed[j]
+        Wij_RI0[p] = V_R_seed[i] * V_I_seed[j]
+        Wij_IR0[p] = V_I_seed[i] * V_R_seed[j]
+        Wij_II0[p] = V_I_seed[i] * V_I_seed[j]
+
+    V_sq0 = np.clip(Wii_RR0 + Wii_II0, 0.9 ** 2, 1.1 ** 2)
+    P_ij0 = np.zeros(na)
+    Q_ij0 = np.zeros(na)
+    S_tot_sq0 = np.clip(
+        np.zeros(na),
+        np.zeros(na),
+        np.array([self.lines[lid][6] ** 2 for lid in self.arc_to_line], dtype=float),
+    )
+
+    x0 = np.concatenate([
+        P_G0,
+        Q_G0,
+        Wii_RR0,
+        Wii_RI0[self.Wii_RI_active_bus_indices],
+        Wii_II0[self.Wii_II_active_bus_indices],
+        Wij_RR0[self.Wij_RR_active_pos],
+        Wij_RI0[self.Wij_RI_active_pos],
+        Wij_IR0[self.Wij_IR_active_pos],
+        Wij_II0[self.Wij_II_active_pos],
+        V_sq0,
+        P_ij0,
+        Q_ij0,
+        S_tot_sq0,
+    ])
+    return x0
+
+
+def _simp_reset_lambdas(self, value=None):
+    nb = self.n_buses
+    na = self.n_arcs
+    total_dim = nb + nb + na + na + nb + na
+
+    if value is None:
+        vec = np.zeros(total_dim, dtype=float)
+    elif isinstance(value, (int, float)):
+        vec = np.full(total_dim, float(value), dtype=float)
+    else:
+        vec = np.asarray(value, dtype=float).flatten()
+        if len(vec) != total_dim:
+            raise ValueError(f"Lambda vector length mismatch. Expected {total_dim}, got {len(vec)}.")
+
+    idx = 0
+    self.lambda_P_bal = vec[idx:idx + nb].tolist(); idx += nb
+    self.lambda_Q_bal = vec[idx:idx + nb].tolist(); idx += nb
+    self.lambda_P_flow = vec[idx:idx + na].tolist(); idx += na
+    self.lambda_Q_flow = vec[idx:idx + na].tolist(); idx += na
+    self.lambda_Vsq = vec[idx:idx + nb].tolist(); idx += nb
+    self.lambda_Ssq = vec[idx:idx + na].tolist(); idx += na
+    self.lambda_vec = [
+        *self.lambda_P_bal,
+        *self.lambda_Q_bal,
+        *self.lambda_P_flow,
+        *self.lambda_Q_flow,
+        *self.lambda_Vsq,
+        *self.lambda_Ssq,
+    ]
+    self.lambda_ref = 0.0
+
+
+def _simp_build_lagrangian(self, ref_bus_id=None):
+    _, ref_idx = _simp_resolve_ref_bus(self, ref_bus_id)
+    del ref_idx
+    nb = self.n_buses
+    na = self.n_arcs
+
+    L = self.build_objective_expr()
+
+    for i in range(nb):
+        PG_sum = sum(self.P_G[gi] for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []))
+        expr = PG_sum - self.P_D[i]
+        expr -= self.G_mat[i, i] * self.Wii_RR[i] + self.G_mat[i, i] * self.Wii_II[i]
+        for j in self.power_balance_pairs_by_bus[i]:
+            p = self._cross_flat(i, j)
+            Gij = self.G_mat[i, j]
+            Bij = self.B_mat[i, j]
+            expr -= Gij * self.Wij_RR[p] - Bij * self.Wij_RI[p] + Gij * self.Wij_II[p] + Bij * self.Wij_IR[p]
+        L += self.lambda_P_bal[i] * expr
+
+    for i in range(nb):
+        QG_sum = sum(self.Q_G[gi] for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []))
+        expr = QG_sum - self.Q_D[i]
+        expr -= 2.0 * self.G_mat[i, i] * self.Wii_RI[i] - self.B_mat[i, i] * self.Wii_II[i] - self.B_mat[i, i] * self.Wii_RR[i]
+        for j in self.power_balance_pairs_by_bus[i]:
+            p = self._cross_flat(i, j)
+            Gij = self.G_mat[i, j]
+            Bij = self.B_mat[i, j]
+            expr -= Gij * self.Wij_IR[p] - Bij * self.Wij_II[p] - Gij * self.Wij_RI[p] - Bij * self.Wij_RR[p]
+        L += self.lambda_Q_bal[i] * expr
+
+    for a, (i, j) in enumerate(self.arc_collection):
+        ell = self.line_pos[self.arc_to_line[a]]
+        g_ij = self.g_series[ell]
+        b_ij = self.b_series[ell]
+        p = self._cross_flat(i, j)
+        P_expr = g_ij * (self.Wii_RR[i] + self.Wii_II[i] - self.Wij_RR[p] - self.Wij_II[p]) + b_ij * (self.Wij_RI[p] - self.Wij_IR[p])
+        Q_expr = -b_ij * (self.Wii_RR[i] + self.Wii_II[i]) + b_ij * (self.Wij_RR[p] + self.Wij_II[p]) + g_ij * (self.Wij_RI[p] - self.Wij_IR[p])
+        L += self.lambda_P_flow[a] * (self.P_ij[a] - P_expr)
+        L += self.lambda_Q_flow[a] * (self.Q_ij[a] - Q_expr)
+
+    for i in range(nb):
+        L += self.lambda_Vsq[i] * (self.V_sq[i] - (self.Wii_RR[i] + self.Wii_II[i]))
+
+    for a in range(na):
+        L += self.lambda_Ssq[a] * (self.S_tot_sq[a] - (self.P_ij[a] ** 2 + self.Q_ij[a] ** 2))
+
+    self.Lagrange = sp.expand(L)
+    return self.Lagrange
+
+
+def _simp_build_h_symbolic(self, ref_bus_id=None):
+    _simp_resolve_ref_bus(self, ref_bus_id)
+    nb = self.n_buses
+    na = self.n_arcs
+    residuals = []
+
+    for i in range(nb):
+        PG_sum = sum(self.P_G[gi] for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []))
+        cP = PG_sum - self.P_D[i]
+        cP -= self.G_mat[i, i] * self.Wii_RR[i] + self.G_mat[i, i] * self.Wii_II[i]
+        for j in self.power_balance_pairs_by_bus[i]:
+            p = self._cross_flat(i, j)
+            Gij = self.G_mat[i, j]
+            Bij = self.B_mat[i, j]
+            cP -= Gij * self.Wij_RR[p] - Bij * self.Wij_RI[p] + Gij * self.Wij_II[p] + Bij * self.Wij_IR[p]
+        residuals.append(cP)
+
+    for i in range(nb):
+        QG_sum = sum(self.Q_G[gi] for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []))
+        cQ = QG_sum - self.Q_D[i]
+        cQ -= 2.0 * self.G_mat[i, i] * self.Wii_RI[i] - self.B_mat[i, i] * self.Wii_II[i] - self.B_mat[i, i] * self.Wii_RR[i]
+        for j in self.power_balance_pairs_by_bus[i]:
+            p = self._cross_flat(i, j)
+            Gij = self.G_mat[i, j]
+            Bij = self.B_mat[i, j]
+            cQ -= Gij * self.Wij_IR[p] - Bij * self.Wij_II[p] - Gij * self.Wij_RI[p] - Bij * self.Wij_RR[p]
+        residuals.append(cQ)
+
+    for a, (i, j) in enumerate(self.arc_collection):
+        ell = self.line_pos[self.arc_to_line[a]]
+        g_ij = self.g_series[ell]
+        b_ij = self.b_series[ell]
+        p = self._cross_flat(i, j)
+        residuals.append(
+            self.P_ij[a] - (g_ij * (self.Wii_RR[i] + self.Wii_II[i] - self.Wij_RR[p] - self.Wij_II[p]) + b_ij * (self.Wij_RI[p] - self.Wij_IR[p]))
+        )
+
+    for a, (i, j) in enumerate(self.arc_collection):
+        ell = self.line_pos[self.arc_to_line[a]]
+        g_ij = self.g_series[ell]
+        b_ij = self.b_series[ell]
+        p = self._cross_flat(i, j)
+        residuals.append(
+            self.Q_ij[a] - (-b_ij * (self.Wii_RR[i] + self.Wii_II[i]) + b_ij * (self.Wij_RR[p] + self.Wij_II[p]) + g_ij * (self.Wij_RI[p] - self.Wij_IR[p]))
+        )
+
+    for i in range(nb):
+        residuals.append(self.V_sq[i] - (self.Wii_RR[i] + self.Wii_II[i]))
+
+    for a in range(na):
+        residuals.append(self.S_tot_sq[a] - (self.P_ij[a] ** 2 + self.Q_ij[a] ** 2))
+
+    return residuals
+
+
+def _simp_build_h_func(self, ref_bus_id=None):
+    _simp_resolve_ref_bus(self, ref_bus_id)
+    nb = self.n_buses
+    na = self.n_arcs
+
+    def h_func(x):
+        vals = self._unpack_x(x)
+        residuals = []
+
+        for i in range(nb):
+            PG_sum = sum(vals["P_G"][gi] for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []))
+            cP = PG_sum - self.P_D[i]
+            cP -= self.G_mat[i, i] * vals["Wii_RR"][i] + self.G_mat[i, i] * vals["Wii_II"][i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                p = self._cross_flat(i, j)
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                cP -= Gij * vals["Wij_RR"][p] - Bij * vals["Wij_RI"][p] + Gij * vals["Wij_II"][p] + Bij * vals["Wij_IR"][p]
+            residuals.append(cP)
+
+        for i in range(nb):
+            QG_sum = sum(vals["Q_G"][gi] for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []))
+            cQ = QG_sum - self.Q_D[i]
+            cQ -= 2.0 * self.G_mat[i, i] * vals["Wii_RI"][i] - self.B_mat[i, i] * vals["Wii_II"][i] - self.B_mat[i, i] * vals["Wii_RR"][i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                p = self._cross_flat(i, j)
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                cQ -= Gij * vals["Wij_IR"][p] - Bij * vals["Wij_II"][p] - Gij * vals["Wij_RI"][p] - Bij * vals["Wij_RR"][p]
+            residuals.append(cQ)
+
+        for a, (i, j) in enumerate(self.arc_collection):
+            ell = self.line_pos[self.arc_to_line[a]]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
+            p = self._cross_flat(i, j)
+            P_expr = g_ij * (vals["Wii_RR"][i] + vals["Wii_II"][i] - vals["Wij_RR"][p] - vals["Wij_II"][p]) + b_ij * (vals["Wij_RI"][p] - vals["Wij_IR"][p])
+            residuals.append(vals["P_ij"][a] - P_expr)
+
+        for a, (i, j) in enumerate(self.arc_collection):
+            ell = self.line_pos[self.arc_to_line[a]]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
+            p = self._cross_flat(i, j)
+            Q_expr = -b_ij * (vals["Wii_RR"][i] + vals["Wii_II"][i]) + b_ij * (vals["Wij_RR"][p] + vals["Wij_II"][p]) + g_ij * (vals["Wij_RI"][p] - vals["Wij_IR"][p])
+            residuals.append(vals["Q_ij"][a] - Q_expr)
+
+        for i in range(nb):
+            residuals.append(vals["V_sq"][i] - (vals["Wii_RR"][i] + vals["Wii_II"][i]))
+
+        for a in range(na):
+            residuals.append(vals["S_tot_sq"][a] - (vals["P_ij"][a] ** 2 + vals["Q_ij"][a] ** 2))
+
+        return np.asarray(residuals, dtype=float)
+
+    return h_func
+
+
+def _simp_update_lambda(self, x, alpha, h_func):
+    lam = np.asarray(self.lambda_vec, dtype=float)
+    h_x = np.asarray(h_func(np.asarray(x, dtype=float)), dtype=float)
+    lambda_new = lam + alpha * h_x
+
+    nb = self.n_buses
+    na = self.n_arcs
+    idx = 0
+    self.lambda_P_bal = lambda_new[idx:idx + nb].tolist(); idx += nb
+    self.lambda_Q_bal = lambda_new[idx:idx + nb].tolist(); idx += nb
+    self.lambda_P_flow = lambda_new[idx:idx + na].tolist(); idx += na
+    self.lambda_Q_flow = lambda_new[idx:idx + na].tolist(); idx += na
+    self.lambda_Vsq = lambda_new[idx:idx + nb].tolist(); idx += nb
+    self.lambda_Ssq = lambda_new[idx:idx + na].tolist(); idx += na
+    self.lambda_vec = lambda_new.tolist()
+    self.lambda_ref = 0.0
+    return lambda_new, h_x
+
+
+SympyACOPFModel._build_variables = _simp_build_variables
+SympyACOPFModel._unpack_x = _simp_unpack_x
+SympyACOPFModel.build_initial_x0 = _simp_build_initial_x0
+SympyACOPFModel.reset_lambdas = _simp_reset_lambdas
+SympyACOPFModel._build_lagrangian = _simp_build_lagrangian
+SympyACOPFModel.build_h_symbolic = _simp_build_h_symbolic
+SympyACOPFModel.build_h_func = _simp_build_h_func
+SympyACOPFModel.update_lambda = _simp_update_lambda
+
+
 def create_qhd_acopf_log_file(model, folder="."):
     """
 Create a log file.
