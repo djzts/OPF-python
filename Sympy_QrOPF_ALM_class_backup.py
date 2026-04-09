@@ -430,12 +430,9 @@ class SympyACOPFModel:
             ("Q_bal", self.n_buses, False),
             ("P_flow", self.n_arcs, False),
             ("Q_flow", self.n_arcs, False),
-            ("P_branch_bal", self.n_buses, False),
-            ("Q_branch_bal", self.n_buses, False),
             ("Vsq", self.n_buses, False),
             ("Ssq", self.n_arcs, True),
-            ("ref_rr", 1, False),
-            ("ref_ri", 1, False),
+            ("ref", 1, False),
         ]
 
     def _get_constraint_block_slices(self):
@@ -475,38 +472,6 @@ class SympyACOPFModel:
             ri = ir_vals[p]
             ir = ri_vals[p]
         return rr, ri, ir, ii
-
-    def _branch_flow_coeffs(self, arc_idx):
-        """
-        Return branch-flow coefficients for the directed arc at position arc_idx
-        under the same pi-model used to build Ybus.
-
-        Returns
-        -------
-        (g_self, b_self, g_mut, b_mut)
-            Such that, for the directed arc i -> j,
-                P_ij = g_self * |V_i|^2 - g_mut * Re(W_ij) - b_mut * Im(W_ij)
-                Q_ij = -b_self * |V_i|^2 + b_mut * Re(W_ij) - g_mut * Im(W_ij)
-        where Im(W_ij) = Wij_IR - Wij_RI in this lifted representation.
-        """
-        lid, direction = self.arc_ids[arc_idx]
-        from_bus, to_bus, r, x, bsh, tap, _ = self.lines[lid]
-        a = tap if tap != 0 else 1.0
-        ell = self.line_pos[lid]
-        g = self.g_series[ell]
-        b = self.b_series[ell]
-        b_sh_half = bsh / 2.0
-
-        if direction == +1:
-            g_self = g / (a ** 2)
-            b_self = (b + b_sh_half) / (a ** 2)
-        else:
-            g_self = g
-            b_self = b + b_sh_half
-
-        g_mut = g / a
-        b_mut = b / a
-        return g_self, b_self, g_mut, b_mut
 
     def _unpack_x(self, x):
         x = np.asarray(x, dtype=float).flatten()
@@ -736,12 +701,9 @@ class SympyACOPFModel:
                 lambda_Q_bal,
                 lambda_P_flow,
                 lambda_Q_flow,
-                lambda_P_branch_bal,
-                lambda_Q_branch_bal,
                 lambda_Vsq,
                 lambda_Ssq,
-                lambda_ref_rr,
-                lambda_ref_ri]
+                lambda_ref]
         """
         block_slices = self._get_constraint_block_slices()
         total_dim = max(end for _, (start, end, _) in block_slices.items())
@@ -774,8 +736,6 @@ class SympyACOPFModel:
         self.lambda_Q_bal = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_P_flow = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
         self.lambda_Q_flow = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
-        self.lambda_P_branch_bal = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
-        self.lambda_Q_branch_bal = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Vsq = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Ssq = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
         self.lambda_W_conj = []
@@ -785,20 +745,16 @@ class SympyACOPFModel:
         self.lambda_W_cross_ir = []
         self.lambda_W_cross_ii = []
         self.lambda_W_cross_mix = []
-        self.lambda_ref_rr = float(vec[idx]); idx += 1
-        self.lambda_ref_ri = float(vec[idx]); idx += 1
+        self.lambda_ref = float(vec[idx]); idx += 1
 
         self.lambda_vec = [
             *self.lambda_P_bal,
             *self.lambda_Q_bal,
             *self.lambda_P_flow,
             *self.lambda_Q_flow,
-            *self.lambda_P_branch_bal,
-            *self.lambda_Q_branch_bal,
             *self.lambda_Vsq,
             *self.lambda_Ssq,
-            self.lambda_ref_rr,
-            self.lambda_ref_ri,
+            self.lambda_ref,
         ]
 
                         
@@ -815,6 +771,31 @@ class SympyACOPFModel:
         self.objective = obj
         return obj
 
+    def _diag_RR(self, i, vals):
+        return vals[i]
+
+    def _diag_RI(self, i, vals):
+        return vals[i]
+
+    def _diag_II(self, i, vals):
+        return vals[i]
+
+    def _cross_RR(self, i, j, vals):
+        p = self._cross_flat(i, j)
+        return vals[p]
+
+    def _cross_RI(self, i, j, vals):
+        p = self._cross_flat(i, j)
+        return vals[p] if i <= j else self._cross_IR(i, j, vals)
+
+    def _cross_IR(self, i, j, vals):
+        p = self._cross_flat(i, j)
+        return vals[p] if i <= j else self._cross_RI(j, i, vals)
+
+    def _cross_II(self, i, j, vals):
+        p = self._cross_flat(i, j)
+        return vals[p]
+    
     def _build_lagrangian(self, ref_bus_id=None):
         """
         Build the (classical) Lagrangian:
@@ -898,68 +879,148 @@ class SympyACOPFModel:
         # (3) Branch power-flow definition constraints
         # ---------------------------
         for a, (i, j) in enumerate(self.arc_collection):
-            g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+            lid = self.arc_to_line[a]
+            ell = self.line_pos[lid]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
             Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
 
-            P_expr = (
-                g_self * (Wii_RR[i] + Wii_II[i])
-                - g_mut * (Wij_RR_ij + Wij_II_ij)
-                + b_mut * (Wij_RI_ij - Wij_IR_ij)
-            )
-            Q_expr = (
-                -b_self * (Wii_RR[i] + Wii_II[i])
-                + b_mut * (Wij_RR_ij + Wij_II_ij)
-                + g_mut * (Wij_RI_ij - Wij_IR_ij)
-            )
+            P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR_ij - Wij_II_ij) + b_ij * (Wij_RI_ij - Wij_IR_ij)
+            Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR_ij + Wij_II_ij) + g_ij * (Wij_RI_ij - Wij_IR_ij)
 
             L += self.lambda_P_flow[a] * (P_ij[a] - P_expr)
             L += self.lambda_Q_flow[a] * (Q_ij[a] - Q_expr)
 
         # ---------------------------
-        # (4) Branch-sum power balance constraints
-        # ---------------------------
-        for i in range(nb):
-            PG_sum = 0
-            QG_sum = 0
-            if i in gen_sym_indices_by_bus_idx:
-                for gi in gen_sym_indices_by_bus_idx[i]:
-                    PG_sum += self.P_G[gi]
-                    QG_sum += self.Q_G[gi]
-
-            P_out = 0
-            Q_out = 0
-            for a, (ii, jj) in enumerate(self.arc_collection):
-                if ii == i:
-                    P_out += P_ij[a]
-                    Q_out += Q_ij[a]
-
-            L += self.lambda_P_branch_bal[i] * (PG_sum - self.P_D[i] - P_out)
-            L += self.lambda_Q_branch_bal[i] * (QG_sum - self.Q_D[i] - Q_out)
-
-        # ---------------------------
-        # (5) Voltage magnitude definition
+        # (4) Voltage magnitude definition
         # ---------------------------
         for i in range(nb):
             L += self.lambda_Vsq[i] * (V_sq[i] - (Wii_RR[i] + Wii_II[i]))
 
         # ---------------------------
-        # (6) Branch S_tot_sq definition
+        # (5) Branch S_tot_sq definition
         # ---------------------------
         for a in range(na):
             L += self.lambda_Ssq[a] * (S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
         # ---------------------------
-        # (7) Reference bus constraints: Wii_RR[ref] = 1, Wii_RI[ref] = 0
+        # (6) Reference bus constraint: V_ref^I = 0
         # ---------------------------
         if ref_bus_id is None:
             ref_bus_id = self.bus_ids[0]
         ref_idx = self.bus_index[ref_bus_id]
-        L += self.lambda_ref_rr * (self.Wii_RR[ref_idx] - 1.0)
-        L += self.lambda_ref_ri * self.Wii_RI[ref_idx]
+        L += self.lambda_ref * self.Wii_II[ref_idx]
 
         self.Lagrange = sp.expand(L)
         return self.Lagrange
 
+    def build_h_symbolic_legacy(self, ref_bus_id=None):
+        """
+        构造符号形式的约束列表 h_sym(x)，顺序必须和 build_h_func 完全一致：
+        [ c_i^P (∀ buses),
+          c_i^Q (∀ buses),
+          c_{ij}^{P,flow} (∀ lines),
+          c_{ij}^{Q,flow} (∀ lines),
+          c_i^{Vsq} (∀ buses),
+          c_{ij}^S (∀ lines),
+          c^{W,cons},
+          c^{ref} ].
+        """
+        nb = self.n_buses
+        na = self.n_arcs
+        buses_range = range(nb)
+
+        # 符号变量别名
+        P_G = self.P_G
+        Q_G = self.Q_G
+        Wii_RR = self.Wii_RR
+        Wii_RI = self.Wii_RI
+        Wii_II = self.Wii_II
+        Wij_RR = self.Wij_RR
+        Wij_RI = self.Wij_RI
+        Wij_IR = self.Wij_IR
+        Wij_II = self.Wij_II
+        V_sq = self.V_sq
+        P_ij = self.P_ij
+        Q_ij = self.Q_ij
+        S_tot_sq = self.S_tot_sq
+
+        if ref_bus_id is None:
+            ref_bus_id = self.bus_ids[0]
+        ref_idx = self.bus_index[ref_bus_id]
+
+        residuals = []
+
+        # bus -> gen 索引 (0..ng-1)
+
+
+        # 1) Active power balance c_i^P
+        for i in range(nb):
+            PG_sum = 0
+            # bus -> gen 索引 (0..ng-1)
+            for bid, idx_list in self.gen_indices_by_bus.items():
+                if self.bus_index[bid] == i:
+                    for gi in idx_list:
+                        PG_sum += P_G[gi]
+            cP = PG_sum - self.P_D[i]
+            Gii = self.G_mat[i, i]
+            Bii = self.B_mat[i, i]
+            cP -= Gii * Wii_RR[i] + Gii * Wii_II[i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                cP -= Gij * Wij_RR_ij - Bij * Wij_RI_ij + Gij * Wij_II_ij + Bij * Wij_IR_ij
+            residuals.append(cP)
+
+        # 2) Reactive power balance c_i^Q
+        for i in range(nb):
+            QG_sum = 0
+            for bid, idx_list in self.gen_indices_by_bus.items():
+                if self.bus_index[bid] == i:
+                    for gi in idx_list:
+                        QG_sum += Q_G[gi]
+            cQ = QG_sum - self.Q_D[i]
+            Gii = self.G_mat[i, i]
+            Bii = self.B_mat[i, i]
+            cQ += Bii * Wii_II[i] + Bii * Wii_RR[i]
+            for j in self.power_balance_pairs_by_bus[i]:
+                Gij = self.G_mat[i, j]
+                Bij = self.B_mat[i, j]
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                cQ -= Gij * Wij_IR_ij - Bij * Wij_II_ij - Gij * Wij_RI_ij - Bij * Wij_RR_ij
+            residuals.append(cQ)
+
+        # 3) Branch power-flow definitions: c_{ij}^{P,flow}, c_{ij}^{Q,flow}
+        for a, (i, j) in enumerate(self.arc_collection):
+            lid = self.arc_to_line[a]
+            ell = self.line_pos[lid]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
+            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+
+            P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR_ij - Wij_II_ij) + b_ij * (Wij_RI_ij - Wij_IR_ij)
+            Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR_ij + Wij_II_ij) + g_ij * (Wij_RI_ij - Wij_IR_ij)
+
+            cP_flow = P_ij[a] - P_expr
+            cQ_flow = Q_ij[a] - Q_expr
+
+            residuals.append(cP_flow)
+            residuals.append(cQ_flow)
+
+        # 4) Voltage magnitude definition c_i^{Vsq}
+        for i in range(nb):
+            residuals.append(V_sq[i] - (Wii_RR[i] + Wii_II[i]))
+
+        # 5) Branch S_tot_sq definition c_{ij}^S
+        for a in range(na):
+            residuals.append(S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
+
+        # 6) Reference bus constraint c^{ref} = Wii_II[ref_idx]
+        c_ref = Wii_II[ref_idx]
+        residuals.append(c_ref)
+
+        return residuals
 
     def build_linear_ALM_Lagrangian_syms(self, x_center, rho, ref_bus_id=None, mu_prox=0.0):
         """
@@ -1058,8 +1119,147 @@ class SympyACOPFModel:
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
+    def get_Lagrangian(self, ref_bus_id=None):
+        """
+        Rebuild and return the current Lagrangian (called L_aug for compatibility),
+        together with the flat variable list and bound list.
 
+        Returns
+        -------
+        L_aug : sympy.Expr
+            The Lagrangian expression with current Lagrange multipliers.
+        variable_list : list of sympy.Symbol
+            Flat list of primal decision variables.
+        Var_bound_list : list of [lower, upper]
+            Corresponding box bounds for each variable.
+        """
+        self._build_lagrangian(ref_bus_id=ref_bus_id)
+        return self.Lagrange, self.variable_list, self.Var_bound_list
+    
+    # ------------------------------------------------------------------
+    # Equality constraints h(x): build numerical h_func(x)
+    # ------------------------------------------------------------------
+    def build_h_func_legacy(self, ref_bus_id=None):
+        """
+        Return a callable h_func(x) that evaluates all equality-constraint
+        residuals h(x) for a given primal vector x.
 
+        The constraint order is:
+        [ c_i^P (∀ buses),
+          c_i^Q (∀ buses),
+          c_{ij}^{P,flow} (∀ lines),
+          c_{ij}^{Q,flow} (∀ lines),
+          c_i^{Vsq} (∀ buses),
+          c_{ij}^S (∀ lines),
+          c^{W,cons},
+          c^{ref} ].
+
+        x must be a flat array/list in the same order as self.variable_list:
+        [P_G (ng),
+         Q_G (ng),
+         Wii_RR (nb),
+         Wii_RI (nb),
+         Wii_II (nb),
+         Wij_RR (ncross),
+         Wij_RI (ncross),
+         Wij_IR (ncross),
+         Wij_II (ncross),
+         V_sq (nb),
+         P_ij (na),
+         Q_ij (na),
+         S_tot_sq (na)].
+        """
+        nb = self.n_buses
+        na = self.n_arcs
+        ng = self.n_gens    
+
+        def h_func(x):
+            vals = self._unpack_x(x)
+
+            P_G = vals["P_G"]
+            Q_G = vals["Q_G"]
+            Wii_RR = vals["Wii_RR"]
+            Wii_RI = vals["Wii_RI"]
+            Wii_II = vals["Wii_II"]
+            Wij_RR = vals["Wij_RR"]
+            Wij_RI = vals["Wij_RI"]
+            Wij_IR = vals["Wij_IR"]
+            Wij_II = vals["Wij_II"]
+            V_sq = vals["V_sq"]
+            P_ij = vals["P_ij"]
+            Q_ij = vals["Q_ij"]
+            S_tot_sq = vals["S_tot_sq"]
+
+            residuals = []
+
+            # 1) Active power balance c_i^P
+            for i in range(nb):
+                PG_sum = 0.0
+                for bid, idx_list in self.gen_indices_by_bus.items():
+                    if self.bus_index[bid] == i:
+                        for gi in idx_list:
+                            PG_sum += P_G[gi]
+                cP = PG_sum - self.P_D[i]
+                Gii = self.G_mat[i, i]
+                cP -= Gii * Wii_RR[i] + Gii * Wii_II[i]
+                for j in self.power_balance_pairs_by_bus[i]:
+                    Gij = self.G_mat[i, j]
+                    Bij = self.B_mat[i, j]
+                    Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                    cP -= Gij * Wij_RR_ij - Bij * Wij_RI_ij + Gij * Wij_II_ij + Bij * Wij_IR_ij
+                residuals.append(cP)
+
+            # 2) Reactive power balance c_i^Q
+            for i in range(nb):
+                QG_sum = 0.0
+                for bid, idx_list in self.gen_indices_by_bus.items():
+                    if self.bus_index[bid] == i:
+                        for gi in idx_list:
+                            QG_sum += Q_G[gi]
+                cQ = QG_sum - self.Q_D[i]
+                Gii = self.G_mat[i, i]
+                Bii = self.B_mat[i, i]
+                cQ += Bii * Wii_II[i] + Bii * Wii_RR[i]
+                for j in self.power_balance_pairs_by_bus[i]:
+                    Gij = self.G_mat[i, j]
+                    Bij = self.B_mat[i, j]
+                    Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                    cQ -= Gij * Wij_IR_ij - Bij * Wij_II_ij - Gij * Wij_RI_ij - Bij * Wij_RR_ij
+                residuals.append(cQ)
+
+            # 3) Branch power-flow definition constraints
+            for a, (i, j) in enumerate(self.arc_collection):
+                lid = self.arc_to_line[a]
+                ell = self.line_pos[lid]
+                g_ij = self.g_series[ell]
+                b_ij = self.b_series[ell]
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+
+                P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR_ij - Wij_II_ij) + b_ij * (Wij_RI_ij - Wij_IR_ij)
+                Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR_ij + Wij_II_ij) + g_ij * (Wij_RI_ij - Wij_IR_ij)
+                cP_flow = P_ij[a] - P_expr
+                cQ_flow = Q_ij[a] - Q_expr
+
+                residuals.append(cP_flow)
+                residuals.append(cQ_flow)
+
+            # 4) Voltage magnitude definition c_i^{Vsq}
+            for i in range(nb):
+                cV = V_sq[i] - (Wii_RR[i] + Wii_II[i])
+                residuals.append(cV)
+
+            # 5) Branch S_tot_sq definition c_{ij}^S
+            for a in range(na):
+                cS = S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2)
+                residuals.append(cS)
+
+            # 6) Reference bus constraint c^{ref} = Wii_II[ref_idx]
+            c_ref = Wii_II[ref_idx]
+            residuals.append(c_ref)
+            return np.asarray(residuals, dtype=float)
+
+        return h_func
+    
     def update_lambda(self, x, alpha, h_func):
         """
         Single-step dual update: λ^{k+1} = λ^k + α h(x^{k+1}),
@@ -1095,12 +1295,9 @@ class SympyACOPFModel:
         self.lambda_Q_bal = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_P_flow = lambda_new[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
         self.lambda_Q_flow = lambda_new[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
-        self.lambda_P_branch_bal = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
-        self.lambda_Q_branch_bal = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Vsq = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Ssq = lambda_new[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
-        self.lambda_ref_rr = float(lambda_new[idx]); idx += 1
-        self.lambda_ref_ri = float(lambda_new[idx]); idx += 1
+        self.lambda_ref = float(lambda_new[idx]); idx += 1
 
         assert idx == len(lambda_new), "Failed to split lambda_new: length mismatch. Check whether the variable order is consistent with h_func."
 
@@ -1173,11 +1370,9 @@ class SympyACOPFModel:
         2) reactive power balance
         3) branch active flow definitions
         4) branch reactive flow definitions
-        5) branch-sum active power balance
-        6) branch-sum reactive power balance
-        7) voltage magnitude auxiliary constraints
-        8) branch thermal auxiliary constraints
-        9) reference bus lifted constraints
+        5) voltage magnitude auxiliary constraints
+        6) branch thermal auxiliary constraints
+        7) reference bus lifted constraint
         """
         nb = self.n_buses
         na = self.n_arcs
@@ -1232,41 +1427,22 @@ class SympyACOPFModel:
             residuals.append(cQ)
 
         for a, (i, j) in enumerate(self.arc_collection):
-            g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+            lid = self.arc_to_line[a]
+            ell = self.line_pos[lid]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
             Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-            P_expr = (
-                g_self * (Wii_RR[i] + Wii_II[i])
-                - g_mut * (Wij_RR_ij + Wij_II_ij)
-                + b_mut * (Wij_RI_ij - Wij_IR_ij)
-            )
+            P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR_ij - Wij_II_ij) + b_ij * (Wij_RI_ij - Wij_IR_ij)
             residuals.append(P_ij[a] - P_expr)
 
         for a, (i, j) in enumerate(self.arc_collection):
-            g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+            lid = self.arc_to_line[a]
+            ell = self.line_pos[lid]
+            g_ij = self.g_series[ell]
+            b_ij = self.b_series[ell]
             Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-            Q_expr = (
-                -b_self * (Wii_RR[i] + Wii_II[i])
-                + b_mut * (Wij_RR_ij + Wij_II_ij)
-                + g_mut * (Wij_RI_ij - Wij_IR_ij)
-            )
+            Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR_ij + Wij_II_ij) + g_ij * (Wij_RI_ij - Wij_IR_ij)
             residuals.append(Q_ij[a] - Q_expr)
-
-        for i in range(nb):
-            PG_sum = 0
-            QG_sum = 0
-            for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
-                PG_sum += P_G[gi]
-                QG_sum += Q_G[gi]
-
-            P_out = 0
-            Q_out = 0
-            for a, (ii, jj) in enumerate(self.arc_collection):
-                if ii == i:
-                    P_out += P_ij[a]
-                    Q_out += Q_ij[a]
-
-            residuals.append(PG_sum - self.P_D[i] - P_out)
-            residuals.append(QG_sum - self.Q_D[i] - Q_out)
 
         for i in range(nb):
             residuals.append(V_sq[i] - (Wii_RR[i] + Wii_II[i]))
@@ -1274,8 +1450,7 @@ class SympyACOPFModel:
         for a in range(na):
             residuals.append(S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
-        residuals.append(Wii_RR[ref_idx] - 1.0)
-        residuals.append(Wii_RI[ref_idx])
+        residuals.append(Wii_II[ref_idx])
         return residuals
 
     def build_h_func(self, ref_bus_id=None):
@@ -1338,41 +1513,22 @@ class SympyACOPFModel:
                 residuals.append(cQ)
 
             for a, (i, j) in enumerate(self.arc_collection):
-                g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+                lid = self.arc_to_line[a]
+                ell = self.line_pos[lid]
+                g_ij = self.g_series[ell]
+                b_ij = self.b_series[ell]
                 Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-                P_expr = (
-                    g_self * (Wii_RR[i] + Wii_II[i])
-                    - g_mut * (Wij_RR_ij + Wij_II_ij)
-                    + b_mut * (Wij_RI_ij - Wij_IR_ij)
-                )
+                P_expr = g_ij * (Wii_RR[i] + Wii_II[i] - Wij_RR_ij - Wij_II_ij) + b_ij * (Wij_RI_ij - Wij_IR_ij)
                 residuals.append(P_ij[a] - P_expr)
 
             for a, (i, j) in enumerate(self.arc_collection):
-                g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+                lid = self.arc_to_line[a]
+                ell = self.line_pos[lid]
+                g_ij = self.g_series[ell]
+                b_ij = self.b_series[ell]
                 Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-                Q_expr = (
-                    -b_self * (Wii_RR[i] + Wii_II[i])
-                    + b_mut * (Wij_RR_ij + Wij_II_ij)
-                    + g_mut * (Wij_RI_ij - Wij_IR_ij)
-                )
+                Q_expr = -b_ij * (Wii_RR[i] + Wii_II[i]) + b_ij * (Wij_RR_ij + Wij_II_ij) + g_ij * (Wij_RI_ij - Wij_IR_ij)
                 residuals.append(Q_ij[a] - Q_expr)
-
-            for i in range(nb):
-                PG_sum = 0.0
-                QG_sum = 0.0
-                for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
-                    PG_sum += P_G[gi]
-                    QG_sum += Q_G[gi]
-
-                P_out = 0.0
-                Q_out = 0.0
-                for a, (ii, jj) in enumerate(self.arc_collection):
-                    if ii == i:
-                        P_out += P_ij[a]
-                        Q_out += Q_ij[a]
-
-                residuals.append(PG_sum - self.P_D[i] - P_out)
-                residuals.append(QG_sum - self.Q_D[i] - Q_out)
 
             for i in range(nb):
                 residuals.append(V_sq[i] - (Wii_RR[i] + Wii_II[i]))
@@ -1380,12 +1536,38 @@ class SympyACOPFModel:
             for a in range(na):
                 residuals.append(S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
-            residuals.append(Wii_RR[ref_idx] - 1.0)
-            residuals.append(Wii_RI[ref_idx])
+            residuals.append(Wii_II[ref_idx])
             return np.asarray(residuals, dtype=float)
 
         return h_func
 
+def create_qhd_acopf_log_file(model, folder="."):
+    """
+Create a log file.
+
+Naming convention:
+    Buses_<n>_<HH>-<MM>-<SS>_<MM>-<DD>-<YYYY>.txt
+
+where:
+    n = number of buses
+    HH-MM-SS = file creation time
+    MM-DD-YYYY = current date
+""" 
+    now = datetime.now()
+    n = model.n_buses
+    time_str = now.strftime("%H-%M-%S")
+    date_str = now.strftime("%m-%d-%Y")
+
+    filename = f"Buses_{n}_{time_str}_{date_str}.txt"
+    filepath = os.path.join(folder, filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("QHD ACOPF Iteration Log\n")
+        f.write(f"Created at: {now.strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Number of buses: {n}\n")
+        f.write("=" * 100 + "\n\n")
+
+    return filepath
 
 
 def _build_qhd_acopf_log_filename(model, folder="."):
@@ -1710,6 +1892,591 @@ def PrintQHDACOPFResults(model, solution, iteration=None, log_file=None, folder=
         **kwargs,
     )
     return log_file
+
+def run_linear_alm_with_logging(model, x0=None, max_iter=20, rho=10.0, alpha=1.0,
+                                mu_prox=1e-4, ref_bus_id=None, tol_eq=1e-6,
+                                tol_ineq=1e-9, verbose=True, log_folder="."):
+    """
+    一个可直接运行的 ALM 主循环，并把每一轮结果自动追加到日志 txt。
+
+    返回
+    ----
+    result : dict
+        {
+            "x": 最后一轮 primal 解,
+            "lambda": 最后一轮对偶变量,
+            "h": 最后一轮约束残差,
+            "log_file": 日志路径,
+            "history": 每轮摘要列表,
+            "all_ok": 是否满足约束,
+        }
+    """
+    if x0 is None:
+        xk = model.build_initial_x0()
+    else:
+        xk = np.asarray(x0, dtype=float).flatten()
+
+    h_func = model.build_h_func(ref_bus_id=ref_bus_id)
+    log_file = initialize_qhd_acopf_log(
+        model,
+        folder=log_folder,
+        extra_header=(
+            f"ALM settings: max_iter={max_iter}, rho={rho}, alpha={alpha}, "
+            f"mu_prox={mu_prox}, tol_eq={tol_eq}, tol_ineq={tol_ineq}"
+        ),
+    )
+
+    history = []
+    best_x = xk.copy()
+    best_metric = np.inf
+    best_ok = False
+
+    for k in range(max_iter):
+        L_sym, variable_list, Var_bound_list = model.build_linear_ALM_Lagrangian_syms(
+            x_center=xk,
+            rho=rho,
+            ref_bus_id=ref_bus_id,
+            mu_prox=mu_prox,
+        )
+
+        x_next = solve_with_gurobi_from_sympy(
+            L_sym=L_sym,
+            variable_list=variable_list,
+            Var_bound_list=Var_bound_list,
+            verbose=False,
+        )
+
+        lambda_new, h_x = model.update_lambda(x_next, alpha=alpha, h_func=h_func)
+        ok_list, all_ok = model.check_constraints(
+            x_next,
+            ref_bus_id=ref_bus_id,
+            tol_eq=tol_eq,
+            tol_ineq=tol_ineq,
+        )
+
+        metric = float(np.max(np.abs(h_x)))
+        if metric < best_metric:
+            best_metric = metric
+            best_x = x_next.copy()
+            best_ok = all_ok
+
+        try:
+            obj_val = float(sp.N(model.objective.subs({sym: val for sym, val in zip(model.variable_list, x_next)})))
+        except Exception:
+            obj_val = None
+
+        history_item = {
+            "iter": k,
+            "max_abs_h": float(np.max(np.abs(h_x))),
+            "l2_norm_h": float(np.linalg.norm(h_x)),
+            "lambda_inf": float(np.max(np.abs(lambda_new))),
+            "feasible": bool(all_ok),
+            "objective": obj_val,
+        }
+        history.append(history_item)
+
+        append_qhd_acopf_results(
+            model=model,
+            solution=x_next,
+            log_file=log_file,
+            iteration=k,
+            rho=rho,
+            alpha=alpha,
+            h_x=h_x,
+            lambda_vec=lambda_new,
+            objective_value=obj_val,
+            feasibility=all_ok,
+        )
+
+        if verbose:
+            print(
+                f"[ALM] iter={k:03d} | max|h|={history_item['max_abs_h']:.3e} "
+                f"| ||h||2={history_item['l2_norm_h']:.3e} "
+                f"| ||lambda||inf={history_item['lambda_inf']:.3e} "
+                f"| feasible={all_ok}"
+            )
+            print(f"[ALM] log updated: {log_file}")
+
+        xk = x_next
+
+        if all_ok:
+            best_x = x_next.copy()
+            best_ok = True
+            break
+
+    return {
+        "x": best_x,
+        "lambda": np.asarray(model.lambda_vec, dtype=float).copy(),
+        "h": np.asarray(h_func(best_x), dtype=float).copy(),
+        "log_file": log_file,
+        "history": history,
+        "all_ok": best_ok,
+    }
+
+def PrintQHDACOPFResults_old(model, solution):
+    """
+    根据 SympyACOPFModel 的解向量 solution（顺序与 model.variable_list 一致），
+    打印类似传统 OPF 输出的结果表，包括：
+    - 每个母线的 VR, VI, Pg, Qg, Pl, Ql, Qshunt
+    - 每条支路的 Pik, Pki, Qik, Qki
+    - 总有功/无功损耗、负荷供应比例
+    """
+
+    # -------- 1) 解向量拆包 --------
+    x = np.asarray(solution, dtype=float).flatten()
+
+    nb = model.n_buses
+    nl = model.n_lines
+    ng = model.n_gens
+    na = model.n_arcs
+
+    idx = 0
+    P_G = x[idx:idx + ng]; idx += ng
+    Q_G = x[idx:idx + ng]; idx += ng
+    Wii_RR = x[idx:idx + nb]; idx += nb
+    idx += nb  # skip Wii_RI
+    Wii_II = x[idx:idx + nb]; idx += nb
+    idx += model.n_cross_pairs  # skip Wij_RR
+    idx += model.n_cross_pairs  # skip Wij_RI
+    idx += model.n_cross_pairs  # skip Wij_IR
+    idx += model.n_cross_pairs  # skip Wij_II
+    V_sq = x[idx:idx + nb]; idx += nb
+    P_ij = x[idx:idx + na]; idx += na
+    Q_ij = x[idx:idx + na]; idx += na
+    S_tot_sq = x[idx:idx + na]; idx += na   # 这里暂时未直接使用
+
+    # -------- 2) 一些方便别名 --------
+    bus_ids   = model.bus_ids
+    line_ids  = model.line_ids
+    lines     = model.lines
+    gen_ids   = model.gen_ids
+    gens      = model.gens
+
+    P_D = model.P_D
+    Q_D = model.Q_D
+
+    # gen id -> position in P_G / Q_G
+    gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
+
+    # -------- 3) 母线结果 --------
+    print("BusID\tWii_RR\tWii_II\tVmag\tPg\tQg\tl\tPl\tQl\tQshunt\n")
+
+    Pgtotal = 0.0
+    Qgtotal = 0.0
+    Ploadtotal = 0.0
+    Qloadtotal = 0.0
+
+    for bi, bus_id in enumerate(bus_ids):
+        Vmag = np.sqrt(max(V_sq[bi], 0.0))
+
+        # 该母线所有机组出力求和
+        Pg_i = 0.0
+        Qg_i = 0.0
+        for gid in gen_ids:
+            if gens[gid][0] == bus_id:
+                gi = gen_index_by_id[gid]
+                Pg_i += P_G[gi]
+                Qg_i += Q_G[gi]
+
+        Pl_i = P_D[bi]
+        Ql_i = Q_D[bi]
+        Qsh_i = 0.0
+        l_i = 1.0
+
+        print(
+            "{0:d}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}\t{6:.4f}\t{7:.4f}\t{8:.4f}\t{9:.4f}".format(
+                bus_id, Wii_RR[bi], Wii_II[bi], Vmag, Pg_i, Qg_i, l_i, Pl_i, Ql_i, Qsh_i
+            )
+        )
+
+        Pgtotal += Pg_i
+        Qgtotal += Qg_i
+        Ploadtotal += Pl_i
+        Qloadtotal += Ql_i
+
+    print("\n")
+    print("TOTAL\t\t\t{0:.4f}\t{1:.4f}\t\t{2:.4f}\t{3:.4f}".format(
+        Pgtotal, Qgtotal, Ploadtotal, Qloadtotal
+    ))
+    print("\n\n")
+
+    # -------- 4) 支路潮流结果 --------
+    print("Busi\tBusk\tPik\tPki\tQik\tQki")
+
+    Ploss = 0.0
+    Qloss = 0.0
+
+    for lid in line_ids:
+        from_bus, to_bus, _, _, _, _, _ = lines[lid]
+
+        # 当前 line 对应的正反向 arc
+        a_fwd = model.arc_index[(lid, +1)]
+        a_rev = model.arc_index[(lid, -1)]
+
+        Pik = P_ij[a_fwd]
+        Pki = P_ij[a_rev]
+        Qik = Q_ij[a_fwd]
+        Qki = Q_ij[a_rev]
+
+        print(
+            "{0:d}\t{1:d}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}".format(
+                from_bus, to_bus, Pik, Pki, Qik, Qki
+            )
+        )
+
+        Ploss += (Pik + Pki)
+        Qloss += (Qik + Qki)
+
+    print("\n")
+    print("Total Ploss: {0:.4f}".format(Ploss))
+    print("Total Qloss: {0:.4f}".format(Qloss))
+
+    # -------- 5) 负荷供应比例 --------
+    if Ploadtotal > 1e-8:
+        Pl_supplied = Pgtotal - Ploss
+        perc_supplied = (Pl_supplied / Ploadtotal) * 100.0
+    else:
+        perc_supplied = 0.0
+
+    print("Total Load Supplied: {0:.4f}%".format(perc_supplied))
+
+
+def format_qhd_acopf_results_old(model, solution, iteration=None, rho=None, alpha=None,
+                             h_x=None, lambda_vec=None, objective_value=None,
+                             feasibility=None, note=None):
+    """
+    Format one ALM/QHD iterate using the lifted-only variable structure.
+    """
+    x = np.asarray(solution, dtype=float).flatten()
+    vals = model._unpack_x(x)
+
+    P_G = vals["P_G"]
+    Q_G = vals["Q_G"]
+    Wii_RR = vals["Wii_RR"]
+    Wii_II = vals["Wii_II"]
+    V_sq = vals["V_sq"]
+    P_ij = vals["P_ij"]
+    Q_ij = vals["Q_ij"]
+    S_tot_sq = vals["S_tot_sq"]
+
+    bus_ids = model.bus_ids
+    line_ids = model.line_ids
+    lines = model.lines
+    gen_ids = model.gen_ids
+    gens = model.gens
+    P_D = model.P_D
+    Q_D = model.Q_D
+
+    gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
+
+    out = []
+    out.append("=" * 120)
+    out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    if iteration is not None:
+        out.append(f"Iteration: {iteration}")
+    if rho is not None:
+        out.append(f"rho: {float(rho):.8g}")
+    if alpha is not None:
+        out.append(f"alpha: {float(alpha):.8g}")
+    if objective_value is not None:
+        out.append(f"objective_value: {float(objective_value):.12g}")
+    if feasibility is not None:
+        out.append(f"feasible: {bool(feasibility)}")
+    if note is not None:
+        out.append(f"note: {note}")
+
+    if h_x is not None:
+        h_x = np.asarray(h_x, dtype=float).flatten()
+        out.append(f"max_abs_h: {np.max(np.abs(h_x)):.12e}")
+        out.append(f"l2_norm_h: {np.linalg.norm(h_x):.12e}")
+
+    if lambda_vec is not None:
+        lam = np.asarray(lambda_vec, dtype=float).flatten()
+        out.append(f"lambda_inf_norm: {np.max(np.abs(lam)):.12e}")
+        out.append(f"lambda_l2_norm: {np.linalg.norm(lam):.12e}")
+
+    out.append("-" * 120)
+    out.append("Bus Results")
+    out.append("BusID\tV_R\t\tV_I\t\tVmag\t\tWii_RR\t\tWii_RI\t\tWii_II\t\tPg\t\tQg\t\tPl\t\tQl")
+
+    Pgtotal = 0.0
+    Qgtotal = 0.0
+    Ploadtotal = 0.0
+    Qloadtotal = 0.0
+
+    for bi, bus_id in enumerate(bus_ids):
+        Pg_i = 0.0
+        Qg_i = 0.0
+        for gid in gen_ids:
+            if gens[gid][0] == bus_id:
+                gi = gen_index_by_id[gid]
+                Pg_i += P_G[gi]
+                Qg_i += Q_G[gi]
+
+        Pl_i = P_D[bi]
+        Ql_i = Q_D[bi]
+        Qsh_i = 0.0
+
+        Pgtotal += Pg_i
+        Qgtotal += Qg_i
+        Ploadtotal += Pl_i
+        Qloadtotal += Ql_i
+
+        out.append(
+            f"{bus_id}\t{V_R[bi]:.6f}\t{V_I[bi]:.6f}\t{V_mag[bi]:.6f}\t{Wii_RR[bi]:.6f}\t{Wii_RI[bi]:.6f}\t{Wii_II[bi]:.6f}\t{Pg_i:.6f}\t{Qg_i:.6f}\t{Pl_i:.6f}\t{Ql_i:.6f}"
+        )
+
+    out.append("")
+    out.append("Branch Results")
+    out.append("LineID\tFrom\tTo\tPik\t\tPki\t\tQik\t\tQki\t\tLossP\t\tLossQ")
+
+    total_Ploss = 0.0
+    total_Qloss = 0.0
+
+    for lid in line_ids:
+        from_bus, to_bus, _, _, _, _, _ = lines[lid]
+        a_fwd = model.arc_index[(lid, +1)]
+        a_rev = model.arc_index[(lid, -1)]
+
+        Pik = P_ij[a_fwd]
+        Pki = P_ij[a_rev]
+        Qik = Q_ij[a_fwd]
+        Qki = Q_ij[a_rev]
+
+        lossP = Pik + Pki
+        lossQ = Qik + Qki
+        total_Ploss += lossP
+        total_Qloss += lossQ
+
+        out.append(
+            f"{lid}\t{from_bus}\t{to_bus}\t{Pik:.6f}\t{Pki:.6f}\t{Qik:.6f}\t{Qki:.6f}\t{lossP:.6f}\t{lossQ:.6f}"
+        )
+
+    out.append("")
+    out.append("Summary")
+    out.append(f"Total Pg           : {Pgtotal:.6f}")
+    out.append(f"Total Qg           : {Qgtotal:.6f}")
+    out.append(f"Total Load P       : {Ploadtotal:.6f}")
+    out.append(f"Total Load Q       : {Qloadtotal:.6f}")
+    out.append(f"Total Active Loss  : {total_Ploss:.6f}")
+    out.append(f"Total Reactive Loss: {total_Qloss:.6f}")
+
+    if abs(Ploadtotal) > 1e-12:
+        Pl_supplied = Pgtotal - total_Ploss
+        perc_supplied = 100.0 * Pl_supplied / Ploadtotal
+        out.append(f"Total Load Supplied: {perc_supplied:.6f}%")
+    else:
+        out.append("Total Load Supplied: N/A")
+
+    if np.any(S_tot_sq < -1e-10):
+        out.append(f"Warning: found negative S_tot_sq min = {np.min(S_tot_sq):.6e}")
+
+    out.append("")
+    return "\n".join(out)
+
+
+def PrintQHDACOPFResults_older(model, solution):
+    """
+    Backward-compatible console printer using the lifted-only variable layout.
+    """
+    x = np.asarray(solution, dtype=float).flatten()
+    vals = model._unpack_x(x)
+
+    P_G = vals["P_G"]
+    Q_G = vals["Q_G"]
+    Wii_RR = vals["Wii_RR"]
+    Wii_II = vals["Wii_II"]
+    V_sq = vals["V_sq"]
+    P_ij = vals["P_ij"]
+    Q_ij = vals["Q_ij"]
+
+    bus_ids = model.bus_ids
+    line_ids = model.line_ids
+    lines = model.lines
+    gen_ids = model.gen_ids
+    gens = model.gens
+    P_D = model.P_D
+    Q_D = model.Q_D
+
+    gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
+
+    print("BusID\tWii_RR\tWii_II\tVmag\tPg\tQg\tl\tPl\tQl\tQshunt\n")
+
+    Pgtotal = 0.0
+    Qgtotal = 0.0
+    Ploadtotal = 0.0
+    Qloadtotal = 0.0
+
+    for bi, bus_id in enumerate(bus_ids):
+
+        Pg_i = 0.0
+        Qg_i = 0.0
+        for gid in gen_ids:
+            if gens[gid][0] == bus_id:
+                gi = gen_index_by_id[gid]
+                Pg_i += P_G[gi]
+                Qg_i += Q_G[gi]
+
+        Pl_i = P_D[bi]
+        Ql_i = Q_D[bi]
+        Qsh_i = 0.0
+        l_i = 1.0
+
+        print(
+            "{0:d}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}\t{6:.4f}\t{7:.4f}\t{8:.4f}\t{9:.4f}".format(
+                bus_id, Wii_RR[bi], Wii_II[bi], Vmag, Pg_i, Qg_i, l_i, Pl_i, Ql_i, Qsh_i
+            )
+        )
+
+        Pgtotal += Pg_i
+        Qgtotal += Qg_i
+        Ploadtotal += Pl_i
+        Qloadtotal += Ql_i
+
+    print("\n")
+    print("TOTAL\t\t\t\t{0:.4f}\t{1:.4f}\t\t{2:.4f}\t{3:.4f}".format(
+        Pgtotal, Qgtotal, Ploadtotal, Qloadtotal
+    ))
+    print("\n\n")
+
+    print("Busi\tBusk\tPik\tPki\tQik\tQki")
+
+    Ploss = 0.0
+    Qloss = 0.0
+
+    for lid in line_ids:
+        from_bus, to_bus, _, _, _, _, _ = lines[lid]
+        a_fwd = model.arc_index[(lid, +1)]
+        a_rev = model.arc_index[(lid, -1)]
+
+        Pik = P_ij[a_fwd]
+        Pki = P_ij[a_rev]
+        Qik = Q_ij[a_fwd]
+        Qki = Q_ij[a_rev]
+
+        print(
+            "{0:d}\t{1:d}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}".format(
+                from_bus, to_bus, Pik, Pki, Qik, Qki
+            )
+        )
+
+        Ploss += Pik + Pki
+        Qloss += Qik + Qki
+
+    print("\n")
+    print("Total Ploss: {0:.4f}".format(Ploss))
+    print("Total Qloss: {0:.4f}".format(Qloss))
+
+    if Ploadtotal > 1e-8:
+        Pl_supplied = Pgtotal - Ploss
+        perc_supplied = (Pl_supplied / Ploadtotal) * 100.0
+    else:
+        perc_supplied = 0.0
+
+    print("Total Load Supplied: {0:.4f}%".format(perc_supplied))
+
+
+def PrintQHDACOPFResults_old(model, solution):
+    """
+    Backward-compatible console printer with postprocessed V_R / V_I recovered
+    from lifted diagonal W variables.
+    """
+    vals = model.postprocess_solution(solution)
+
+    P_G = vals["P_G"]
+    Q_G = vals["Q_G"]
+    Wii_RR = vals["Wii_RR"]
+    Wii_RI = vals["Wii_RI"]
+    Wii_II = vals["Wii_II"]
+    V_R = vals["V_R"]
+    V_I = vals["V_I"]
+    V_mag = vals["V_mag"]
+    P_ij = vals["P_ij"]
+    Q_ij = vals["Q_ij"]
+
+    bus_ids = model.bus_ids
+    line_ids = model.line_ids
+    lines = model.lines
+    gen_ids = model.gen_ids
+    gens = model.gens
+    P_D = model.P_D
+    Q_D = model.Q_D
+
+    gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
+
+    print("BusID\tV_R\tV_I\tVmag\tWii_RR\tWii_RI\tWii_II\tPg\tQg\tl\tPl\tQl\tQshunt\n")
+
+    Pgtotal = 0.0
+    Qgtotal = 0.0
+    Ploadtotal = 0.0
+    Qloadtotal = 0.0
+
+    for bi, bus_id in enumerate(bus_ids):
+        Pg_i = 0.0
+        Qg_i = 0.0
+        for gid in gen_ids:
+            if gens[gid][0] == bus_id:
+                gi = gen_index_by_id[gid]
+                Pg_i += P_G[gi]
+                Qg_i += Q_G[gi]
+
+        Pl_i = P_D[bi]
+        Ql_i = Q_D[bi]
+        Qsh_i = 0.0
+        l_i = 1.0
+
+        print(
+            "{0:d}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}\t{6:.4f}\t{7:.4f}\t{8:.4f}\t{9:.4f}\t{10:.4f}\t{11:.4f}\t{12:.4f}".format(
+                bus_id, V_R[bi], V_I[bi], V_mag[bi], Wii_RR[bi], Wii_RI[bi], Wii_II[bi], Pg_i, Qg_i, l_i, Pl_i, Ql_i, Qsh_i
+            )
+        )
+
+        Pgtotal += Pg_i
+        Qgtotal += Qg_i
+        Ploadtotal += Pl_i
+        Qloadtotal += Ql_i
+
+    print("\n")
+    print("TOTAL\t\t\t\t\t\t\t{0:.4f}\t{1:.4f}\t\t{2:.4f}\t{3:.4f}".format(
+        Pgtotal, Qgtotal, Ploadtotal, Qloadtotal
+    ))
+    print("\n\n")
+
+    print("Busi\tBusk\tPik\tPki\tQik\tQki")
+
+    Ploss = 0.0
+    Qloss = 0.0
+
+    for lid in line_ids:
+        from_bus, to_bus, _, _, _, _, _ = lines[lid]
+        a_fwd = model.arc_index[(lid, +1)]
+        a_rev = model.arc_index[(lid, -1)]
+
+        Pik = P_ij[a_fwd]
+        Pki = P_ij[a_rev]
+        Qik = Q_ij[a_fwd]
+        Qki = Q_ij[a_rev]
+
+        print(
+            "{0:d}\t{1:d}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}".format(
+                from_bus, to_bus, Pik, Pki, Qik, Qki
+            )
+        )
+
+        Ploss += Pik + Pki
+        Qloss += Qik + Qki
+
+    print("\n")
+    print("Total Ploss: {0:.4f}".format(Ploss))
+    print("Total Qloss: {0:.4f}".format(Qloss))
+
+    if Ploadtotal > 1e-8:
+        Pl_supplied = Pgtotal - Ploss
+        perc_supplied = (Pl_supplied / Ploadtotal) * 100.0
+    else:
+        perc_supplied = 0.0
+
+    print("Total Load Supplied: {0:.4f}%".format(perc_supplied))
 
 def solve_with_gurobi_from_sympy(L_sym, variable_list, Var_bound_list, verbose=False):
     """
