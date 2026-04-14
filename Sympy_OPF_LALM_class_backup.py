@@ -3,53 +3,8 @@ import numpy as np
 import gurobipy as gp
 from gurobipy import GRB
 import os
-import shutil
-import subprocess
 from datetime import datetime
 from pathlib import Path
-
-def ensure_1d_decision_vector(x, expected_len=None, name="x"):
-    """
-    Convert a candidate solution into a 1D float vector and validate its shape.
-    """
-    arr = np.asarray(x, dtype=float)
-
-    if arr.ndim == 0:
-        raise ValueError(
-            f"{name} must be a 1D decision vector, but got a scalar-like value: {arr!r}. "
-            "This usually means the solver result field was None or a single number."
-        )
-
-    arr = arr.reshape(-1)
-
-    if expected_len is not None and arr.size != expected_len:
-        raise ValueError(
-            f"{name} must have length {expected_len}, but got shape {arr.shape} "
-            f"with {arr.size} entries."
-        )
-
-    return arr
-
-def extract_qhd_solution_vector(response, prefer_refined=True, expected_len=None):
-    """
-    Extract a usable 1D minimizer vector from a QHD response object.
-
-    If refined minimization is unavailable (for example when refine=False),
-    fall back to the coarse minimizer automatically.
-    """
-    candidate_names = ["refined_minimizer", "minimizer"] if prefer_refined else ["minimizer", "refined_minimizer"]
-
-    for attr in candidate_names:
-        if hasattr(response, attr):
-            candidate = getattr(response, attr)
-            if candidate is not None:
-                return ensure_1d_decision_vector(candidate, expected_len=expected_len, name=f"response.{attr}")
-
-    available = [attr for attr in candidate_names if hasattr(response, attr)]
-    raise ValueError(
-        "Could not extract a solution vector from the QHD response. "
-        f"Tried fields {candidate_names}, available among them: {available}."
-    )
 
 class SympyACOPFModel:
     """
@@ -364,12 +319,11 @@ class SympyACOPFModel:
         nb = self.n_buses
         nl = self.n_lines
 
-        # Build Ybus in the same way as Pyomo_OPF_gurobi.ipynb so both models
-        # use the same G/B matrices in bus-balance and branch-flow equations.
+        # build Ybus with simple MATPOWER-like π-model (no taps other than magnitude)
         Ybus = np.zeros((nb, nb), dtype=np.complex128)
+        # series admittances for each line (for branch flow equations)
         g_series = np.zeros(nl)
         b_series = np.zeros(nl)
-        branch_b = np.zeros((nb, nb))
 
         for ell, lid in enumerate(self.line_ids):
             from_bus, to_bus, r, x, bsh, tap, rate = self.lines[lid]
@@ -383,31 +337,25 @@ class SympyACOPFModel:
             else:
                 y = 1.0 / z  # series admittance
 
-            Bs = 1j * bsh
+            # shunt susceptance (total), split half to each end
+            Bc = 1j * bsh
+
             a = tap if tap != 0 else 1.0
 
-            # Match the Pyomo notebook exactly, including its treatment of
-            # shunt charging and tap scaling on the diagonal terms.
-            Ybus[i, i] += y / (a ** 2)
-            Ybus[j, j] += y / (a ** 2)
-
-            Ybus[i, i] += Bs
-            Ybus[j, j] += Bs
-
+            # contributions to Ybus (standard π-model with tap on "from" side)
+            Ybus[i, i] += (y / (a ** 2)) + Bc / 2.0
+            Ybus[j, j] += y + Bc / 2.0
             Ybus[i, j] -= y / a
             Ybus[j, i] -= y / a
 
             g_series[ell] = y.real
             b_series[ell] = y.imag
-            branch_b[i, j] = Bs.imag
-            branch_b[j, i] = Bs.imag
 
         self.Ybus = Ybus
         self.G_mat = Ybus.real
         self.B_mat = Ybus.imag
         self.g_series = g_series
         self.b_series = b_series
-        self.branch_b = branch_b
 
         # build load vectors Pd, Qd in p.u. aligned with bus index order
         self.P_D = np.zeros(nb)
@@ -428,47 +376,6 @@ class SympyACOPFModel:
             variable_list.append(v)
             Var_bound_list.append(list(bnd))
         return variable_list, Var_bound_list
-
-    def _branch_flow_expr_rect(self, arc_idx, ViR, ViI, VjR, VjI):
-        """
-        Build the directed branch-flow expressions using the same formulas as
-        Pyomo_OPF_gurobi.ipynb:
-
-            P_ij = (-G_ij + g_ij) |V_i|^2 + G_ij Re(V_i conj(V_j))
-                   + B_ij Im(V_i conj(V_j))
-            Q_ij = ( B_ij - b_ij) |V_i|^2 - B_ij Re(V_i conj(V_j))
-                   + G_ij Im(V_i conj(V_j))
-
-        where g_ij is zero in the Pyomo notebook and b_ij stores the line
-        charging susceptance attached to the (i, j) branch.
-        """
-        i, j = self.arc_collection[arc_idx]
-        Gij = self.G_mat[i, j]
-        Bij = self.B_mat[i, j]
-        bij = self.branch_b[i, j]
-
-        vi_sq = ViR ** 2 + ViI ** 2
-        w_real = ViR * VjR + ViI * VjI
-        w_imag = ViI * VjR - ViR * VjI
-
-        P_expr = (-Gij) * vi_sq + Gij * w_real + Bij * w_imag
-        Q_expr = (Bij - bij) * vi_sq - Bij * w_real + Gij * w_imag
-        return P_expr, Q_expr
-
-    def _build_objective_expr(self):
-        """
-        Build the generation-cost expression using the same indexing and
-        coefficients as Pyomo_OPF_gurobi.ipynb.
-        """
-        obj = 0
-        for gi, gid in enumerate(self.gen_ids):
-            gdata = self.gens[gid]
-            const_term = gdata[4]
-            linear_term = gdata[5]
-            quad_term = gdata[6]
-            PGi = self.P_G[gi]
-            obj += quad_term * PGi ** 2 + linear_term * PGi + const_term
-        return obj
 
     def _build_variables(self):
         nb = self.n_buses
@@ -567,20 +474,19 @@ class SympyACOPFModel:
                 lambda_Q_flow,
                 lambda_Vsq,
                 lambda_Ssq,
-                lambda_ref_VI,
-                lambda_ref_VR]
+                lambda_ref]
         """
 
         nb = self.n_buses
         na = self.n_arcs
 
         # total number of multipliers
-        total_dim = 2 * nb + 2 * na + nb + na + 2
+        total_dim = 2 * nb + 2 * na + nb + na + 1
         # = P_bal(nb) + Q_bal(nb)
         # + P_flow(nl) + Q_flow(nl)
         # + Vsq(nb)
         # + Ssq(nl)
-        # + ref(2)
+        # + ref(1)
 
         # ---------------------------------------------------
         # CASE 1: value is None → set all to 0
@@ -594,8 +500,7 @@ class SympyACOPFModel:
             self.lambda_Q_flow = [scalar] * na
             self.lambda_Vsq = [scalar] * nb
             self.lambda_Ssq = [scalar] * na
-            self.lambda_ref_VI = scalar
-            self.lambda_ref_VR = scalar
+            self.lambda_ref = scalar
 
         # ---------------------------------------------------
         # CASE 2: value is scalar
@@ -609,8 +514,7 @@ class SympyACOPFModel:
             self.lambda_Q_flow = [scalar] * na
             self.lambda_Vsq = [scalar] * nb
             self.lambda_Ssq = [scalar] * na
-            self.lambda_ref_VI = scalar
-            self.lambda_ref_VR = scalar
+            self.lambda_ref = scalar
 
         # ---------------------------------------------------
         # CASE 3: value is vector
@@ -649,9 +553,7 @@ class SympyACOPFModel:
             idx += na   
 
             # Reference bus
-            self.lambda_ref_VI = float(vec[idx])
-            idx += 1
-            self.lambda_ref_VR = float(vec[idx])
+            self.lambda_ref = float(vec[idx])
 
         # ---------------------------------------------------
         # rebuild lambda_vec in correct order
@@ -663,8 +565,7 @@ class SympyACOPFModel:
             *self.lambda_Q_flow,
             *self.lambda_Vsq,
             *self.lambda_Ssq,
-            self.lambda_ref_VI,
-            self.lambda_ref_VR
+            self.lambda_ref
         ]
 
                         
@@ -686,9 +587,22 @@ class SympyACOPFModel:
 
         buses_range = range(nb)
 
-        # Match the objective currently used in Pyomo_OPF_gurobi.ipynb.
-        obj = self._build_objective_expr()
-        self.objective = obj
+        # generator cost: C(P) = a P^2 + b P + c, aligned with gen_ids
+        a_cost = []
+        b_cost = []
+        c_cost = []
+        for gid in self.gen_ids:
+            gdata = self.gens[gid]
+            a_cost.append(gdata[5])
+            b_cost.append(gdata[6])
+            c_cost.append(gdata[7])
+
+        # objective
+        obj = 0
+        for gi in range(ng):
+            PGi = self.P_G[gi]
+            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
+
         L = obj
 
         # Convenience aliases
@@ -701,6 +615,8 @@ class SympyACOPFModel:
 
         G_mat = self.G_mat
         B_mat = self.B_mat
+        g_series = self.g_series
+        b_series = self.b_series
         arc_collection = self.arc_collection
 
         P_D = self.P_D
@@ -775,7 +691,24 @@ class SympyACOPFModel:
             ViI = V_I[i]
             VjR = V_R[j]
             VjI = V_I[j]
-            P_expr, Q_expr = self._branch_flow_expr_rect(a, ViR, ViI, VjR, VjI)
+
+            lid = self.arc_to_line[a]
+            ell = self.line_pos[lid]
+
+            g_ij = g_series[ell]
+            b_ij = b_series[ell]
+
+            # P_ij definition (rectangular form)
+            P_expr = (
+                ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+            )
+
+            # Q_ij definition (rectangular form)
+            Q_expr = (
+                ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+            )
 
             h_P_flow = self.P_ij[a] - P_expr
             h_Q_flow = self.Q_ij[a] - Q_expr
@@ -798,16 +731,14 @@ class SympyACOPFModel:
             L += self.lambda_Ssq[a] * h_Ssq
 
         # ---------------------------
-        # (6) Reference bus constraints: V_ref^I = 0, V_ref^R = 1
+        # (6) Reference bus constraint: V_ref^I = 0
         # ---------------------------
         if ref_bus_id is None:
             # default: first bus id
             ref_bus_id = self.bus_ids[0]
         ref_idx = self.bus_index[ref_bus_id]
-        h_ref_vi = V_I[ref_idx]
-        h_ref_vr = V_R[ref_idx] - 1.0
-        L += self.lambda_ref_VI * h_ref_vi
-        L += self.lambda_ref_VR * h_ref_vr
+        h_ref = V_I[ref_idx]
+        L += self.lambda_ref * h_ref
 
         self.Lagrange = L
         return L
@@ -839,9 +770,11 @@ class SympyACOPFModel:
         Q_ij = self.Q_ij
         S_tot_sq = self.S_tot_sq
 
-        # data aliases
+        # 数据别名
         G_mat = self.G_mat
         B_mat = self.B_mat
+        g_series = self.g_series
+        b_series = self.b_series
         arc_collection = self.arc_collection
 
         P_D = self.P_D
@@ -915,7 +848,21 @@ class SympyACOPFModel:
             ViI = V_I[i]
             VjR = V_R[j]
             VjI = V_I[j]
-            P_expr, Q_expr = self._branch_flow_expr_rect(a, ViR, ViI, VjR, VjI)
+            
+            lid = self.arc_to_line[a]
+            ell = self.line_pos[lid]
+
+            g_ij = g_series[ell]
+            b_ij = b_series[ell]
+
+            P_expr = (
+                ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+            )
+            Q_expr = (
+                ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+            )
 
             cP_flow = P_ij[a] - P_expr
             cQ_flow = Q_ij[a] - Q_expr
@@ -933,9 +880,9 @@ class SympyACOPFModel:
             cS = S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2)
             residuals.append(cS)
 
-        # 6) Reference bus constraints
-        residuals.append(V_I[ref_idx])
-        residuals.append(V_R[ref_idx] - 1.0)
+        # 6) Reference bus constraint c^{ref} = V_I[ref_idx]
+        c_ref = V_I[ref_idx]
+        residuals.append(c_ref)
 
         return residuals
 
@@ -965,8 +912,20 @@ class SympyACOPFModel:
         nb = self.n_buses
         ng = self.n_gens
 
-        obj = self._build_objective_expr()
-        self.objective = obj
+        a_cost = []
+        b_cost = []
+        c_cost = []
+        for gid in self.gen_ids:
+            gdata = self.gens[gid]
+            a_cost.append(gdata[5])
+            b_cost.append(gdata[6])
+            c_cost.append(gdata[7])
+
+        obj = 0
+        for gi in range(ng):
+            PGi = self.P_G[gi]
+            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
+
         L = obj
 
         # ---------- 2) 符号构造 h(x) & J(x) ----------
@@ -1086,7 +1045,11 @@ class SympyACOPFModel:
 
         G_mat = self.G_mat
         B_mat = self.B_mat
+        g_series = self.g_series
+        b_series = self.b_series
+        line_collection = self.line_collection
         arc_collection = self.arc_collection
+        line_pos = {lid: k for k, lid in enumerate(self.line_ids)}
         
 
         P_D = self.P_D
@@ -1097,8 +1060,7 @@ class SympyACOPFModel:
         ref_idx = self.bus_index[ref_bus_id]
 
         def h_func(x):
-            expected_len = 2 * ng + 3 * nb + 3 * na
-            x = ensure_1d_decision_vector(x, expected_len=expected_len, name="x")
+            x = np.asarray(x, dtype=float)
             # unpack x according to variable_list structure
             idx = 0
             P_G = x[idx:idx + ng]
@@ -1176,7 +1138,23 @@ class SympyACOPFModel:
                 ViI = V_I[i]
                 VjR = V_R[j]
                 VjI = V_I[j]
-                P_expr, Q_expr = self._branch_flow_expr_rect(a, ViR, ViI, VjR, VjI)
+
+                lid = self.arc_to_line[a]
+                ell = line_pos[lid]
+
+                g_ij = g_series[ell]
+                b_ij = b_series[ell]
+
+                # P_ij definition
+                P_expr = (
+                    ViR * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                    + ViI * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+                )
+                # Q_ij definition
+                Q_expr = (
+                    ViI * (g_ij * (ViR - VjR) - b_ij * (ViI - VjI))
+                    - ViR * (g_ij * (ViI - VjI) + b_ij * (ViR - VjR))
+                )
 
                 cP_flow = P_ij[a] - P_expr
                 cQ_flow = Q_ij[a] - Q_expr
@@ -1194,9 +1172,9 @@ class SympyACOPFModel:
                 cS = S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2)
                 residuals.append(cS)
 
-            # 6) Reference bus constraints
-            residuals.append(V_I[ref_idx])
-            residuals.append(V_R[ref_idx] - 1.0)
+            # 6) Reference bus constraint c^{ref} = V_I[ref_idx]
+            c_ref = V_I[ref_idx]
+            residuals.append(c_ref)
 
             return np.asarray(residuals, dtype=float)
 
@@ -1254,9 +1232,7 @@ class SympyACOPFModel:
         self.lambda_Ssq = lambda_new[idx:idx + na].tolist()
         idx += na
         # λ_ref (1)
-        self.lambda_ref_VI = float(lambda_new[idx])
-        idx += 1
-        self.lambda_ref_VR = float(lambda_new[idx])
+        self.lambda_ref = float(lambda_new[idx])
         idx += 1
 
         assert idx == len(lambda_new), "lambda_new 拆分时长度对不上，检查顺序是否和 h_func 一致"
@@ -1322,6 +1298,34 @@ class SympyACOPFModel:
         all_ok = all(ok_list)
         return ok_list, all_ok
 
+def create_qhd_acopf_log_file(model, folder="."):
+    """
+    创建日志文件：
+    命名规则：
+        Buses-n-HH-MM-SS-MM-DD-YYYY.txt
+
+    其中：
+        n = 总线数
+        HH-MM-SS = 文件创建时间
+        MM-DD-YYYY = 当天日期
+    """
+    now = datetime.now()
+    n = model.n_buses
+    time_str = now.strftime("%H-%M-%S")
+    date_str = now.strftime("%m-%d-%Y")
+
+    filename = f"Buses-{n}-{time_str}-{date_str}.txt"
+    filepath = os.path.join(folder, filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("QHD ACOPF Iteration Log\n")
+        f.write(f"Created at: {now.strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Number of buses: {n}\n")
+        f.write("=" * 100 + "\n\n")
+
+    return filepath
+
+
 def _build_qhd_acopf_log_filename(model, folder="."):
     """
     日志文件命名规则：
@@ -1336,48 +1340,11 @@ def _build_qhd_acopf_log_filename(model, folder="."):
     n = model.n_buses
     time_str = now.strftime("%H-%M-%S")
     date_str = now.strftime("%m-%d-%Y")
-    filename = f"Buses-{n}_{date_str}_{time_str}.txt"
+    filename = f"Buses-{n}-{time_str}-{date_str}.txt"
     return str(Path(folder) / filename)
 
 
-def _open_file_in_vscode(file_path):
-    """
-    Try to open a file in VS Code on Windows. Fail quietly if VS Code is not
-    available so logging and solving can continue normally.
-    """
-    file_path = str(Path(file_path).resolve())
-
-    candidates = []
-    code_cli = shutil.which("code")
-    if code_cli:
-        candidates.append([code_cli, "-r", file_path])
-
-    local_appdata = os.environ.get("LOCALAPPDATA")
-    program_files = os.environ.get("PROGRAMFILES")
-    program_files_x86 = os.environ.get("PROGRAMFILES(X86)")
-    for base in (local_appdata, program_files, program_files_x86):
-        if not base:
-            continue
-
-        user_install = Path(base) / "Programs" / "Microsoft VS Code" / "Code.exe"
-        system_install = Path(base) / "Microsoft VS Code" / "Code.exe"
-        if user_install.exists():
-            candidates.append([str(user_install), "-r", file_path])
-        if system_install.exists():
-            candidates.append([str(system_install), "-r", file_path])
-
-    for cmd in candidates:
-        try:
-            subprocess.Popen(cmd)
-            return True
-        except OSError:
-            continue
-
-    return False
-
-
-def initialize_qhd_acopf_log(model, folder=".", extra_header=None, option=None,
-                             qhd_solver=None, auto_open_in_vscode=True):
+def initialize_qhd_acopf_log(model, folder=".", extra_header=None):
     """
     首次创建日志文件，并把路径挂在 model._qhd_acopf_log_file 上。
     """
@@ -1385,28 +1352,17 @@ def initialize_qhd_acopf_log(model, folder=".", extra_header=None, option=None,
     Path(folder).mkdir(parents=True, exist_ok=True)
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    if option == 1:
-        solver_string = f"QHD with {qhd_solver} solver"
-    elif option == 2:
-        solver_string = "QHD with Gurobi solver"
-    elif option is None:
-        solver_string = "Not specified"
-    else:
-        solver_string = "Invalid option"
     with open(log_file, "w", encoding="utf-8") as f:
         f.write("QHD ACOPF / ALM Iteration Log\n")
         f.write(f"Created at: {now}\n")
         f.write(f"Number of buses: {model.n_buses}\n")
         f.write(f"Number of lines: {model.n_lines}\n")
         f.write(f"Number of generators: {model.n_gens}\n")
-        f.write(f"Solver used: {solver_string}\n")
         if extra_header is not None:
             f.write(str(extra_header).rstrip() + "\n")
         f.write("=" * 120 + "\n\n")
 
     model._qhd_acopf_log_file = log_file
-    if auto_open_in_vscode:
-        _open_file_in_vscode(log_file)
     return log_file
 
 
@@ -1470,7 +1426,7 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
 
     out.append("-" * 120)
     out.append("Bus Results")
-    out.append("BusID\tV_R\t\tV_I\t\tVmag\t\tPg\t\tQg\t\tPl\t\tQl")
+    out.append("BusID	VR		VI		Vmag		Pg		Qg		Pl		Ql		Qshunt")
 
     Pgtotal = 0.0
     Qgtotal = 0.0
@@ -1492,13 +1448,15 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
 
         Pl_i = P_D[bi]
         Ql_i = Q_D[bi]
+        Qsh_i = 0.0
+
         Pgtotal += Pg_i
         Qgtotal += Qg_i
         Ploadtotal += Pl_i
         Qloadtotal += Ql_i
 
         out.append(
-            f"{bus_id}\t{Vr:.6f}\t{Vi:.6f}\t{Vmag:.6f}\t{Pg_i:.6f}\t{Qg_i:.6f}\t{Pl_i:.6f}\t{Ql_i:.6f}"
+            f"{bus_id}	{Vr:.6f}	{Vi:.6f}	{Vmag:.6f}	{Pg_i:.6f}	{Qg_i:.6f}	{Pl_i:.6f}	{Ql_i:.6f}	{Qsh_i:.6f}"
         )
 
     out.append("")
@@ -1570,103 +1528,6 @@ def append_qhd_acopf_results(model, solution, log_file=None, folder=".", **kwarg
     return log_file
 
 
-def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, alpha=None,
-                                     h_x=None, lambda_vec=None, objective_value=None,
-                                     feasibility=None, note=None):
-    """
-    Compact console formatter: keep V_R / V_I in the console output and use a
-    lighter layout than the full log formatter.
-    """
-    x = np.asarray(solution, dtype=float).flatten()
-
-    nb = model.n_buses
-    ng = model.n_gens
-    na = model.n_arcs
-
-    idx = 0
-    P_G = x[idx:idx + ng]; idx += ng
-    Q_G = x[idx:idx + ng]; idx += ng
-    V_R = x[idx:idx + nb]; idx += nb
-    V_I = x[idx:idx + nb]; idx += nb
-    V_sq = x[idx:idx + nb]; idx += nb
-    P_ij = x[idx:idx + na]; idx += na
-    Q_ij = x[idx:idx + na]; idx += na
-
-    bus_ids = model.bus_ids
-    line_ids = model.line_ids
-    lines = model.lines
-    gen_ids = model.gen_ids
-    gens = model.gens
-    P_D = model.P_D
-    Q_D = model.Q_D
-
-    gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
-
-    out = []
-    out.append("=" * 120)
-    out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    if iteration is not None:
-        out.append(f"Iteration: {iteration}")
-    if rho is not None:
-        out.append(f"rho: {float(rho):.8g}")
-    if alpha is not None:
-        out.append(f"alpha: {float(alpha):.8g}")
-    if objective_value is not None:
-        out.append(f"objective_value: {float(objective_value):.12g}")
-    if feasibility is not None:
-        out.append(f"feasible: {bool(feasibility)}")
-    if note is not None:
-        out.append(f"note: {note}")
-
-    if h_x is not None:
-        h_x = np.asarray(h_x, dtype=float).flatten()
-        out.append(f"max_abs_h: {np.max(np.abs(h_x)):.12e}")
-        out.append(f"l2_norm_h: {np.linalg.norm(h_x):.12e}")
-
-    if lambda_vec is not None:
-        lam = np.asarray(lambda_vec, dtype=float).flatten()
-        out.append(f"lambda_inf_norm: {np.max(np.abs(lam)):.12e}")
-        out.append(f"lambda_l2_norm: {np.linalg.norm(lam):.12e}")
-
-    out.append("-" * 120)
-    out.append("Bus Results")
-    out.append("BusID\tV_R\t\tV_I\t\tVmag\t\tPg\t\tQg\t\tPl\t\tQl")
-
-    for bi, bus_id in enumerate(bus_ids):
-        Pg_i = 0.0
-        Qg_i = 0.0
-        for gid in gen_ids:
-            if gens[gid][0] == bus_id:
-                gi = gen_index_by_id[gid]
-                Pg_i += P_G[gi]
-                Qg_i += Q_G[gi]
-
-        out.append(
-            f"{bus_id}\t{V_R[bi]:.6f}\t{V_I[bi]:.6f}\t{np.sqrt(max(V_sq[bi], 0.0)):.6f}\t"
-            f"{Pg_i:.6f}\t{Qg_i:.6f}\t{P_D[bi]:.6f}\t{Q_D[bi]:.6f}"
-        )
-
-    out.append("")
-    out.append("Branch Results")
-    out.append("LineID\tFrom\tTo\tPik\t\tPki\t\tQik\t\tQki\t\tLossP\t\tLossQ")
-
-    for lid in line_ids:
-        from_bus, to_bus, _, _, _, _, _ = lines[lid]
-        a_fwd = model.arc_index[(lid, +1)]
-        a_rev = model.arc_index[(lid, -1)]
-        Pik = P_ij[a_fwd]
-        Pki = P_ij[a_rev]
-        Qik = Q_ij[a_fwd]
-        Qki = Q_ij[a_rev]
-        out.append(
-            f"{lid}\t{from_bus}\t{to_bus}\t{Pik:.6f}\t{Pki:.6f}\t{Qik:.6f}\t{Qki:.6f}\t"
-            f"{(Pik + Pki):.6f}\t{(Qik + Qki):.6f}"
-        )
-
-    out.append("")
-    return "\n".join(out)
-
-
 def PrintQHDACOPFResults(model, solution, iteration=None, log_file=None, folder=".",
                          print_to_console=True, **kwargs):
     """
@@ -1674,7 +1535,7 @@ def PrintQHDACOPFResults(model, solution, iteration=None, log_file=None, folder=
     - 默认仍可把结果打印到屏幕
     - 同时把结果写入日志 txt
     """
-    text = format_qhd_acopf_console_results(model, solution, iteration=iteration, **kwargs)
+    text = format_qhd_acopf_results(model, solution, iteration=iteration, **kwargs)
 
     if print_to_console:
         print(text)
@@ -1808,6 +1669,129 @@ def run_linear_alm_with_logging(model, x0=None, max_iter=20, rho=10.0, alpha=1.0
         "history": history,
         "all_ok": best_ok,
     }
+
+def PrintQHDACOPFResults_old(model, solution):
+    """
+    根据 SympyACOPFModel 的解向量 solution（顺序与 model.variable_list 一致），
+    打印类似传统 OPF 输出的结果表，包括：
+    - 每个母线的 VR, VI, Pg, Qg, Pl, Ql, Qshunt
+    - 每条支路的 Pik, Pki, Qik, Qki
+    - 总有功/无功损耗、负荷供应比例
+    """
+
+    # -------- 1) 解向量拆包 --------
+    x = np.asarray(solution, dtype=float).flatten()
+
+    nb = model.n_buses
+    nl = model.n_lines
+    ng = model.n_gens
+    na = model.n_arcs
+
+    idx = 0
+    P_G = x[idx:idx + ng]; idx += ng
+    Q_G = x[idx:idx + ng]; idx += ng
+    V_R = x[idx:idx + nb]; idx += nb
+    V_I = x[idx:idx + nb]; idx += nb
+    V_sq = x[idx:idx + nb]; idx += nb
+    P_ij = x[idx:idx + na]; idx += na
+    Q_ij = x[idx:idx + na]; idx += na
+    S_tot_sq = x[idx:idx + na]; idx += na   # 这里暂时未直接使用
+
+    # -------- 2) 一些方便别名 --------
+    bus_ids   = model.bus_ids
+    line_ids  = model.line_ids
+    lines     = model.lines
+    gen_ids   = model.gen_ids
+    gens      = model.gens
+
+    P_D = model.P_D
+    Q_D = model.Q_D
+
+    # gen id -> position in P_G / Q_G
+    gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
+
+    # -------- 3) 母线结果 --------
+    print("BusID\tVR\tVI\tPg\tQg\tl\tPl\tQl\tQshunt\n")
+
+    Pgtotal = 0.0
+    Qgtotal = 0.0
+    Ploadtotal = 0.0
+    Qloadtotal = 0.0
+
+    for bi, bus_id in enumerate(bus_ids):
+        Vr = V_R[bi]
+        Vi = V_I[bi]
+
+        # 该母线所有机组出力求和
+        Pg_i = 0.0
+        Qg_i = 0.0
+        for gid in gen_ids:
+            if gens[gid][0] == bus_id:
+                gi = gen_index_by_id[gid]
+                Pg_i += P_G[gi]
+                Qg_i += Q_G[gi]
+
+        Pl_i = P_D[bi]
+        Ql_i = Q_D[bi]
+        Qsh_i = 0.0
+        l_i = 1.0
+
+        print(
+            "{0:d}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}\t{6:.4f}\t{7:.4f}\t{8:.4f}".format(
+                bus_id, Vr, Vi, Pg_i, Qg_i, l_i, Pl_i, Ql_i, Qsh_i
+            )
+        )
+
+        Pgtotal += Pg_i
+        Qgtotal += Qg_i
+        Ploadtotal += Pl_i
+        Qloadtotal += Ql_i
+
+    print("\n")
+    print("TOTAL\t\t\t{0:.4f}\t{1:.4f}\t\t{2:.4f}\t{3:.4f}".format(
+        Pgtotal, Qgtotal, Ploadtotal, Qloadtotal
+    ))
+    print("\n\n")
+
+    # -------- 4) 支路潮流结果 --------
+    print("Busi\tBusk\tPik\tPki\tQik\tQki")
+
+    Ploss = 0.0
+    Qloss = 0.0
+
+    for lid in line_ids:
+        from_bus, to_bus, _, _, _, _, _ = lines[lid]
+
+        # 当前 line 对应的正反向 arc
+        a_fwd = model.arc_index[(lid, +1)]
+        a_rev = model.arc_index[(lid, -1)]
+
+        Pik = P_ij[a_fwd]
+        Pki = P_ij[a_rev]
+        Qik = Q_ij[a_fwd]
+        Qki = Q_ij[a_rev]
+
+        print(
+            "{0:d}\t{1:d}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}".format(
+                from_bus, to_bus, Pik, Pki, Qik, Qki
+            )
+        )
+
+        Ploss += (Pik + Pki)
+        Qloss += (Qik + Qki)
+
+    print("\n")
+    print("Total Ploss: {0:.4f}".format(Ploss))
+    print("Total Qloss: {0:.4f}".format(Qloss))
+
+    # -------- 5) 负荷供应比例 --------
+    if Ploadtotal > 1e-8:
+        Pl_supplied = Pgtotal - Ploss
+        perc_supplied = (Pl_supplied / Ploadtotal) * 100.0
+    else:
+        perc_supplied = 0.0
+
+    print("Total Load Supplied: {0:.4f}%".format(perc_supplied))
 
 def solve_with_gurobi_from_sympy(L_sym, variable_list, Var_bound_list, verbose=False):
     """

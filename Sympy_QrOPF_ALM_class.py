@@ -344,15 +344,13 @@ class SympyACOPFModel:
                 y = 1.0 / z  # series admittance
 
             # shunt susceptance (total), split half to each end
-            Bc = 1j * bsh
 
-            a = tap if tap != 0 else 1.0
 
             # contributions to Ybus (standard π-model with tap on "from" side)
-            Ybus[i, i] += (y / (a ** 2)) + Bc / 2.0
-            Ybus[j, j] += y + Bc / 2.0
-            Ybus[i, j] -= y / a
-            Ybus[j, i] -= y / a
+            Ybus[i, i] += y
+            Ybus[j, j] += y
+            Ybus[i, j] -= y
+            Ybus[j, i] -= y
 
             g_series[ell] = y.real
             b_series[ell] = y.imag
@@ -425,17 +423,20 @@ class SympyACOPFModel:
         Each entry is a tuple:
             (name, size, linearize_in_linear_alm)
         """
+        ref_pair_count = len(self._get_ref_line_pairs(self.bus_ids[0]))
         return [
             ("P_bal", self.n_buses, False),
             ("Q_bal", self.n_buses, False),
             ("P_flow", self.n_arcs, False),
             ("Q_flow", self.n_arcs, False),
-            ("P_branch_bal", self.n_buses, False),
-            ("Q_branch_bal", self.n_buses, False),
             ("Vsq", self.n_buses, False),
             ("Ssq", self.n_arcs, True),
-            ("ref_rr", 1, False),
-            ("ref_ri", 1, False),
+            ("Wdiag_rank", self.n_buses, True),
+            ("Wcross_mag", self.n_cross_pairs, True),
+            ("ref_diag_ii", 1, False),
+            ("ref_diag_ri", 1, False),
+            ("ref_ii", ref_pair_count, False),
+            ("ref_ir", ref_pair_count, False),
         ]
 
     def _get_constraint_block_slices(self):
@@ -464,6 +465,24 @@ class SympyACOPFModel:
     def _cross_flat(self, i, j):
         return self.cross_pair_index[tuple(sorted((i, j)))]
 
+    def _get_ref_line_pairs(self, ref_bus_id):
+        ref_idx = self.bus_index[ref_bus_id]
+        ref_pairs = []
+        for i, j in self.line_collection:
+            if i == ref_idx:
+                ref_pairs.append((i, j))
+            elif j == ref_idx:
+                ref_pairs.append((j, i))
+        return ref_pairs
+
+    def _validate_ref_bus_id(self, ref_bus_id):
+        default_ref_bus_id = self.bus_ids[0]
+        if ref_bus_id != default_ref_bus_id:
+            raise ValueError(
+                f"Strict LaTeX model is implemented with a fixed reference bus {default_ref_bus_id}; "
+                f"got ref_bus_id={ref_bus_id}."
+            )
+
     def _cross_terms(self, i, j, rr_vals, ri_vals, ir_vals, ii_vals):
         p = self._cross_flat(i, j)
         rr = rr_vals[p]
@@ -478,35 +497,24 @@ class SympyACOPFModel:
 
     def _branch_flow_coeffs(self, arc_idx):
         """
-        Return branch-flow coefficients for the directed arc at position arc_idx
-        under the same pi-model used to build Ybus.
+        Return the series branch coefficients for the directed arc at position
+        arc_idx under the simplified LaTeX model.
 
         Returns
         -------
-        (g_self, b_self, g_mut, b_mut)
-            Such that, for the directed arc i -> j,
-                P_ij = g_self * |V_i|^2 - g_mut * Re(W_ij) - b_mut * Im(W_ij)
-                Q_ij = -b_self * |V_i|^2 + b_mut * Re(W_ij) - g_mut * Im(W_ij)
-        where Im(W_ij) = Wij_IR - Wij_RI in this lifted representation.
+        (g, b)
+            Series-admittance coefficients such that, for the directed arc i -> j,
+                P_ij = g * (|V_i|^2 - Re(W_ij)) + b * Im(W_ij)
+                Q_ij = b * (Re(W_ij) - |V_i|^2) + g * Im(W_ij)
+            where Re(W_ij) = Wij_RR + Wij_II and
+            Im(W_ij) = Wij_RI - Wij_IR in this lifted representation.
         """
         lid, direction = self.arc_ids[arc_idx]
         from_bus, to_bus, r, x, bsh, tap, _ = self.lines[lid]
-        a = tap if tap != 0 else 1.0
         ell = self.line_pos[lid]
         g = self.g_series[ell]
         b = self.b_series[ell]
-        b_sh_half = bsh / 2.0
-
-        if direction == +1:
-            g_self = g / (a ** 2)
-            b_self = (b + b_sh_half) / (a ** 2)
-        else:
-            g_self = g
-            b_self = b + b_sh_half
-
-        g_mut = g / a
-        b_mut = b / a
-        return g_self, b_self, g_mut, b_mut
+        return g, b
 
     def _unpack_x(self, x):
         x = np.asarray(x, dtype=float).flatten()
@@ -733,15 +741,17 @@ class SympyACOPFModel:
         2) value is float/int   -> all lambdas = that scalar
         3) value is vector      -> assign according to stacking order:
             [lambda_P_bal,
-                lambda_Q_bal,
-                lambda_P_flow,
-                lambda_Q_flow,
-                lambda_P_branch_bal,
-                lambda_Q_branch_bal,
-                lambda_Vsq,
-                lambda_Ssq,
-                lambda_ref_rr,
-                lambda_ref_ri]
+             lambda_Q_bal,
+             lambda_P_flow,
+             lambda_Q_flow,
+             lambda_Vsq,
+             lambda_Ssq,
+             lambda_Wdiag_rank,
+             lambda_Wcross_mag,
+             lambda_ref_diag_ii,
+             lambda_ref_diag_ri,
+             lambda_ref_ii,
+             lambda_ref_ir]
         """
         block_slices = self._get_constraint_block_slices()
         total_dim = max(end for _, (start, end, _) in block_slices.items())
@@ -774,31 +784,36 @@ class SympyACOPFModel:
         self.lambda_Q_bal = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_P_flow = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
         self.lambda_Q_flow = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
-        self.lambda_P_branch_bal = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
-        self.lambda_Q_branch_bal = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Vsq = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Ssq = vec[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
+        self.lambda_Wdiag_rank = vec[idx:idx + self.n_buses].tolist(); idx += self.n_buses
+        self.lambda_Wcross_mag = vec[idx:idx + self.n_cross_pairs].tolist(); idx += self.n_cross_pairs
+        self.lambda_ref_diag_ii = float(vec[idx]); idx += 1
+        self.lambda_ref_diag_ri = float(vec[idx]); idx += 1
         self.lambda_W_conj = []
-        self.lambda_W_diag_rank = []
+        self.lambda_W_diag_rank = list(self.lambda_Wdiag_rank)
         self.lambda_W_cross_rr = []
         self.lambda_W_cross_ri = []
         self.lambda_W_cross_ir = []
-        self.lambda_W_cross_ii = []
+        self.lambda_W_cross_ii = list(self.lambda_Wcross_mag)
         self.lambda_W_cross_mix = []
-        self.lambda_ref_rr = float(vec[idx]); idx += 1
-        self.lambda_ref_ri = float(vec[idx]); idx += 1
+        ref_pair_count = len(self._get_ref_line_pairs(self.bus_ids[0]))
+        self.lambda_ref_ii = vec[idx:idx + ref_pair_count].tolist(); idx += ref_pair_count
+        self.lambda_ref_ir = vec[idx:idx + ref_pair_count].tolist(); idx += ref_pair_count
 
         self.lambda_vec = [
             *self.lambda_P_bal,
             *self.lambda_Q_bal,
             *self.lambda_P_flow,
             *self.lambda_Q_flow,
-            *self.lambda_P_branch_bal,
-            *self.lambda_Q_branch_bal,
             *self.lambda_Vsq,
             *self.lambda_Ssq,
-            self.lambda_ref_rr,
-            self.lambda_ref_ri,
+            *self.lambda_Wdiag_rank,
+            *self.lambda_Wcross_mag,
+            self.lambda_ref_diag_ii,
+            self.lambda_ref_diag_ri,
+            *self.lambda_ref_ii,
+            *self.lambda_ref_ir,
         ]
 
                         
@@ -898,64 +913,68 @@ class SympyACOPFModel:
         # (3) Branch power-flow definition constraints
         # ---------------------------
         for a, (i, j) in enumerate(self.arc_collection):
-            g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+            g, b = self._branch_flow_coeffs(a)
             Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
 
             P_expr = (
-                g_self * (Wii_RR[i] + Wii_II[i])
-                - g_mut * (Wij_RR_ij + Wij_II_ij)
-                + b_mut * (Wij_RI_ij - Wij_IR_ij)
+                g * ((Wii_RR[i] + Wii_II[i]) - (Wij_RR_ij + Wij_II_ij))
+                + b * (Wij_RI_ij - Wij_IR_ij)
             )
             Q_expr = (
-                -b_self * (Wii_RR[i] + Wii_II[i])
-                + b_mut * (Wij_RR_ij + Wij_II_ij)
-                + g_mut * (Wij_RI_ij - Wij_IR_ij)
+                b * ((Wij_RR_ij + Wij_II_ij) - (Wii_RR[i] + Wii_II[i]))
+                + g * (Wij_RI_ij - Wij_IR_ij)
             )
 
             L += self.lambda_P_flow[a] * (P_ij[a] - P_expr)
             L += self.lambda_Q_flow[a] * (Q_ij[a] - Q_expr)
 
         # ---------------------------
-        # (4) Branch-sum power balance constraints
-        # ---------------------------
-        for i in range(nb):
-            PG_sum = 0
-            QG_sum = 0
-            if i in gen_sym_indices_by_bus_idx:
-                for gi in gen_sym_indices_by_bus_idx[i]:
-                    PG_sum += self.P_G[gi]
-                    QG_sum += self.Q_G[gi]
-
-            P_out = 0
-            Q_out = 0
-            for a, (ii, jj) in enumerate(self.arc_collection):
-                if ii == i:
-                    P_out += P_ij[a]
-                    Q_out += Q_ij[a]
-
-            L += self.lambda_P_branch_bal[i] * (PG_sum - self.P_D[i] - P_out)
-            L += self.lambda_Q_branch_bal[i] * (QG_sum - self.Q_D[i] - Q_out)
-
-        # ---------------------------
-        # (5) Voltage magnitude definition
+        # (4) Voltage magnitude definition
         # ---------------------------
         for i in range(nb):
             L += self.lambda_Vsq[i] * (V_sq[i] - (Wii_RR[i] + Wii_II[i]))
 
         # ---------------------------
-        # (6) Branch S_tot_sq definition
+        # (5) Branch S_tot_sq definition
         # ---------------------------
         for a in range(na):
             L += self.lambda_Ssq[a] * (S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
         # ---------------------------
-        # (7) Reference bus constraints: Wii_RR[ref] = 1, Wii_RI[ref] = 0
+        # (6) Diagonal lifted rank-1 consistency
         # ---------------------------
+        for i in range(nb):
+            h_Wdiag = Wii_RR[i] * Wii_II[i] - Wii_RI[i] ** 2
+            L += self.lambda_Wdiag_rank[i] * h_Wdiag
+
+        # ---------------------------
+        # (7) Cross lifted magnitude consistency
+        # ---------------------------
+        for p, (i, j) in enumerate(self.cross_pairs):
+            Wij_real = Wij_RR[p] + Wij_II[p]
+            Wij_imag = Wij_RI[p] - Wij_IR[p]
+            h_Wcross = Wij_real ** 2 + Wij_imag ** 2 - V_sq[i] * V_sq[j]
+            L += self.lambda_Wcross_mag[p] * h_Wcross
+
         if ref_bus_id is None:
             ref_bus_id = self.bus_ids[0]
+        self._validate_ref_bus_id(ref_bus_id)
         ref_idx = self.bus_index[ref_bus_id]
-        L += self.lambda_ref_rr * (self.Wii_RR[ref_idx] - 1.0)
-        L += self.lambda_ref_ri * self.Wii_RI[ref_idx]
+        ref_pairs = self._get_ref_line_pairs(ref_bus_id)
+
+        # ---------------------------
+        # (8) Reference bus diagonal constraints: Im(V_ref) = 0
+        # ---------------------------
+        L += self.lambda_ref_diag_ii * Wii_II[ref_idx]
+        L += self.lambda_ref_diag_ri * Wii_RI[ref_idx]
+
+        # ---------------------------
+        # (9) Reference bus lifted constraints on each line (ref, j)
+        # ---------------------------
+        for k, (i, j) in enumerate(ref_pairs):
+            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+            L += self.lambda_ref_ii[k] * Wij_II_ij
+            L += self.lambda_ref_ir[k] * Wij_IR_ij
 
         self.Lagrange = sp.expand(L)
         return self.Lagrange
@@ -1095,12 +1114,15 @@ class SympyACOPFModel:
         self.lambda_Q_bal = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_P_flow = lambda_new[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
         self.lambda_Q_flow = lambda_new[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
-        self.lambda_P_branch_bal = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
-        self.lambda_Q_branch_bal = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Vsq = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
         self.lambda_Ssq = lambda_new[idx:idx + self.n_arcs].tolist(); idx += self.n_arcs
-        self.lambda_ref_rr = float(lambda_new[idx]); idx += 1
-        self.lambda_ref_ri = float(lambda_new[idx]); idx += 1
+        self.lambda_Wdiag_rank = lambda_new[idx:idx + self.n_buses].tolist(); idx += self.n_buses
+        self.lambda_Wcross_mag = lambda_new[idx:idx + self.n_cross_pairs].tolist(); idx += self.n_cross_pairs
+        self.lambda_ref_diag_ii = float(lambda_new[idx]); idx += 1
+        self.lambda_ref_diag_ri = float(lambda_new[idx]); idx += 1
+        ref_pair_count = len(self._get_ref_line_pairs(self.bus_ids[0]))
+        self.lambda_ref_ii = lambda_new[idx:idx + ref_pair_count].tolist(); idx += ref_pair_count
+        self.lambda_ref_ir = lambda_new[idx:idx + ref_pair_count].tolist(); idx += ref_pair_count
 
         assert idx == len(lambda_new), "Failed to split lambda_new: length mismatch. Check whether the variable order is consistent with h_func."
 
@@ -1173,11 +1195,12 @@ class SympyACOPFModel:
         2) reactive power balance
         3) branch active flow definitions
         4) branch reactive flow definitions
-        5) branch-sum active power balance
-        6) branch-sum reactive power balance
-        7) voltage magnitude auxiliary constraints
-        8) branch thermal auxiliary constraints
-        9) reference bus lifted constraints
+        5) voltage magnitude auxiliary constraints
+        6) branch thermal auxiliary constraints
+        7) diagonal lifted consistency
+        8) cross lifted consistency
+        9) reference bus diagonal constraints
+        10) reference bus lifted constraints
         """
         nb = self.n_buses
         na = self.n_arcs
@@ -1198,7 +1221,9 @@ class SympyACOPFModel:
 
         if ref_bus_id is None:
             ref_bus_id = self.bus_ids[0]
+        self._validate_ref_bus_id(ref_bus_id)
         ref_idx = self.bus_index[ref_bus_id]
+        ref_pairs = self._get_ref_line_pairs(ref_bus_id)
 
         residuals = []
 
@@ -1232,41 +1257,22 @@ class SympyACOPFModel:
             residuals.append(cQ)
 
         for a, (i, j) in enumerate(self.arc_collection):
-            g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+            g, b = self._branch_flow_coeffs(a)
             Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
             P_expr = (
-                g_self * (Wii_RR[i] + Wii_II[i])
-                - g_mut * (Wij_RR_ij + Wij_II_ij)
-                + b_mut * (Wij_RI_ij - Wij_IR_ij)
+                g * ((Wii_RR[i] + Wii_II[i]) - (Wij_RR_ij + Wij_II_ij))
+                + b * (Wij_RI_ij - Wij_IR_ij)
             )
             residuals.append(P_ij[a] - P_expr)
 
         for a, (i, j) in enumerate(self.arc_collection):
-            g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+            g, b = self._branch_flow_coeffs(a)
             Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
             Q_expr = (
-                -b_self * (Wii_RR[i] + Wii_II[i])
-                + b_mut * (Wij_RR_ij + Wij_II_ij)
-                + g_mut * (Wij_RI_ij - Wij_IR_ij)
+                b * ((Wij_RR_ij + Wij_II_ij) - (Wii_RR[i] + Wii_II[i]))
+                + g * (Wij_RI_ij - Wij_IR_ij)
             )
             residuals.append(Q_ij[a] - Q_expr)
-
-        for i in range(nb):
-            PG_sum = 0
-            QG_sum = 0
-            for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
-                PG_sum += P_G[gi]
-                QG_sum += Q_G[gi]
-
-            P_out = 0
-            Q_out = 0
-            for a, (ii, jj) in enumerate(self.arc_collection):
-                if ii == i:
-                    P_out += P_ij[a]
-                    Q_out += Q_ij[a]
-
-            residuals.append(PG_sum - self.P_D[i] - P_out)
-            residuals.append(QG_sum - self.Q_D[i] - Q_out)
 
         for i in range(nb):
             residuals.append(V_sq[i] - (Wii_RR[i] + Wii_II[i]))
@@ -1274,8 +1280,23 @@ class SympyACOPFModel:
         for a in range(na):
             residuals.append(S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
-        residuals.append(Wii_RR[ref_idx] - 1.0)
+        for i in range(nb):
+            residuals.append(Wii_RR[i] * Wii_II[i] - Wii_RI[i] ** 2)
+
+        for p, (i, j) in enumerate(self.cross_pairs):
+            Wij_real = Wij_RR[p] + Wij_II[p]
+            Wij_imag = Wij_RI[p] - Wij_IR[p]
+            residuals.append(Wij_real ** 2 + Wij_imag ** 2 - V_sq[i] * V_sq[j])
+
+        residuals.append(Wii_II[ref_idx])
         residuals.append(Wii_RI[ref_idx])
+
+        for i, j in ref_pairs:
+            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+            residuals.append(Wij_II_ij)
+        for i, j in ref_pairs:
+            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+            residuals.append(Wij_IR_ij)
         return residuals
 
     def build_h_func(self, ref_bus_id=None):
@@ -1287,7 +1308,9 @@ class SympyACOPFModel:
         na = self.n_arcs
         if ref_bus_id is None:
             ref_bus_id = self.bus_ids[0]
+        self._validate_ref_bus_id(ref_bus_id)
         ref_idx = self.bus_index[ref_bus_id]
+        ref_pairs = self._get_ref_line_pairs(ref_bus_id)
 
         def h_func(x):
             vals = self._unpack_x(x)
@@ -1338,41 +1361,22 @@ class SympyACOPFModel:
                 residuals.append(cQ)
 
             for a, (i, j) in enumerate(self.arc_collection):
-                g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+                g, b = self._branch_flow_coeffs(a)
                 Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
                 P_expr = (
-                    g_self * (Wii_RR[i] + Wii_II[i])
-                    - g_mut * (Wij_RR_ij + Wij_II_ij)
-                    + b_mut * (Wij_RI_ij - Wij_IR_ij)
+                    g * ((Wii_RR[i] + Wii_II[i]) - (Wij_RR_ij + Wij_II_ij))
+                    + b * (Wij_RI_ij - Wij_IR_ij)
                 )
                 residuals.append(P_ij[a] - P_expr)
 
             for a, (i, j) in enumerate(self.arc_collection):
-                g_self, b_self, g_mut, b_mut = self._branch_flow_coeffs(a)
+                g, b = self._branch_flow_coeffs(a)
                 Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
                 Q_expr = (
-                    -b_self * (Wii_RR[i] + Wii_II[i])
-                    + b_mut * (Wij_RR_ij + Wij_II_ij)
-                    + g_mut * (Wij_RI_ij - Wij_IR_ij)
+                    b * ((Wij_RR_ij + Wij_II_ij) - (Wii_RR[i] + Wii_II[i]))
+                    + g * (Wij_RI_ij - Wij_IR_ij)
                 )
                 residuals.append(Q_ij[a] - Q_expr)
-
-            for i in range(nb):
-                PG_sum = 0.0
-                QG_sum = 0.0
-                for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
-                    PG_sum += P_G[gi]
-                    QG_sum += Q_G[gi]
-
-                P_out = 0.0
-                Q_out = 0.0
-                for a, (ii, jj) in enumerate(self.arc_collection):
-                    if ii == i:
-                        P_out += P_ij[a]
-                        Q_out += Q_ij[a]
-
-                residuals.append(PG_sum - self.P_D[i] - P_out)
-                residuals.append(QG_sum - self.Q_D[i] - Q_out)
 
             for i in range(nb):
                 residuals.append(V_sq[i] - (Wii_RR[i] + Wii_II[i]))
@@ -1380,8 +1384,23 @@ class SympyACOPFModel:
             for a in range(na):
                 residuals.append(S_tot_sq[a] - (P_ij[a] ** 2 + Q_ij[a] ** 2))
 
-            residuals.append(Wii_RR[ref_idx] - 1.0)
+            for i in range(nb):
+                residuals.append(Wii_RR[i] * Wii_II[i] - Wii_RI[i] ** 2)
+
+            for p, (i, j) in enumerate(self.cross_pairs):
+                Wij_real = Wij_RR[p] + Wij_II[p]
+                Wij_imag = Wij_RI[p] - Wij_IR[p]
+                residuals.append(Wij_real ** 2 + Wij_imag ** 2 - V_sq[i] * V_sq[j])
+
+            residuals.append(Wii_II[ref_idx])
             residuals.append(Wii_RI[ref_idx])
+
+            for i, j in ref_pairs:
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                residuals.append(Wij_II_ij)
+            for i, j in ref_pairs:
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                residuals.append(Wij_IR_ij)
             return np.asarray(residuals, dtype=float)
 
         return h_func
