@@ -1,0 +1,128 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-04-17 11:54:41
+Number of buses: 2
+Number of lines: 1
+Number of generators: 1
+Solver used: QHD with Gurobi solver
+========================================================================================================================
+
+========================================================================================================================
+Update time: 2026-04-17 11:54:42
+Iteration: 0
+rho: 50
+alpha: 0.8
+objective_value: 0
+feasible: False
+max_abs_h: 7.765029999336e-02
+l2_norm_h: 1.188295553234e-01
+lambda_inf_norm: 6.212023999468e-02
+lambda_l2_norm: 9.506364425870e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000000	-0.000000	1.000000	0.139287	0.057578	0.000000	0.000000
+2	0.975645	-0.037094	0.975040	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.179305	-0.260027	0.057578	-0.100182	-0.080721	-0.042604
+
+Summary
+Total Pg           : 0.139287
+Total Qg           : 0.057578
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.080721
+Total Reactive Loss: -0.042604
+Total Load Supplied: 73.336266%
+
+========================================================================================================================
+Update time: 2026-04-17 11:54:42
+Iteration: 1
+rho: 50
+alpha: 0.8
+objective_value: 0
+feasible: False
+max_abs_h: 4.021672151383e-02
+l2_norm_h: 7.959196987745e-02
+lambda_inf_norm: 6.666114390534e-02
+lambda_l2_norm: 1.458197991364e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000001	-0.000000	1.000001	0.143452	0.070501	0.000000	0.000000
+2	0.973122	-0.037045	0.973844	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.182834	-0.259783	0.070501	-0.099698	-0.076950	-0.029197
+
+Summary
+Total Pg           : 0.143452
+Total Qg           : 0.070501
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.076950
+Total Reactive Loss: -0.029197
+Total Load Supplied: 73.467349%
+
+========================================================================================================================
+Update time: 2026-04-17 11:54:42
+Iteration: 2
+rho: 50
+alpha: 0.8
+objective_value: 0
+feasible: False
+max_abs_h: 3.958926525497e-02
+l2_norm_h: 7.833238708390e-02
+lambda_inf_norm: 9.829247122766e-02
+lambda_l2_norm: 2.029916222396e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000001	-0.000000	1.000001	0.146000	0.070547	0.000000	0.000000
+2	0.973055	-0.037282	0.973789	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.184752	-0.260411	0.070547	-0.099652	-0.075659	-0.029104
+
+Summary
+Total Pg           : 0.146000
+Total Qg           : 0.070547
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.075659
+Total Reactive Loss: -0.029104
+Total Load Supplied: 73.886407%
+
+========================================================================================================================
+Update time: 2026-04-17 11:54:43
+Iteration: 3
+rho: 50
+alpha: 0.8
+objective_value: 0
+feasible: False
+max_abs_h: 3.896127187395e-02
+l2_norm_h: 7.708493531804e-02
+lambda_inf_norm: 1.294220451078e-01
+lambda_l2_norm: 2.617205237786e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000001	0.000000	1.000001	0.148522	0.070668	0.000000	0.000000
+2	0.972974	-0.037514	0.973718	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.186654	-0.261039	0.070668	-0.099657	-0.074385	-0.028989
+
+Summary
+Total Pg           : 0.148522
+Total Qg           : 0.070668
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.074385
+Total Reactive Loss: -0.028989
+Total Load Supplied: 74.302286%
+

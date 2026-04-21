@@ -699,6 +699,8 @@ class SympyACOPFModel:
         Q_ij = self.Q_ij
         S_tot_sq = self.S_tot_sq
 
+        G_mat = self.G_mat
+        B_mat = self.B_mat
         arc_collection = self.arc_collection
 
         P_D = self.P_D
@@ -706,24 +708,34 @@ class SympyACOPFModel:
 
         # map bus index -> generator sympy index (or None)
         gen_sym_indices_by_bus_idx = {self.bus_index[bid]: gids for bid, gids in self.gen_indices_by_bus.items()}
-        outgoing_arc_indices_by_bus = {i: [] for i in buses_range}
-        for a, (i, _) in enumerate(arc_collection):
-            outgoing_arc_indices_by_bus[i].append(a)
 
         # ---------------------------
         # (1) Active power balance constraints
         # ---------------------------
         for i in buses_range:
+            ViR = V_R[i]
+            ViI = V_I[i]
+
+            # sum_j ( G_ij VjR - B_ij VjI ), sum_j ( G_ij VjI + B_ij VjR )
+            sum_GR_BI = 0
+            sum_GI_BR = 0
+            for j in buses_range:
+                VjR = V_R[j]
+                VjI = V_I[j]
+                Gij = G_mat[i, j]
+                Bij = B_mat[i, j]
+                sum_GR_BI += Gij * VjR - Bij * VjI
+                sum_GI_BR += Gij * VjI + Bij * VjR
+
+            P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
+
+            # if bus i has generator
             PG_sum = 0
             if i in gen_sym_indices_by_bus_idx:
                 for gi in gen_sym_indices_by_bus_idx[i]:
                     PG_sum += self.P_G[gi]
 
-            P_out_sum = 0
-            for a in outgoing_arc_indices_by_bus[i]:
-                P_out_sum += P_ij[a]
-
-            h_P = PG_sum - P_D[i] - P_out_sum
+            h_P = PG_sum - P_D[i] - P_inj
 
             L += self.lambda_P_bal[i] * h_P
 
@@ -731,16 +743,27 @@ class SympyACOPFModel:
         # (2) Reactive power balance constraints
         # ---------------------------
         for i in buses_range:
+            ViR = V_R[i]
+            ViI = V_I[i]
+
+            sum_GR_BI = 0
+            sum_GI_BR = 0
+            for j in buses_range:
+                VjR = V_R[j]
+                VjI = V_I[j]
+                Gij = G_mat[i, j]
+                Bij = B_mat[i, j]
+                sum_GR_BI += Gij * VjR - Bij * VjI
+                sum_GI_BR += Gij * VjI + Bij * VjR
+
+            Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
+
             QG_sum = 0
             if i in gen_sym_indices_by_bus_idx:
                 for gi in gen_sym_indices_by_bus_idx[i]:
                     QG_sum += self.Q_G[gi]
 
-            Q_out_sum = 0
-            for a in outgoing_arc_indices_by_bus[i]:
-                Q_out_sum += Q_ij[a]
-
-            h_Q = QG_sum - Q_D[i] - Q_out_sum
+            h_Q = QG_sum - Q_D[i] - Q_inj
 
             L += self.lambda_Q_bal[i] * h_Q
 
@@ -817,16 +840,18 @@ class SympyACOPFModel:
         S_tot_sq = self.S_tot_sq
 
         # data aliases
+        G_mat = self.G_mat
+        B_mat = self.B_mat
         arc_collection = self.arc_collection
 
         P_D = self.P_D
         Q_D = self.Q_D
 
-        # bus -> generator symbol indices and outgoing arcs
-        gen_sym_indices_by_bus_idx = {self.bus_index[bid]: gids for bid, gids in self.gen_indices_by_bus.items()}
-        outgoing_arc_indices_by_bus = {i: [] for i in buses_range}
-        for a, (i, _) in enumerate(arc_collection):
-            outgoing_arc_indices_by_bus[i].append(a)
+        # bus -> gen 索引 (0..ng-1)
+        gen_sym_index_by_bus_idx = {}
+        for bus_id, gen_idx in self.gen_index_by_bus.items():
+            bus_idx = self.bus_index[bus_id]
+            gen_sym_index_by_bus_idx[bus_idx] = gen_idx
 
         if ref_bus_id is None:
             ref_bus_id = self.bus_ids[0]
@@ -836,31 +861,51 @@ class SympyACOPFModel:
 
         # 1) Active power balance c_i^P
         for i in buses_range:
-            PG_sum = 0
-            if i in gen_sym_indices_by_bus_idx:
-                for gi in gen_sym_indices_by_bus_idx[i]:
-                    PG_sum += P_G[gi]
+            ViR = V_R[i]
+            ViI = V_I[i]
 
-            P_out_sum = 0
-            for a in outgoing_arc_indices_by_bus[i]:
-                P_out_sum += P_ij[a]
+            sum_GR_BI = 0
+            sum_GI_BR = 0
+            for j in buses_range:
+                VjR = V_R[j]
+                VjI = V_I[j]
+                Gij = G_mat[i, j]
+                Bij = B_mat[i, j]
+                sum_GR_BI += Gij * VjR - Bij * VjI
+                sum_GI_BR += Gij * VjI + Bij * VjR
 
-            cP = PG_sum - P_D[i] - P_out_sum
+            P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
+
+            if i in gen_sym_index_by_bus_idx:
+                gi = gen_sym_index_by_bus_idx[i]
+                cP = P_G[gi] - P_D[i] - P_inj
+            else:
+                cP = - P_D[i] - P_inj
 
             residuals.append(cP)
 
         # 2) Reactive power balance c_i^Q
         for i in buses_range:
-            QG_sum = 0
-            if i in gen_sym_indices_by_bus_idx:
-                for gi in gen_sym_indices_by_bus_idx[i]:
-                    QG_sum += Q_G[gi]
+            ViR = V_R[i]
+            ViI = V_I[i]
 
-            Q_out_sum = 0
-            for a in outgoing_arc_indices_by_bus[i]:
-                Q_out_sum += Q_ij[a]
+            sum_GR_BI = 0
+            sum_GI_BR = 0
+            for j in buses_range:
+                VjR = V_R[j]
+                VjI = V_I[j]
+                Gij = G_mat[i, j]
+                Bij = B_mat[i, j]
+                sum_GR_BI += Gij * VjR - Bij * VjI
+                sum_GI_BR += Gij * VjI + Bij * VjR
 
-            cQ = QG_sum - Q_D[i] - Q_out_sum
+            Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
+
+            if i in gen_sym_index_by_bus_idx:
+                gi = gen_sym_index_by_bus_idx[i]
+                cQ = Q_G[gi] - Q_D[i] - Q_inj
+            else:
+                cQ = - Q_D[i] - Q_inj
 
             residuals.append(cQ)
 
@@ -1033,12 +1078,16 @@ class SympyACOPFModel:
         ng = self.n_gens
         buses_range = range(nb)
 
-        # bus -> generator indices and outgoing arcs
-        gen_sym_indices_by_bus_idx = {self.bus_index[bid]: gids for bid, gids in self.gen_indices_by_bus.items()}
+        # bus -> gen index mapping (in 0..ng-1)
+        gen_sym_index_by_bus_idx = {}
+        for bus_id, gen_idx in self.gen_index_by_bus.items():
+            bus_idx = self.bus_index[bus_id]
+            gen_sym_index_by_bus_idx[bus_idx] = gen_idx
+
+        G_mat = self.G_mat
+        B_mat = self.B_mat
         arc_collection = self.arc_collection
-        outgoing_arc_indices_by_bus = {i: [] for i in buses_range}
-        for a, (i, _) in enumerate(arc_collection):
-            outgoing_arc_indices_by_bus[i].append(a)
+        
 
         P_D = self.P_D
         Q_D = self.Q_D
@@ -1073,31 +1122,51 @@ class SympyACOPFModel:
 
             # 1) Active power balance c_i^P
             for i in buses_range:
-                PG_sum = 0.0
-                if i in gen_sym_indices_by_bus_idx:
-                    for gi in gen_sym_indices_by_bus_idx[i]:
-                        PG_sum += P_G[gi]
+                ViR = V_R[i]
+                ViI = V_I[i]
 
-                P_out_sum = 0.0
-                for a in outgoing_arc_indices_by_bus[i]:
-                    P_out_sum += P_ij[a]
+                sum_GR_BI = 0.0
+                sum_GI_BR = 0.0
+                for j in buses_range:
+                    VjR = V_R[j]
+                    VjI = V_I[j]
+                    Gij = G_mat[i, j]
+                    Bij = B_mat[i, j]
+                    sum_GR_BI += Gij * VjR - Bij * VjI
+                    sum_GI_BR += Gij * VjI + Bij * VjR
 
-                cP = PG_sum - P_D[i] - P_out_sum
+                P_inj = ViR * sum_GR_BI + ViI * sum_GI_BR
+
+                if i in gen_sym_index_by_bus_idx:
+                    gi = gen_sym_index_by_bus_idx[i]
+                    cP = P_G[gi] - P_D[i] - P_inj
+                else:
+                    cP = - P_D[i] - P_inj
 
                 residuals.append(cP)
 
             # 2) Reactive power balance c_i^Q
             for i in buses_range:
-                QG_sum = 0.0
-                if i in gen_sym_indices_by_bus_idx:
-                    for gi in gen_sym_indices_by_bus_idx[i]:
-                        QG_sum += Q_G[gi]
+                ViR = V_R[i]
+                ViI = V_I[i]
 
-                Q_out_sum = 0.0
-                for a in outgoing_arc_indices_by_bus[i]:
-                    Q_out_sum += Q_ij[a]
+                sum_GR_BI = 0.0
+                sum_GI_BR = 0.0
+                for j in buses_range:
+                    VjR = V_R[j]
+                    VjI = V_I[j]
+                    Gij = G_mat[i, j]
+                    Bij = B_mat[i, j]
+                    sum_GR_BI += Gij * VjR - Bij * VjI
+                    sum_GI_BR += Gij * VjI + Bij * VjR
 
-                cQ = QG_sum - Q_D[i] - Q_out_sum
+                Q_inj = ViI * sum_GR_BI - ViR * sum_GI_BR
+
+                if i in gen_sym_index_by_bus_idx:
+                    gi = gen_sym_index_by_bus_idx[i]
+                    cQ = Q_G[gi] - Q_D[i] - Q_inj
+                else:
+                    cQ = - Q_D[i] - Q_inj
 
                 residuals.append(cQ)
 

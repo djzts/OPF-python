@@ -1,0 +1,38 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-04-14 20:49:14
+Number of buses: 2
+Number of lines: 1
+Number of generators: 1
+Solver used: QHD with Gurobi solver
+========================================================================================================================
+
+========================================================================================================================
+Update time: 2026-04-14 20:49:15
+Iteration: 0
+rho: 20
+alpha: 0.0005
+objective_value: 0
+feasible: False
+max_abs_h: 1.314860815300e-01
+l2_norm_h: 1.937248237951e-01
+lambda_inf_norm: 6.574304076501e-05
+lambda_l2_norm: 9.686241189753e-05
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.011556	0.009675	1.005761	0.213020	0.065422	0.000000	0.000000
+2	0.994231	-0.019158	1.002084	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.084415	-0.084693	0.015422	-0.037076	-0.000278	-0.021654
+
+Summary
+Total Pg           : 0.213020
+Total Qg           : 0.065422
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.000278
+Total Reactive Loss: -0.021654
+Total Load Supplied: 71.099119%
+
