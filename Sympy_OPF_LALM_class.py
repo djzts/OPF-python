@@ -500,8 +500,8 @@ class SympyACOPFModel:
 
         # Bus voltages: V_R, V_I
         self.V_R = sp.symbols(f'V_R0:{nb}')
-        # simple rectangular bounds derived from magnitude in [0.9, 1.1]
-        V_R_bound = [[0, 1.1] for _ in range(nb)]
+        # Match Pyomo_OPF_gurobi.ipynb rectangular voltage-real bounds.
+        V_R_bound = [[-1.1, 1.1] for _ in range(nb)]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
             self.V_R, V_R_bound, self.variable_list, self.Var_bound_list
         )
@@ -781,8 +781,8 @@ class SympyACOPFModel:
             # default: first bus id
             ref_bus_id = self.bus_ids[0]
         ref_idx = self.bus_index[ref_bus_id]
-        h_ref_vi = 20 * V_I[ref_idx]
-        h_ref_vr = 20 * (V_R[ref_idx] - 1.0)
+        h_ref_vi = V_I[ref_idx]
+        h_ref_vr = V_R[ref_idx] - 1.0
         L += self.lambda_ref_VI * h_ref_vi
         L += self.lambda_ref_VR * h_ref_vr
 
@@ -889,8 +889,8 @@ class SympyACOPFModel:
             residuals.append(cS)
 
         # 6) Reference bus constraints
-        residuals.append(20 * V_I[ref_idx])
-        residuals.append(20 * (V_R[ref_idx] - 1.0))
+        residuals.append(V_I[ref_idx])
+        residuals.append(V_R[ref_idx] - 1.0)
 
         return residuals
 
@@ -1126,8 +1126,8 @@ class SympyACOPFModel:
                 residuals.append(cS)
 
             # 6) Reference bus constraints
-            residuals.append(20 * V_I[ref_idx])
-            residuals.append(20 * (V_R[ref_idx] - 1.0))
+            residuals.append(V_I[ref_idx])
+            residuals.append(V_R[ref_idx] - 1.0)
 
             return np.asarray(residuals, dtype=float)
 

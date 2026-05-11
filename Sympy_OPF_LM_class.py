@@ -405,12 +405,13 @@ class SympyACOPFModel:
             b_cost.append(gdata[6])
             c_cost.append(gdata[7])
 
-        # objective
+        # objective: use only f(x) = sum(a*Pg^2 + b*Pg + c)
         obj = 0
         for gi in range(ng):
             PGi = self.P_G[gi]
-            obj += 0.5 * a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
+            obj += a_cost[gi] * PGi ** 2 + b_cost[gi] * PGi + c_cost[gi]
 
+        self.objective = obj
         L = obj
 
         # Convenience aliases
