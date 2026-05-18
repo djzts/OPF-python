@@ -108,7 +108,7 @@ def solve_subproblem_qhd(lagrangian, variable_list, var_bound_list, config: Solv
 
     if config.qhd_solver == "simbi":
         qhd_model.simbi_setup(
-            resolution=32,
+            resolution=16,
             agents=1024,
             max_steps=5000,
             embedding_scheme="unary",
