@@ -24,24 +24,34 @@ from Sympy_OPF_LALM_class import (
 @dataclass
 class SolverConfig:
     n_bus: int = 5
-    max_outer: int = 2200
+    max_outer: int = 900
     tol: float = 1e-4
     option: int = 1  # 1: QHD, 2: Gurobi
     qhd_solver: str = "simbi"  # simbi / openjij / gurobi
     rho: float = 80.0
-    alpha: float = 8
-    mu_prox: float = 0.0
+    alpha: float = 5.0
+    mu_prox: float = 2e-2
     alpha_mode: str = "adaptive"  # adaptive / fixed
-    alpha_min: float = 2e-2
-    alpha_max: float = 20.0
+    alpha_min: float = 1e-2
+    alpha_max: float = 8.0
     rho_min: float = 20.0
-    rho_max: float = 160.0
+    rho_max: float = 120.0
     plateau_window: int = 4
     worsen_window: int = 2
     stable_window: int = 4
     improve_tol: float = 0.02
     worsen_tol: float = 0.03
     qhd_refine: bool = True
+    simbi_resolution: int = 20
+    simbi_shots: int = 128
+    simbi_agents: int = 2048
+    simbi_max_steps: int = 8000
+    simbi_seed: int | None = 42
+    simbi_best_only: bool = False
+    simbi_ballistic: bool = False
+    simbi_heated: bool | None = None
+    early_stop_patience: int = 300
+    return_best_solution: bool = True
     print_to_console: bool = True
     log_folder: str = "logs"
 
@@ -88,6 +98,14 @@ def validate_config(config: SolverConfig) -> None:
         raise ValueError("rho must be positive.")
     if config.option not in {1, 2}:
         raise ValueError("option must be 1 (QHD) or 2 (Gurobi).")
+    if config.qhd_solver not in {"simbi", "openjij", "gurobi"}:
+        raise ValueError("qhd_solver must be 'simbi', 'openjij', or 'gurobi'.")
+    if config.max_outer <= 0:
+        raise ValueError("max_outer must be positive.")
+    if config.simbi_resolution <= 0:
+        raise ValueError("simbi_resolution must be positive.")
+    if config.simbi_shots <= 0:
+        raise ValueError("simbi_shots must be positive.")
 
 
 def validate_bounds(variable_list, var_bound_list) -> None:
@@ -108,12 +126,16 @@ def solve_subproblem_qhd(lagrangian, variable_list, var_bound_list, config: Solv
 
     if config.qhd_solver == "simbi":
         qhd_model.simbi_setup(
-            resolution=16,
-            agents=1024,
-            max_steps=5000,
+            resolution=config.simbi_resolution,
+            shots=config.simbi_shots,
+            agents=config.simbi_agents,
+            max_steps=config.simbi_max_steps,
             embedding_scheme="unary",
             post_processing_method="TNC",
-            best_only=False,
+            best_only=config.simbi_best_only,
+            seed=config.simbi_seed,
+            ballistic=config.simbi_ballistic,
+            heated=config.simbi_heated,
             verbose=True,
         )
     elif config.qhd_solver == "openjij":
@@ -272,6 +294,17 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
     stable_count = 0
     prev_norm_h = None
     prev_lambda_inf = None
+    best_record = {
+        "iter": None,
+        "metric": float("inf"),
+        "x": None,
+        "objective": None,
+        "h_x": None,
+        "lambda_vec": None,
+        "feasible": False,
+        "rho": None,
+        "alpha": None,
+    }
 
     for k in range(config.max_outer):
         if config.alpha_mode == "fixed":
@@ -336,6 +369,25 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
             }
         )
 
+        if norm_h < best_record["metric"] - 1e-12:
+            best_record.update(
+                {
+                    "iter": k,
+                    "metric": norm_h,
+                    "x": x_new.copy(),
+                    "objective": objective_value,
+                    "h_x": np.asarray(h_val, dtype=float).copy(),
+                    "lambda_vec": np.asarray(lambda_new, dtype=float).copy(),
+                    "feasible": check_flag,
+                    "rho": float(rho),
+                    "alpha": float(alpha),
+                }
+            )
+            print(
+                f"[best] iter={k}, l2_norm_h={norm_h:.6e}, "
+                f"objective={objective_value:.9g}"
+            )
+
         log_file = PrintQHDACOPFResults(
             model,
             x_new,
@@ -362,10 +414,52 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
             xk = x_new.copy()
             break
 
+        if (
+            config.early_stop_patience > 0
+            and best_record["iter"] is not None
+            and k - best_record["iter"] >= config.early_stop_patience
+        ):
+            print(
+                "\nEarly stop: no residual improvement for "
+                f"{config.early_stop_patience} iterations."
+            )
+            xk = (
+                best_record["x"].copy()
+                if config.return_best_solution and best_record["x"] is not None
+                else x_new.copy()
+            )
+            break
+
         xk = x_new.copy()
 
     print("\n===== End Loop =====\n")
     print("Final log file:", log_file)
+    if best_record["iter"] is not None:
+        print(
+            "Best residual iteration:",
+            best_record["iter"],
+            f"objective={best_record['objective']:.9g}",
+            f"l2_norm_h={best_record['metric']:.6e}",
+            f"rho={best_record['rho']:.6g}",
+            f"alpha={best_record['alpha']:.6g}",
+        )
+        log_file = PrintQHDACOPFResults(
+            model,
+            best_record["x"],
+            log_file=log_file,
+            iteration=best_record["iter"],
+            folder=config.log_folder,
+            print_to_console=False,
+            rho=best_record["rho"],
+            alpha=best_record["alpha"],
+            h_x=best_record["h_x"],
+            lambda_vec=best_record["lambda_vec"],
+            objective_value=best_record["objective"],
+            feasibility=best_record["feasible"],
+            note="best_iteration_by_l2_norm_h",
+        )
+        if config.return_best_solution:
+            xk = best_record["x"].copy()
     save_objective_plot(objective_history, log_file, config.log_folder)
 
     return {
@@ -373,6 +467,7 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
         "log_file": log_file,
         "objective_history": objective_history,
         "metric_history": metric_history,
+        "best_record": best_record,
         "final_alpha": alpha,
         "final_rho": rho,
     }
