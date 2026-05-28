@@ -23,7 +23,7 @@ from Sympy_OPF_LALM_class import (
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 5
+    n_bus: int = 3
     max_outer: int = 900
     tol: float = 1e-4
     option: int = 1  # 1: QHD, 2: Gurobi
@@ -42,10 +42,10 @@ class SolverConfig:
     improve_tol: float = 0.02
     worsen_tol: float = 0.03
     qhd_refine: bool = True
-    simbi_resolution: int = 20
+    simbi_resolution: int = 14
     simbi_shots: int = 128
-    simbi_agents: int = 2048
-    simbi_max_steps: int = 8000
+    simbi_agents: int = 4096
+    simbi_max_steps: int = 1300
     simbi_seed: int | None = 42
     simbi_best_only: bool = False
     simbi_ballistic: bool = False
@@ -53,6 +53,7 @@ class SolverConfig:
     early_stop_patience: int = 300
     return_best_solution: bool = True
     print_to_console: bool = True
+    show_plot: bool = True
     log_folder: str = "logs"
 
 
@@ -240,7 +241,9 @@ def adapt_alpha_rho(
     return alpha, rho, stable_count, plateau_count, worsen_count
 
 
-def save_objective_plot(objective_history, log_file: str, log_folder: str) -> None:
+def save_objective_plot(
+    objective_history, log_file: str, log_folder: str, show: bool = True
+) -> None:
     valid_history = [item for item in objective_history if np.isfinite(item["objective"])]
     if not valid_history:
         print("Objective history plot skipped: no valid objective values recorded.")
@@ -259,8 +262,10 @@ def save_objective_plot(objective_history, log_file: str, log_folder: str) -> No
 
     plot_path = Path(log_folder) / f"{Path(log_file).stem}-Obj.png"
     fig.savefig(plot_path, dpi=200, bbox_inches="tight")
-    plt.close(fig)
     print("Objective history plot:", plot_path)
+    if show:
+        plt.show()
+    plt.close(fig)
 
 
 def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
@@ -460,7 +465,12 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
         )
         if config.return_best_solution:
             xk = best_record["x"].copy()
-    save_objective_plot(objective_history, log_file, config.log_folder)
+    save_objective_plot(
+        objective_history,
+        log_file,
+        config.log_folder,
+        show=config.show_plot,
+    )
 
     return {
         "x": xk,
