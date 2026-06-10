@@ -826,7 +826,7 @@ class SympyACOPFModel:
             a = self.gens[gid][5]
             b = self.gens[gid][6]
             c = self.gens[gid][7]
-            obj += 0.5 * a * self.P_G[gi] ** 2 + b * self.P_G[gi] + c
+            obj += a * self.P_G[gi] ** 2 + b * self.P_G[gi] + c
         self.objective = obj
         return obj
 
@@ -1490,6 +1490,14 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
 
     gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
 
+    if objective_value is None and hasattr(model, "objective"):
+        try:
+            objective_value = float(sp.N(model.objective.subs({
+                sym: val for sym, val in zip(model.variable_list, x)
+            })))
+        except Exception:
+            objective_value = None
+
     out = []
     out.append("=" * 120)
     out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -1644,6 +1652,14 @@ def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, 
     V_mag = voltage_post["V_mag"]
 
     gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
+
+    if objective_value is None and hasattr(model, "objective"):
+        try:
+            objective_value = float(sp.N(model.objective.subs({
+                sym: val for sym, val in zip(model.variable_list, x)
+            })))
+        except Exception:
+            objective_value = None
 
     out = []
     out.append("=" * 120)
