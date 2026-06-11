@@ -1,0 +1,311 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{cite}
+
+\newcommand{\needref}[1]{\textcolor{red}{[#1]}}
+\newcommand{\RR}{\mathrm{RR}}
+\newcommand{\RI}{\mathrm{RI}}
+\newcommand{\IR}{\mathrm{IR}}
+\newcommand{\II}{\mathrm{II}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\sq}{\mathrm{sq}}
+\graphicspath{{../logs/}}
+
+\title{Lifted Rectangular AC Optimal Power Flow via Linearized Augmented Lagrangian and Quantum Hamiltonian Descent}
+
+\author{Author Name(s)
+\thanks{The authors are with the Department/Institute Name, University/Organization Name. E-mail: author@example.com.}
+\thanks{This manuscript is a working draft. Red bracketed text indicates locations where references should be inserted before submission.}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+AC optimal power flow (ACOPF) is a nonconvex network optimization problem whose equality constraints are difficult to encode directly in Ising or QUBO forms used by quantum and quantum-inspired optimizers \needref{ACOPF nonconvexity and OPF survey references}. This paper develops a lifted rectangular-coordinate ACOPF framework in which active and reactive power balance, branch-flow definitions, voltage-magnitude equations, thermal-flow auxiliaries, and reference-bus conditions are collected in an augmented Lagrangian. To preserve a quadratic subproblem structure, nonlinear lifted-consistency and thermal auxiliary constraints are locally linearized at each outer iteration, while affine constraints in the lifted variables are retained exactly. The resulting box-constrained quadratic subproblems are solved with a Quantum Hamiltonian Descent (QHD) implementation using a Simulated Bifurcation backend, unary discretization, spin decoding, and local continuous refinement. Preliminary Simbi-only comparisons on 5-, 9-, and 14-bus systems are reported against standard-answer files in the repository. The 14-bus run reaches a maximum residual of $1.05\times 10^{-4}$, while the selected 5- and 9-bus runs expose the current feasibility gap that remains after QHD/Simbi sampling and local refinement. The current results are intended as a modeling and algorithmic baseline rather than a claim of quantum advantage \needref{QHD, quantum annealing, and simulated bifurcation references}.
+\end{abstract}
+
+\begin{IEEEkeywords}
+AC optimal power flow, augmented Lagrangian method, rectangular coordinates, lifted formulation, QUBO, Ising optimization, Quantum Hamiltonian Descent, simulated bifurcation.
+\end{IEEEkeywords}
+
+\section{Introduction}
+\IEEEPARstart{A}{C} optimal power flow (ACOPF) is a central optimization problem in electric power system operation. It minimizes generation cost subject to Kirchhoff-law power balance, nonlinear AC branch-flow equations, generator limits, voltage limits, and thermal line limits. The nonconvexity of ACOPF makes large-scale and globally reliable solution challenging, motivating convex relaxations, nonlinear programming algorithms, decomposition methods, and learning-assisted or physics-informed variants \needref{classical ACOPF algorithms and relaxations}.
+
+Quantum and quantum-inspired optimization methods offer another possible computational route: if an OPF subproblem can be written as a quadratic Hamiltonian or QUBO, it can be submitted to annealing-style samplers, simulated bifurcation engines, or Hamiltonian-descent solvers \needref{QUBO/Ising optimization and power-system quantum optimization references}. The difficulty is that the native ACOPF equations are not immediately quadratic in a convenient binary encoding. Direct penalty formulations can become high order, poorly scaled, or too constraint-heavy for current hardware and simulators. A practical formulation must therefore separate the power-system modeling issue from the solver-encoding issue.
+
+This work studies that separation. We use a lifted rectangular-coordinate ACOPF model in which voltage products are represented by auxiliary variables. In this lifted space, many network equations become affine. The remaining nonlinear consistency equations are handled through a linearized augmented Lagrangian method (ALM), so that each outer iteration produces a quadratic, box-constrained subproblem. This subproblem is then passed to a QHD-style interface and solved with the local Simulated Bifurcation backend implemented in the adjusted \texttt{qhdopt} code.
+
+The main contributions are as follows.
+\begin{itemize}
+    \item A sparse lifted rectangular ACOPF formulation that keeps only the voltage-product variables required by branch-flow equations and nonzero admittance entries.
+    \item A linearized ALM construction that preserves a quadratic subproblem by linearizing only nonlinear residual blocks, while retaining affine physical equations exactly.
+    \item A QHD/Simbi implementation path that maps each boxed quadratic subproblem to a unary-encoded spin model and decodes samples back to continuous OPF variables.
+    \item Preliminary numerical evidence, based only on Simbi runs, on 5-, 9-, and 14-bus systems, including comparison with repository standard-answer files.
+\end{itemize}
+
+\section{Related Work}
+Classical ACOPF methods include nonlinear interior-point and sequential quadratic programming solvers, semidefinite and second-order-cone relaxations, moment relaxations, convex envelopes, and decomposition methods \needref{interior-point OPF, SDP/SOC OPF relaxations, moment relaxation references}. These methods are mature and remain the appropriate baseline for operational studies. The present paper does not replace those solvers; instead, it constructs an OPF subproblem family compatible with Hamiltonian or QUBO optimizers.
+
+The second relevant line of work concerns quantum annealing, gate-model variational optimization, Hamiltonian-descent formulations, and simulated bifurcation methods for quadratic unconstrained binary optimization \needref{quantum annealing, QAOA, QHD, simulated bifurcation references}. Power-system applications of these methods usually require either binary expansion of continuous variables, discretized OPF approximations, or penalty methods for equality constraints \needref{quantum optimization for OPF and unit commitment references}. This paper differs by maintaining a continuous lifted AC model at the outer level, then producing a quadratic encoded subproblem at each ALM iteration.
+
+\section{Lifted Rectangular ACOPF Model}
+\subsection{Network Sets and Data}
+Let $\mathcal N$ denote the set of buses, $\mathcal E$ the set of undirected transmission lines, and $\mathcal A$ the set of directed arcs obtained by including both directions of each line. Let $\mathcal G_i$ denote the set of generators at bus $i$. The bus admittance matrix is $Y=G+jB$, and the series admittance of directed arc $a=(i,j)$ is $g_a+j b_a$. Active and reactive loads are $P_i^D$ and $Q_i^D$. Each generator $g$ has limits $P_g^{\min}$, $P_g^{\max}$, $Q_g^{\min}$, $Q_g^{\max}$ and quadratic cost
+\begin{equation}
+    C_g(P_g)=a_g P_g^2+b_g P_g+c_g .
+\end{equation}
+
+\subsection{Decision Variables}
+The primal vector contains generator powers, lifted voltage products, voltage-magnitude auxiliaries, branch-flow auxiliaries, and squared apparent-power auxiliaries:
+\begin{equation}
+    x=\left(P_G,Q_G,W_{\diag},W_{\mathrm{cross}},V^{\sq},P_{\mathcal A},Q_{\mathcal A},S_{\mathcal A}^{\sq}\right).
+\end{equation}
+For each bus $i$, the diagonal lifted terms are
+\begin{equation}
+    W_{ii}^{\RR}=(V_i^R)^2,\quad
+    W_{ii}^{\RI}=V_i^R V_i^I,\quad
+    W_{ii}^{\II}=(V_i^I)^2 .
+\end{equation}
+For each sparse lifted pair $(i,j)$ required by the physical network, four cross terms are used:
+\begin{equation}
+\begin{aligned}
+    W_{ij}^{\RR}=V_i^R V_j^R,\quad
+    W_{ij}^{\RI}=V_i^R V_j^I,\\
+    W_{ij}^{\IR}=V_i^I V_j^R,\quad
+    W_{ij}^{\II}=V_i^I V_j^I .
+\end{aligned}
+\end{equation}
+In the implementation, this pair set is built from branch-flow pairs and nonzero off-diagonal admittance entries. Hence the lifted model is sparse rather than all-to-all.
+
+The remaining feasible set is a box
+\begin{equation}
+    \mathcal X=\{x:\underline{x}\leq x\leq \overline{x}\},
+\end{equation}
+where the bounds come from generator limits, voltage-magnitude limits, branch MVA ratings, and conservative bounds on lifted voltage products and branch-flow variables.
+
+\subsection{Objective}
+The generation-cost objective is
+\begin{equation}
+    f(x)=\sum_{g\in\mathcal G} C_g(P_g).
+\end{equation}
+The lifted variables enter the objective only through the augmented terms described below.
+
+\subsection{Equality Residuals}
+All physical equations are stacked into a residual vector $h(x)$. For bus $i$, the active-power balance residual is
+\begin{align}
+c_i^P(x)={}&\sum_{g\in\mathcal G_i}P_g-P_i^D
+    -G_{ii}(W_{ii}^{\RR}+W_{ii}^{\II}) \nonumber\\
+&-\sum_{j\in\mathcal N_i}
+\bigl(G_{ij}W_{ij}^{\RR}-B_{ij}W_{ij}^{\RI} \nonumber\\
+&\hspace{3.0em}
+      +G_{ij}W_{ij}^{\II}+B_{ij}W_{ij}^{\IR}\bigr),
+\end{align}
+where $\mathcal N_i$ contains neighbors with nonzero admittance terms. The reactive-power balance residual is
+\begin{align}
+c_i^Q(x)={}&\sum_{g\in\mathcal G_i}Q_g-Q_i^D
+    +B_{ii}(W_{ii}^{\RR}+W_{ii}^{\II}) \nonumber\\
+&-\sum_{j\in\mathcal N_i}
+\bigl(G_{ij}W_{ij}^{\IR}-B_{ij}W_{ij}^{\II} \nonumber\\
+&\hspace{3.0em}
+      -G_{ij}W_{ij}^{\RI}-B_{ij}W_{ij}^{\RR}\bigr).
+\end{align}
+
+For directed arc $a=(i,j)$, branch active and reactive flow definitions are
+\begin{align}
+c_a^{P,f}(x)={}&P_a-
+g_a\bigl((W_{ii}^{\RR}+W_{ii}^{\II}) \nonumber\\
+&-(W_{ij}^{\RR}+W_{ij}^{\II})\bigr)
+-b_a(W_{ij}^{\RI}-W_{ij}^{\IR}),\\
+c_a^{Q,f}(x)={}&Q_a-
+b_a\bigl((W_{ij}^{\RR}+W_{ij}^{\II}) \nonumber\\
+&-(W_{ii}^{\RR}+W_{ii}^{\II})\bigr)
+-g_a(W_{ij}^{\RI}-W_{ij}^{\IR}).
+\end{align}
+The voltage-magnitude and branch thermal auxiliary residuals are
+\begin{align}
+c_i^V(x)&=V_i^{\sq}-(W_{ii}^{\RR}+W_{ii}^{\II}),\\
+c_a^S(x)&=S_a^{\sq}-(P_a^2+Q_a^2).
+\end{align}
+The lifted consistency residuals are
+\begin{align}
+c_i^{W,d}(x)&=W_{ii}^{\RR}W_{ii}^{\II}-(W_{ii}^{\RI})^2,\\
+c_{ij}^{W,c}(x)&=(W_{ij}^{\RR}+W_{ij}^{\II})^2
+ +(W_{ij}^{\RI}-W_{ij}^{\IR})^2
+ -V_i^{\sq}V_j^{\sq}.
+\end{align}
+Finally, with reference bus $r$, the current implementation enforces
+\begin{equation}
+    W_{rr}^{\II}=0,\quad W_{rr}^{\RI}=0,\quad
+    W_{rj}^{\II}=0,\quad W_{rj}^{\IR}=0
+\end{equation}
+for incident lifted pairs $(r,j)$. The full residual vector is ordered as
+\begin{equation}
+h(x)=\left[
+c^P,c^Q,c^{P,f},c^{Q,f},c^V,c^S,c^{W,d},c^{W,c},c^{\mathrm{ref}}
+\right]^T,
+\end{equation}
+where each entry denotes the corresponding stacked residual block.
+
+\section{Linearized Augmented Lagrangian}
+The fully augmented problem would minimize
+\begin{equation}
+    \mathcal L_\rho(x,\lambda)=
+    f(x)+\lambda^T h(x)+\frac{\rho}{2}\|h(x)\|_2^2
+\end{equation}
+over $x\in\mathcal X$. However, directly squaring nonlinear residuals would generate high-order polynomial terms that are not compatible with a quadratic Hamiltonian. The implementation therefore separates residuals into affine blocks $h_L(x)$ and nonlinear blocks $h_N(x)$. In the present model, the nonlinear blocks are $c^S$, $c^{W,d}$, and $c^{W,c}$.
+
+At outer iteration $k$, nonlinear blocks are replaced by their first-order approximation
+\begin{equation}
+    \widetilde h_N^{\,k}(x)=h_N(x^k)+J_N(x^k)(x-x^k),
+\end{equation}
+while affine residuals are kept exact. Let
+\begin{equation}
+    \widetilde h_k(x)=\left[h_L(x),\widetilde h_N^{\,k}(x)\right]^T .
+\end{equation}
+The QHD-compatible subproblem is
+\begin{equation}
+\label{eq:linearized-alm-subproblem}
+\begin{aligned}
+x^{k+1}\in\arg\min_{x\in\mathcal X}\;&
+ f(x)+(\lambda^k)^T\widetilde h_k(x)\\
+&+\frac{\rho_k}{2}\|\widetilde h_k(x)\|_2^2
+ +\frac{\mu}{2}\|x-x^k\|_2^2 .
+\end{aligned}
+\end{equation}
+Because $f(x)$ is quadratic and $\widetilde h_k(x)$ is affine, \eqref{eq:linearized-alm-subproblem} is a box-constrained quadratic program. After solving the subproblem, the dual variables are updated using the true nonlinear residual:
+\begin{equation}
+    \lambda^{k+1}=\lambda^k+\alpha_k h(x^{k+1}).
+\end{equation}
+The implementation includes adaptive adjustment of $\alpha_k$ and $\rho_k$: stable residual decrease can slightly increase $\alpha_k$, residual worsening decreases $\alpha_k$, repeated worsening increases $\rho_k$, and plateau behavior increases $\rho_k$ while damping $\alpha_k$.
+
+\section{QHD and Simulated Bifurcation Subproblem Solver}
+Each quadratic subproblem is submitted through the \texttt{QHD.SymPy} interface. Bounds are handled by an affine map
+\begin{equation}
+    x=\underline{x}+D z,\qquad z\in[0,1]^n,
+\end{equation}
+where $D=\mathrm{diag}(\overline{x}-\underline{x})$. With unary resolution $r$, each scalar $z_i$ is represented by $r$ binary variables. The decoded value is the unary average when the bitstring is monotone; otherwise, the implementation projects to a soft unary representation before decoding.
+
+The expanded quadratic polynomial is decomposed into univariate and bivariate terms. These terms are compiled to an Ising energy
+\begin{equation}
+    E(s)=\sum_{i<j}J_{ij}s_i s_j+\sum_i h_i s_i,\qquad s_i\in\{-1,+1\}.
+\end{equation}
+The Simulated Bifurcation backend solves the equivalent dense quadratic spin polynomial
+\begin{equation}
+    \min_s\; s^T M s+v^T s,
+\end{equation}
+with $M=\frac{1}{2}J$ and $v=h$. The sampled spins are converted to bitstrings, decoded to continuous subproblem variables, and optionally refined by a continuous local optimizer. In the reported runs, the Simbi backend was used with unary embedding, resolution $r=14$, $128$ shots, $4096$ agents, $1300$ maximum SB steps, and local TNC post-processing.
+
+\section{Algorithmic Summary}
+The implemented procedure is:
+\begin{enumerate}
+    \item Build the sparse lifted rectangular ACOPF model and initialize $x^0$ from load sharing, voltage magnitudes, and zero branch-flow auxiliaries.
+    \item Initialize $\lambda^0=0$, $\rho_0$, $\alpha_0$, and the proximal weight $\mu$.
+    \item At each outer iteration, construct $\widetilde h_k(x)$ by linearizing only nonlinear residual blocks at $x^k$.
+    \item Form the quadratic ALM subproblem in \eqref{eq:linearized-alm-subproblem}.
+    \item Solve the boxed quadratic subproblem with QHD/Simbi and local refinement.
+    \item Evaluate the true residual $h(x^{k+1})$, update $\lambda^{k+1}$, and adapt $\rho_k,\alpha_k$.
+    \item Stop when the maximum absolute residual is below tolerance or when the early-stop patience criterion is reached; retain the best residual iterate.
+\end{enumerate}
+
+\section{Numerical Study}
+\subsection{Test Cases and Encoded Sizes}
+The current numerical study uses only Simbi backend runs. The standard answers are taken from \texttt{5bus-answer.txt}, \texttt{9bus-answer.txt}, and \texttt{14bus-answer.txt}. Table~\ref{tab:size} summarizes the lifted model sizes. The logical spin count is the number of continuous variables multiplied by the unary resolution $r=14$; it is not a hardware physical-qubit count.
+
+\begin{table}[!t]
+\caption{Lifted ACOPF Size and Unary-Encoded Spin Dimension}
+\label{tab:size}
+\centering
+\begin{tabular}{c|c|c|c|c|c|c}
+\hline
+Case & Buses & Lines & Gen. & Variables & Residuals & Spins \\
+\hline
+5-bus  & 5  & 6  & 3 & 86  & 70  & 1204 \\
+9-bus  & 9  & 9  & 3 & 132 & 103 & 1848 \\
+14-bus & 14 & 20 & 5 & 266 & 202 & 3724 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Residual and Objective Summary}
+Table~\ref{tab:simbi-results} reports the best iterate by $\ell_2$ residual from the selected logs. The objective gap is computed as $100(f_{\mathrm{QHD}}-f_{\mathrm{std}})/f_{\mathrm{std}}$. A negative objective gap should not be interpreted as a better OPF solution when residuals are nonzero; it indicates that the sampled point is still not exactly feasible. The ``feasible'' flag in the raw log remains false because the checker uses a strict equality tolerance, so the table reports residual magnitudes directly.
+
+\begin{table*}[!t]
+\caption{Preliminary Simbi-Only Results Compared with Standard Answer Files}
+\label{tab:simbi-results}
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c}
+\hline
+Case & Standard file & $f_{\mathrm{std}}$ & Selected QHD log & Best iter. & $f_{\mathrm{QHD}}$ & Gap & $\max |h(x)|$ \\
+\hline
+5-bus  & \texttt{5bus-answer.txt}  & 9.195047 & \texttt{Buses-5\_06-07-2026\_00-05-09}  & 189 & 9.162802 & -0.351\% & $2.899{\times}10^{-3}$ \\
+9-bus  & \texttt{9bus-answer.txt}  & 4.098132 & \texttt{Buses-9\_06-08-2026\_19-48-09}  & 17  & 4.045797 & -1.277\% & $7.509{\times}10^{-3}$ \\
+14-bus & \texttt{14bus-answer.txt} & 4.875262 & \texttt{Buses-14\_06-08-2026\_11-02-24} & 86  & 4.910898 & 0.731\% & $1.053{\times}10^{-4}$ \\
+\hline
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{Euclidean Distance to Standard Answers for Best-Residual Iterates}
+\label{tab:load-results}
+\centering
+\begin{tabular}{c|c|c|c|c|c|c}
+\hline
+Case & Iter. & Bus L2 & Branch L2 & Combined L2 & Objective diff. & Load supplied \\
+\hline
+5-bus  & 189 & 0.118648 & 0.114625 & 0.164974 & -0.032244 & 99.891\% \\
+9-bus  & 17  & 0.647244 & 1.129135 & 1.301488 & -0.052335 & 99.316\% \\
+14-bus & 86  & 0.670897 & 1.011694 & 1.213930 & 0.035636  & 99.984\% \\
+\hline
+\end{tabular}
+\end{table*}
+
+\begin{table}[!t]
+\caption{Closest-to-Standard Iterates by Combined L2 Distance}
+\label{tab:closest-standard}
+\centering
+\begin{tabular}{c|c|c|c}
+\hline
+Case & Iter. & Combined L2 & Objective diff. \\
+\hline
+5-bus  & 134 & 0.026343 & -0.028019 \\
+9-bus  & 317 & 0.684123 & 0.059669 \\
+14-bus & 361 & 0.385633 & 0.026457 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{\detokenize{Buses-5_06-07-2026_00-05-09-Obj.png}}
+\caption{5-bus objective history from the selected Simbi-only run.}
+\label{fig:five-bus-plot}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{\detokenize{Buses-9_06-08-2026_19-48-09-Obj.png}}
+\caption{9-bus objective history from the selected Simbi-only run.}
+\label{fig:nine-bus-plot}
+\end{figure}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.95\textwidth]{\detokenize{qhd_vs_standard_summary.png}}
+\caption{Summary of closest-to-standard QHD/Simbi iterates, using combined Euclidean distance over bus states and branch flows.}
+\label{fig:standard-summary}
+\end{figure*}
+
+\subsection{Discussion}
+The 14-bus case reaches a maximum residual near $10^{-4}$ and tracks the standard objective within approximately $0.73\%$ at the best-residual iterate. The 5-bus run is close in objective but retains a residual near $10^{-3}$, and the selected 9-bus run is visibly less feasible, with a maximum residual of $7.51\times10^{-3}$. Tables~\ref{tab:load-results} and~\ref{tab:closest-standard} show that the residual-minimizing iterate and the closest-to-standard iterate need not coincide. This is expected in a penalty-based nonconvex method: a point can be close to a reference OPF solution in bus/branch variables while still having larger lifted residuals, or vice versa. These results indicate that the linearized ALM mechanism can produce meaningful ACOPF iterates through a discretized spin backend, but the feasibility quality is sensitive to penalty scaling, stepsize adaptation, unary resolution, and local refinement.
+
+The present study has three important limitations. First, all numerical results in this draft use the Simbi backend rather than quantum hardware. Second, the table does not yet include a systematic comparison against Gurobi, IPOPT, MATPOWER, or other standard ACOPF baselines \needref{MATPOWER/IPOPT/Gurobi ACOPF baseline references}. Third, the encoded spin dimension grows with both the number of lifted variables and unary resolution; future work should study adaptive resolution, warm starts, and better scaling of the ALM penalty.
+
+\section{Conclusion}
+This paper presented a lifted rectangular ACOPF formulation and a linearized augmented Lagrangian algorithm designed to generate quadratic box-constrained subproblems. These subproblems are compatible with QHD-style Ising optimizers and were tested with a Simulated Bifurcation backend. Preliminary comparisons on 5-, 9-, and 14-bus systems show that the framework can approach the standard-answer objectives while reducing AC residuals, with the strongest feasibility performance observed on the selected 14-bus run. The immediate next steps are to add systematic classical solver baselines, improve feasibility refinement, report runtime and sensitivity studies, and replace the red reference placeholders with formal citations.
+
+\end{document}

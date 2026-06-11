@@ -1,0 +1,128 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{cite}
+
+\newcommand{\needref}[1]{\textcolor{red}{[#1]}}
+\newcommand{\RR}{\mathrm{RR}}
+\newcommand{\RI}{\mathrm{RI}}
+\newcommand{\IR}{\mathrm{IR}}
+\newcommand{\II}{\mathrm{II}}
+\newcommand{\sq}{\mathrm{sq}}
+\graphicspath{{../logs/}}
+
+\title{A Linearized Augmented-Lagrangian Route from Lifted ACOPF to Simulated-Bifurcation Solvers}
+
+\author{\IEEEauthorblockN{Author Name(s)}
+\IEEEauthorblockA{Department/Institute Name\\
+University/Organization Name\\
+Email: author@example.com}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper presents a preliminary quantum-inspired approach for AC optimal power flow (ACOPF). Starting from a lifted rectangular-coordinate ACOPF model, all equality constraints are collected in an augmented Lagrangian. Nonlinear residual blocks are locally linearized so that each outer iteration produces a box-constrained quadratic subproblem. The subproblem is encoded through a Quantum Hamiltonian Descent (QHD) interface and solved using a Simulated Bifurcation backend. Simbi-only comparisons on 5-, 9-, and 14-bus systems are reported against repository standard-answer files. Reference locations are marked in red for later replacement by formal citations \needref{ACOPF, augmented Lagrangian, QHD, and simulated bifurcation references}.
+\end{abstract}
+
+\begin{IEEEkeywords}
+ACOPF, augmented Lagrangian, lifted rectangular formulation, QHD, simulated bifurcation, Ising optimization.
+\end{IEEEkeywords}
+
+\section{Introduction}
+AC optimal power flow (ACOPF) minimizes generation cost while satisfying nonlinear network physics and engineering limits. Its nonconvex equality constraints make the problem difficult for both classical nonlinear solvers and emerging Ising/QUBO-based optimizers \needref{ACOPF nonconvexity and OPF survey references}. Quantum and quantum-inspired solvers are most naturally applied to quadratic binary or spin models, so a direct ACOPF-to-Ising translation is not straightforward \needref{QUBO/Ising and quantum optimization references}.
+
+This paper proposes a practical bridge. We lift the rectangular-coordinate ACOPF model into voltage-product variables, keep the remaining constraints in an augmented Lagrangian, and linearize only the nonlinear residual blocks at each outer iteration. The result is a sequence of quadratic box-constrained subproblems that can be discretized and solved by a QHD/Simbi backend. The contribution is not a claim of quantum advantage; it is a solver-compatible ACOPF modeling pipeline and an initial set of Simbi-only numerical results.
+
+\section{Lifted ACOPF Residual Model}
+Let $\mathcal N$ be buses, $\mathcal E$ lines, and $\mathcal A$ directed arcs. The primal vector is
+\begin{equation}
+x=(P_G,Q_G,W_{\mathrm{diag}},W_{\mathrm{cross}},V^{\sq},P_{\mathcal A},Q_{\mathcal A},S_{\mathcal A}^{\sq}).
+\end{equation}
+For bus $i$, $W_{ii}^{\RR}$, $W_{ii}^{\RI}$, and $W_{ii}^{\II}$ represent $(V_i^R)^2$, $V_i^RV_i^I$, and $(V_i^I)^2$. For each sparse network pair $(i,j)$, $W_{ij}^{\RR}$, $W_{ij}^{\RI}$, $W_{ij}^{\IR}$, and $W_{ij}^{\II}$ represent cross-voltage products. This lifting makes active/reactive balance and branch-flow definitions affine in $W$.
+
+The cost is
+\begin{equation}
+    f(x)=\sum_{g\in\mathcal G}(a_gP_g^2+b_gP_g+c_g).
+\end{equation}
+The equality residual vector stacks active and reactive bus balances, branch active and reactive flow definitions, voltage-magnitude auxiliary equations, branch squared-flow equations, lifted consistency equations, and reference-bus constraints:
+\begin{equation}
+    h(x)=\left[c^P,c^Q,c^{P,f},c^{Q,f},c^V,c^S,c^{W,d},c^{W,c},c^{\mathrm{ref}}\right]^T .
+\end{equation}
+The nonlinear residuals are
+\begin{align}
+c_a^S(x)&=S_a^{\sq}-(P_a^2+Q_a^2),\\
+c_i^{W,d}(x)&=W_{ii}^{\RR}W_{ii}^{\II}-(W_{ii}^{\RI})^2,\\
+c_{ij}^{W,c}(x)&=(W_{ij}^{\RR}+W_{ij}^{\II})^2
+ +(W_{ij}^{\RI}-W_{ij}^{\IR})^2
+ -V_i^{\sq}V_j^{\sq}.
+\end{align}
+All remaining constraints are imposed as simple bounds $x\in\mathcal X=\{x:\underline{x}\leq x\leq\overline{x}\}$.
+
+\section{Linearized ALM to QHD/Simbi}
+At iteration $k$, nonlinear blocks are replaced by a first-order model:
+\begin{equation}
+\widetilde h_N^k(x)=h_N(x^k)+J_N(x^k)(x-x^k).
+\end{equation}
+Affine blocks are retained exactly, giving $\widetilde h_k(x)=[h_L(x),\widetilde h_N^k(x)]^T$. The inner subproblem is
+\begin{equation}
+\label{eq:conf-subproblem}
+x^{k+1}\in\arg\min_{x\in\mathcal X}
+f(x)+(\lambda^k)^T\widetilde h_k(x)
+\frac{\rho_k}{2}\|\widetilde h_k(x)\|_2^2
+\frac{\mu}{2}\|x-x^k\|_2^2 .
+\end{equation}
+Since $\widetilde h_k$ is affine and $f$ is quadratic, \eqref{eq:conf-subproblem} is quadratic. The dual variables are updated with the true residual:
+\begin{equation}
+    \lambda^{k+1}=\lambda^k+\alpha_k h(x^{k+1}).
+\end{equation}
+
+The QHD interface maps $x=\underline{x}+Dz$ with $z\in[0,1]^n$, encodes each $z_i$ using unary resolution $r$, compiles the resulting quadratic polynomial into an Ising energy, and submits it to the Simulated Bifurcation backend. The reported runs used unary embedding, $r=14$, $128$ shots, $4096$ agents, $1300$ SB steps, and TNC local refinement.
+
+\section{Preliminary Simbi Results}
+The standard objectives are taken from \texttt{5bus-answer.txt}, \texttt{9bus-answer.txt}, and \texttt{14bus-answer.txt}. Table~\ref{tab:conf-results} reports selected best-residual iterates from the user-specified Simbi logs. The logical spin count is $14$ times the number of continuous variables and does not represent physical qubits. Objective gaps are computed relative to the standard answer; negative gaps are not interpreted as improvements when residuals remain nonzero.
+
+\begin{table}[!t]
+\caption{Selected Simbi-Only ACOPF Results}
+\label{tab:conf-results}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{c|c|c|c|c|c|c}
+\hline
+Case & Std. & QHD & Gap & Comb. L2 & $\max|h|$ & Load \\
+\hline
+5-bus  & 9.195 & 9.163 & -0.351\% & 0.165 & $2.899{\times}10^{-3}$ & 99.891\% \\
+9-bus  & 4.098 & 4.046 & -1.277\% & 1.301 & $7.509{\times}10^{-3}$ & 99.316\% \\
+14-bus & 4.875 & 4.911 & 0.731\%  & 1.214 & $1.053{\times}10^{-4}$ & 99.984\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure*}[!t]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{\detokenize{Buses-5_06-07-2026_00-05-09-Obj.png}}\\
+(a) 5-bus selected run
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{\detokenize{Buses-9_06-08-2026_19-48-09-Obj.png}}\\
+(b) 9-bus selected run
+\end{minipage}
+\caption{Objective histories from the selected Simbi-only logs.}
+\label{fig:conf-plots}
+\end{figure*}
+
+The 14-bus selected run reaches a maximum residual near $10^{-4}$ and tracks the standard objective within approximately $0.73\%$. The 5-bus and selected 9-bus runs show larger feasibility gaps, indicating the need for additional tuning of penalty scaling, resolution, and refinement. Future experiments should add IPOPT, MATPOWER, and Gurobi baselines, runtime comparisons, and sensitivity studies \needref{classical ACOPF baseline references}.
+
+\section{Conclusion}
+This paper introduced a lifted rectangular ACOPF formulation and a linearized augmented-Lagrangian strategy that converts each outer iteration into a quadratic subproblem suitable for QHD/Simbi solution. Initial Simbi-only tests show promising residual reduction, especially on the selected 14-bus run. The next step is to strengthen feasibility refinement, add classical baselines, and replace the red reference placeholders with formal citations.
+
+\end{document}

@@ -52,9 +52,6 @@ class SolverConfig:
     simbi_best_only: bool = False
     simbi_ballistic: bool = False
     simbi_heated: bool | None = None
-    simbi_multi_gpu: bool = False
-    simbi_num_gpus: int | None = None
-    simbi_gpu_ids: list[int] | None = None
     early_stop_patience: int = 300
     tnc_maxfun: int | None = None
     ipopt_max_iter: int = 350
@@ -257,6 +254,11 @@ def solve_subproblem_gurobi(lagrangian, variable_list, var_bound_list):
         Var_bound_list=var_bound_list,
         verbose=False,
     )
+
+
+def evaluate_objective(model: SympyACOPFModel, x_vec) -> float:
+    subs_dict = {var: val for var, val in zip(model.variable_list, x_vec)}
+    return float(sp.N(model.objective.subs(subs_dict)))
 
 
 def _clip_to_bounds(x, var_bound_list):
@@ -701,7 +703,10 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
 
         coarse_h_val = h_func(x_coarse)
         coarse_norm_h = float(np.linalg.norm(coarse_h_val))
+        coarse_objective_value = evaluate_objective(model, x_coarse)
+        _, coarse_check_flag = model.check_constraints(x_coarse)
         print(f"[coarse:LALM] ||h(x)|| = {coarse_norm_h:.6e}")
+        print(f"[coarse:LALM] objective = {coarse_objective_value:.9g}")
 
         h_val = h_func(x_new)
         norm_h = float(np.linalg.norm(h_val))
@@ -732,8 +737,7 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
         _, check_flag = model.check_constraints(x_new)
         print("Constraint check:", check_flag)
 
-        subs_dict = {var: val for var, val in zip(model.variable_list, x_new)}
-        objective_value = float(sp.N(model.objective.subs(subs_dict)))
+        objective_value = evaluate_objective(model, x_new)
         objective_history.append({"iter": k, "objective": objective_value})
         metric_history.append(
             {
@@ -741,6 +745,9 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
                 "max_abs_h": float(np.max(np.abs(h_val))),
                 "l2_norm_h": norm_h,
                 "coarse_l2_norm_h": coarse_norm_h,
+                "coarse_max_abs_h": float(np.max(np.abs(coarse_h_val))),
+                "coarse_objective": coarse_objective_value,
+                "refined_objective": objective_value,
                 "refine_method": canonical_refine_method(config.refine_method),
                 "alpha": float(alpha),
                 "rho": float(rho),
@@ -769,6 +776,22 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
 
         log_file = PrintQHDACOPFResults(
             model,
+            x_coarse,
+            log_file=log_file,
+            iteration=k,
+            folder=config.log_folder,
+            print_to_console=False,
+            rho=rho,
+            alpha=alpha,
+            h_x=coarse_h_val,
+            lambda_vec=None,
+            objective_value=coarse_objective_value,
+            feasibility=coarse_check_flag,
+            note="coarse_solution_before_refine",
+        )
+
+        log_file = PrintQHDACOPFResults(
+            model,
             x_new,
             log_file=log_file,
             iteration=k,
@@ -780,6 +803,7 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
             lambda_vec=lambda_new,
             objective_value=objective_value,
             feasibility=check_flag,
+            note=f"refined_solution_{canonical_refine_method(config.refine_method)}",
         )
 
         if check_flag:

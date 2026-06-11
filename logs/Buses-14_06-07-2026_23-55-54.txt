@@ -1,0 +1,8 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-06-07 23:55:54
+Number of buses: 14
+Number of lines: 20
+Number of generators: 5
+Solver used: QHD with simbi solver
+========================================================================================================================
+

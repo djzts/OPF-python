@@ -86,7 +86,7 @@ def load_matpower_json(json_file):
 log_step(3, "正在载入 bus、line 和 generator 数据。")
 Sbase = 10 # MW
 
-option = 14
+option = 5
 if option == 3:
     #[bus_id, bus_type, Vm, Va, Gs, Bs, Pd, Qd]
     buses = {
