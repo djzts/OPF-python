@@ -24,9 +24,9 @@ from Sympy_OPF_LALM_class import (
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 14
+    n_bus: int = 3
     max_outer: int = 2000
-    tol: float = 1e-4
+    tol: float = 1e-5
     option: int = 1  # 1: QHD, 2: Gurobi
     qhd_solver: str = "simbi"  # simbi / openjij / gurobi
     refine_method: str = "TNC_orig"  # none / ipopt_orig / TNC_orig / GurobiALM / GurobiOrig
@@ -44,20 +44,17 @@ class SolverConfig:
     improve_tol: float = 0.005
     worsen_tol: float = 0.03
     qhd_refine: bool = True
-    simbi_resolution: int = 16
+    simbi_resolution: int = 40
     simbi_shots: int = 128
-    simbi_agents: int = 4096
-    simbi_max_steps: int = 42000
+    simbi_agents: int = 1024
+    simbi_max_steps: int = 12000
     simbi_seed: int | None = 42
     simbi_best_only: bool = False
     simbi_ballistic: bool = False
     simbi_heated: bool | None = None
-    simbi_multi_gpu: bool = False
-    simbi_num_gpus: int | None = None
-    simbi_gpu_ids: list[int] | None = None
-    early_stop_patience: int = 300
+    early_stop_patience: int = 350
     tnc_maxfun: int | None = None
-    ipopt_max_iter: int = 350
+    ipopt_max_iter: int = 300
     gurobi_time_limit: float | None = 60.0
     gurobi_threads: int = 0
     gurobi_log_to_console: bool = False
@@ -174,9 +171,6 @@ def solve_subproblem_qhd(
             seed=config.simbi_seed,
             ballistic=config.simbi_ballistic,
             heated=config.simbi_heated,
-            multi_gpu=config.simbi_multi_gpu,
-            num_gpus=config.simbi_num_gpus,
-            gpu_ids=config.simbi_gpu_ids,
             verbose=True,
         )
     elif config.qhd_solver == "openjij":

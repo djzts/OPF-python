@@ -37,7 +37,10 @@ def extract_qhd_solution_vector(response, prefer_refined=True, expected_len=None
     If refined minimization is unavailable (for example when refine=False),
     fall back to the coarse minimizer automatically.
     """
-    candidate_names = ["refined_minimizer", "minimizer"] if prefer_refined else ["minimizer", "refined_minimizer"]
+    if prefer_refined:
+        candidate_names = ["refined_minimizer", "minimizer", "coarse_minimizer"]
+    else:
+        candidate_names = ["coarse_minimizer", "minimizer", "refined_minimizer"]
 
     for attr in candidate_names:
         if hasattr(response, attr):
@@ -1343,7 +1346,9 @@ def initialize_qhd_acopf_log(model, folder=".", extra_header=None, option=None,
 
 def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=None,
                              h_x=None, lambda_vec=None, objective_value=None,
-                             feasibility=None, note=None):
+                             feasibility=None, note=None,
+                             include_iteration_header=True,
+                             include_feasibility=True):
     """
     把当前一轮 ALM / QHD 结果整理成字符串，供写入 txt 日志。
     """
@@ -1374,17 +1379,18 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
     gen_index_by_id = {gid: k for k, gid in enumerate(gen_ids)}
 
     out = []
-    out.append("=" * 120)
-    out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    if iteration is not None:
-        out.append(f"Iteration: {iteration}")
-    if rho is not None:
-        out.append(f"rho: {float(rho):.8g}")
-    if alpha is not None:
-        out.append(f"alpha: {float(alpha):.8g}")
+    out.append("=" * 120 if include_iteration_header else "-" * 120)
+    if include_iteration_header:
+        out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        if iteration is not None:
+            out.append(f"Iteration: {iteration}")
+        if rho is not None:
+            out.append(f"rho: {float(rho):.8g}")
+        if alpha is not None:
+            out.append(f"alpha: {float(alpha):.8g}")
     if objective_value is not None:
         out.append(f"objective_value: {float(objective_value):.12g}")
-    if feasibility is not None:
+    if include_feasibility and feasibility is not None:
         out.append(f"feasible: {bool(feasibility)}")
     if note is not None:
         out.append(f"note: {note}")
@@ -1491,13 +1497,35 @@ def append_qhd_acopf_results(model, solution, log_file=None, folder=".", **kwarg
     if log_file is None:
         log_file = initialize_qhd_acopf_log(model, folder=folder)
 
-    text = format_qhd_acopf_results(model, solution, **kwargs)
+    iteration = kwargs.get("iteration")
+    note = kwargs.get("note")
+    previous_iteration = getattr(model, "_qhd_acopf_last_log_iteration", None)
+    previous_note = getattr(model, "_qhd_acopf_last_log_note", None)
+    same_iteration_refined_after_coarse = (
+        iteration is not None
+        and iteration == previous_iteration
+        and previous_note == "coarse_solution_before_refine"
+        and isinstance(note, str)
+        and note.startswith("refined_solution_")
+    )
+    include_iteration_header = not same_iteration_refined_after_coarse
+    include_feasibility = note != "coarse_solution_before_refine"
+
+    text = format_qhd_acopf_results(
+        model,
+        solution,
+        include_iteration_header=include_iteration_header,
+        include_feasibility=include_feasibility,
+        **kwargs,
+    )
 
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(text)
         f.write("\n")
 
     model._qhd_acopf_log_file = log_file
+    model._qhd_acopf_last_log_iteration = iteration
+    model._qhd_acopf_last_log_note = note
     return log_file
 
 
