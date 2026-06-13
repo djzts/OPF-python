@@ -1347,6 +1347,7 @@ def initialize_qhd_acopf_log(model, folder=".", extra_header=None, option=None,
 def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=None,
                              h_x=None, lambda_vec=None, objective_value=None,
                              feasibility=None, note=None,
+                             lalm_energy=None,
                              include_iteration_header=True,
                              include_feasibility=True):
     """
@@ -1390,6 +1391,8 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
             out.append(f"alpha: {float(alpha):.8g}")
     if objective_value is not None:
         out.append(f"objective_value: {float(objective_value):.12g}")
+    if lalm_energy is not None:
+        out.append(f"lalm_energy: {float(lalm_energy):.12g}")
     if include_feasibility and feasibility is not None:
         out.append(f"feasible: {bool(feasibility)}")
     if note is not None:
@@ -1440,7 +1443,7 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
 
     out.append("")
     out.append("Branch Results")
-    out.append("LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ")
+    out.append("LineID	From	To	Pik		Pki		Qik		Qki		Sik_sq		Ski_sq		LossP		LossQ")
 
     total_Ploss = 0.0
     total_Qloss = 0.0
@@ -1454,6 +1457,8 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
         Pki = P_ij[a_rev]
         Qik = Q_ij[a_fwd]
         Qki = Q_ij[a_rev]
+        Sik_sq = S_tot_sq[a_fwd]
+        Ski_sq = S_tot_sq[a_rev]
 
         lossP = Pik + Pki
         lossQ = Qik + Qki
@@ -1461,7 +1466,8 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
         total_Qloss += lossQ
 
         out.append(
-            f"{lid}	{from_bus}	{to_bus}	{Pik:.6f}	{Pki:.6f}	{Qik:.6f}	{Qki:.6f}	{lossP:.6f}	{lossQ:.6f}"
+            f"{lid}	{from_bus}	{to_bus}	{Pik:.6f}	{Pki:.6f}	{Qik:.6f}	{Qki:.6f}	"
+            f"{Sik_sq:.6f}	{Ski_sq:.6f}	{lossP:.6f}	{lossQ:.6f}"
         )
 
     out.append("")
@@ -1531,7 +1537,8 @@ def append_qhd_acopf_results(model, solution, log_file=None, folder=".", **kwarg
 
 def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, alpha=None,
                                      h_x=None, lambda_vec=None, objective_value=None,
-                                     feasibility=None, note=None):
+                                     feasibility=None, note=None,
+                                     lalm_energy=None):
     """
     Compact console formatter: keep V_R / V_I in the console output and use a
     lighter layout than the full log formatter.
@@ -1550,6 +1557,7 @@ def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, 
     V_sq = x[idx:idx + nb]; idx += nb
     P_ij = x[idx:idx + na]; idx += na
     Q_ij = x[idx:idx + na]; idx += na
+    S_tot_sq = x[idx:idx + na]; idx += na
 
     bus_ids = model.bus_ids
     line_ids = model.line_ids
@@ -1572,6 +1580,8 @@ def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, 
         out.append(f"alpha: {float(alpha):.8g}")
     if objective_value is not None:
         out.append(f"objective_value: {float(objective_value):.12g}")
+    if lalm_energy is not None:
+        out.append(f"lalm_energy: {float(lalm_energy):.12g}")
     if feasibility is not None:
         out.append(f"feasible: {bool(feasibility)}")
     if note is not None:
@@ -1607,7 +1617,7 @@ def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, 
 
     out.append("")
     out.append("Branch Results")
-    out.append("LineID\tFrom\tTo\tPik\t\tPki\t\tQik\t\tQki\t\tLossP\t\tLossQ")
+    out.append("LineID\tFrom\tTo\tPik\t\tPki\t\tQik\t\tQki\t\tSik_sq\t\tSki_sq\t\tLossP\t\tLossQ")
 
     for lid in line_ids:
         from_bus, to_bus, _, _, _, _, _ = lines[lid]
@@ -1617,9 +1627,11 @@ def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, 
         Pki = P_ij[a_rev]
         Qik = Q_ij[a_fwd]
         Qki = Q_ij[a_rev]
+        Sik_sq = S_tot_sq[a_fwd]
+        Ski_sq = S_tot_sq[a_rev]
         out.append(
             f"{lid}\t{from_bus}\t{to_bus}\t{Pik:.6f}\t{Pki:.6f}\t{Qik:.6f}\t{Qki:.6f}\t"
-            f"{(Pik + Pki):.6f}\t{(Qik + Qki):.6f}"
+            f"{Sik_sq:.6f}\t{Ski_sq:.6f}\t{(Pik + Pki):.6f}\t{(Qik + Qki):.6f}"
         )
 
     out.append("")

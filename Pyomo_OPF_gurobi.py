@@ -86,7 +86,7 @@ def load_matpower_json(json_file):
 log_step(3, "正在载入 bus、line 和 generator 数据。")
 Sbase = 10 # MW
 
-option = 5
+option = 3
 if option == 3:
     #[bus_id, bus_type, Vm, Va, Gs, Bs, Pd, Qd]
     buses = {
@@ -838,7 +838,7 @@ plt.tight_layout()
 output_png = SCRIPT_DIR / f"Pyomo_OPF_gurobi_case{option}_power_flow.png"
 fig.savefig(output_png, dpi=180, bbox_inches="tight")
 print(f"Saved power flow figure to {output_png.resolve()}")
-plt.show()
+#plt.show()
 
 
 # In[23]:

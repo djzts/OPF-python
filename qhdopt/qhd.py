@@ -401,6 +401,7 @@ class QHD:
             tnc_options: Optional[dict] = None,
             ipopt_options: Optional[dict] = None,
             gurobi_options: Optional[dict] = None,
+            refine_bounds: Optional[Union[Tuple, List, Bounds]] = None,
     ):
         """
         Configure a full ACOPF refinement problem for post-processing.
@@ -434,6 +435,22 @@ class QHD:
                     f"x_center length {x_center.size} does not match dimension {self.dimension}."
                 )
 
+        if refine_bounds is not None:
+            if isinstance(refine_bounds, Bounds):
+                refine_bounds_obj = refine_bounds
+            else:
+                refine_lb, refine_scale = generate_bounds(refine_bounds, self.dimension)
+                refine_ub = [
+                    float(lb) + float(width)
+                    for lb, width in zip(refine_lb, refine_scale)
+                ]
+                refine_bounds_obj = Bounds(
+                    np.asarray(refine_lb, dtype=float),
+                    np.asarray(refine_ub, dtype=float),
+                )
+        else:
+            refine_bounds_obj = None
+
         self.acopf_refine_problem = {
             "objective": objective,
             "constraints": constraints,
@@ -445,6 +462,7 @@ class QHD:
             "tnc_options": dict(tnc_options or {}),
             "ipopt_options": dict(ipopt_options or {}),
             "gurobi_options": dict(gurobi_options or {}),
+            "refine_bounds": refine_bounds_obj,
         }
         return self
 
@@ -651,8 +669,12 @@ class QHD:
         method = canonical_acopf_refine_method(solver)
         if self.acopf_refine_problem is None:
             raise ValueError("ACOPF refine problem is not configured. Call set_acopf_refine_problem first.")
+        problem = self.acopf_refine_problem
+        refine_bounds = problem.get("refine_bounds")
+        if refine_bounds is not None:
+            bounds = refine_bounds
 
-        if self.acopf_refine_problem.get("best_only", True) and getattr(self, "coarse_minimizer", None) is not None:
+        if problem.get("best_only", True) and getattr(self, "coarse_minimizer", None) is not None:
             samples_to_refine = [self.coarse_minimizer]
         else:
             samples_to_refine = samples

@@ -43,9 +43,9 @@ def extract_qhd_solution_vector(response, prefer_refined=True, expected_len=None
     If refined minimization is unavailable, fall back to the coarse minimizer.
     """
     if prefer_refined:
-        candidate_names = ["refined_minimizer", "minimizer"]
+        candidate_names = ["refined_minimizer", "minimizer", "coarse_minimizer"]
     else:
-        candidate_names = ["minimizer", "refined_minimizer"]
+        candidate_names = ["coarse_minimizer", "minimizer", "refined_minimizer"]
 
     for attr in candidate_names:
         if hasattr(response, attr):

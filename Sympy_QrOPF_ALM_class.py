@@ -319,7 +319,7 @@ class SympyACOPFModel:
         assert x0.size == len(self.variable_list), (
             f"Constructed x0 length {x0.size} != variable_list length {len(self.variable_list)}"
         )
-        return x0     
+        return self._clip_to_var_bounds(x0)
 
     def _build_network_matrices(self):
         nb = self.n_buses
@@ -330,6 +330,7 @@ class SympyACOPFModel:
         # series admittances for each line (for branch flow equations)
         g_series = np.zeros(nl)
         b_series = np.zeros(nl)
+        branch_b = np.zeros((nb, nb))
 
         for ell, lid in enumerate(self.line_ids):
             from_bus, to_bus, r, x, bsh, tap, rate = self.lines[lid]
@@ -347,19 +348,29 @@ class SympyACOPFModel:
 
 
             # contributions to Ybus (standard π-model with tap on "from" side)
-            Ybus[i, i] += y
-            Ybus[j, j] += y
-            Ybus[i, j] -= y
-            Ybus[j, i] -= y
+            Bs = 1j * bsh
+            a = tap if tap != 0 else 1.0
+
+            Ybus[i, i] += y / (a ** 2)
+            Ybus[j, j] += y / (a ** 2)
+
+            Ybus[i, i] += Bs
+            Ybus[j, j] += Bs
+
+            Ybus[i, j] -= y / a
+            Ybus[j, i] -= y / a
 
             g_series[ell] = y.real
             b_series[ell] = y.imag
+            branch_b[i, j] = Bs.imag
+            branch_b[j, i] = Bs.imag
 
         self.Ybus = Ybus
         self.G_mat = Ybus.real
         self.B_mat = Ybus.imag
         self.g_series = g_series
         self.b_series = b_series
+        self.branch_b = branch_b
 
         # build load vectors Pd, Qd in p.u. aligned with bus index order
         self.P_D = np.zeros(nb)
@@ -498,7 +509,7 @@ class SympyACOPFModel:
     def _branch_flow_coeffs(self, arc_idx):
         """
         Return the series branch coefficients for the directed arc at position
-        arc_idx under the simplified LaTeX model.
+        arc_idx under the W/Y lifted model.
 
         Returns
         -------
@@ -509,12 +520,22 @@ class SympyACOPFModel:
             where Re(W_ij) = Wij_RR + Wij_II and
             Im(W_ij) = Wij_RI - Wij_IR in this lifted representation.
         """
-        lid, direction = self.arc_ids[arc_idx]
-        from_bus, to_bus, r, x, bsh, tap, _ = self.lines[lid]
+        lid = self.arc_to_line[arc_idx]
         ell = self.line_pos[lid]
-        g = self.g_series[ell]
-        b = self.b_series[ell]
-        return g, b
+        return self.g_series[ell], self.b_series[ell]
+
+    def _branch_flow_expr_lifted(self, arc_idx, Wii_RR, Wii_II, Wij_RR, Wij_RI, Wij_IR, Wij_II):
+        i, j = self.arc_collection[arc_idx]
+        g_ij, b_ij = self._branch_flow_coeffs(arc_idx)
+        Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+            i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+        )
+        vi_sq = Wii_RR[i] + Wii_II[i]
+        w_real = Wij_RR_ij + Wij_II_ij
+
+        P_expr = g_ij * (vi_sq - w_real) + b_ij * (Wij_RI_ij - Wij_IR_ij)
+        Q_expr = -b_ij * vi_sq + b_ij * w_real + g_ij * (Wij_RI_ij - Wij_IR_ij)
+        return P_expr, Q_expr
 
     def _unpack_x(self, x):
         x = np.asarray(x, dtype=float).flatten()
@@ -558,7 +579,14 @@ class SympyACOPFModel:
             "S_tot_sq": S_tot_sq,
         }
 
-    def recover_voltages_from_lifted(self, x=None, vals=None, vr_nonnegative=True, tol=1e-10):
+    def recover_voltages_from_lifted(
+        self,
+        x=None,
+        vals=None,
+        vr_nonnegative=True,
+        tol=1e-10,
+        method="diagonal",
+    ):
         """
         Reconstruct rectangular bus voltages from diagonal lifted variables.
 
@@ -593,6 +621,15 @@ class SympyACOPFModel:
         Wii_II = np.asarray(vals["Wii_II"], dtype=float)
         V_sq = np.asarray(vals["V_sq"], dtype=float)
 
+        if method == "rank1":
+            return self.recover_rank1_voltage_from_lifted(
+                vals=vals,
+                vr_nonnegative=vr_nonnegative,
+                tol=tol,
+            )
+        if method not in {"diagonal", "cross"}:
+            raise ValueError("method must be 'diagonal', 'cross', or 'rank1'.")
+
         nb = self.n_buses
         V_R = np.zeros(nb, dtype=float)
         V_I = np.zeros(nb, dtype=float)
@@ -603,7 +640,11 @@ class SympyACOPFModel:
                 vr_mag = -vr_mag
             V_R[i] = vr_mag
 
-            if abs(vr_mag) > tol:
+            if method == "diagonal":
+                vi_mag = float(np.sqrt(max(Wii_II[i], 0.0)))
+                vr_for_sign = vr_mag if abs(vr_mag) > tol else 1.0
+                V_I[i] = -vi_mag if Wii_RI[i] * vr_for_sign < -tol else vi_mag
+            elif abs(vr_mag) > tol:
                 V_I[i] = Wii_RI[i] / vr_mag
             else:
                 vi_mag = float(np.sqrt(max(Wii_II[i], 0.0)))
@@ -612,7 +653,61 @@ class SympyACOPFModel:
                 else:
                     V_I[i] = vi_mag
 
-        V_mag = np.sqrt(np.maximum(V_sq, 0.0))
+        if method == "diagonal":
+            V_mag = np.sqrt(np.maximum(Wii_RR + Wii_II, 0.0))
+        else:
+            V_mag = np.sqrt(np.maximum(V_sq, 0.0))
+        return {
+            "V_R": V_R,
+            "V_I": V_I,
+            "V_mag": V_mag,
+        }
+
+    def recover_rank1_voltage_from_lifted(self, x=None, vals=None, vr_nonnegative=True, tol=1e-10):
+        if vals is None:
+            if x is None:
+                raise ValueError("Either x or vals must be provided.")
+            vals = self._unpack_x(x)
+
+        voltage = self.recover_voltages_from_lifted(
+            vals=vals,
+            vr_nonnegative=vr_nonnegative,
+            tol=tol,
+            method="diagonal",
+        )
+        V_R = np.asarray(voltage["V_R"], dtype=float).copy()
+        V_I = np.asarray(voltage["V_I"], dtype=float).copy()
+
+        Wij_RR = np.asarray(vals["Wij_RR"], dtype=float)
+        Wij_RI = np.asarray(vals["Wij_RI"], dtype=float)
+        Wij_IR = np.asarray(vals["Wij_IR"], dtype=float)
+        ref_idx = self.bus_index[self.bus_ids[0]]
+        if vr_nonnegative:
+            V_R[ref_idx] = min(max(abs(V_R[ref_idx]), np.sqrt(0.99999)), 1.0)
+        V_I[ref_idx] = 0.0
+
+        ref_vr = V_R[ref_idx]
+        if abs(ref_vr) > tol:
+            for j in range(self.n_buses):
+                if j == ref_idx:
+                    continue
+                pair = tuple(sorted((ref_idx, j)))
+                p = self.cross_pair_index.get(pair)
+                if p is None:
+                    continue
+
+                vr_hint = Wij_RR[p] / ref_vr
+                if not vr_nonnegative and abs(vr_hint) > tol:
+                    V_R[j] = np.copysign(abs(V_R[j]), vr_hint)
+
+                if pair[0] == ref_idx:
+                    vi_hint = Wij_RI[p] / ref_vr
+                else:
+                    vi_hint = Wij_IR[p] / ref_vr
+                if abs(vi_hint) > tol:
+                    V_I[j] = np.copysign(abs(V_I[j]), vi_hint)
+
+        V_mag = np.sqrt(np.maximum(V_R ** 2 + V_I ** 2, 0.0))
         return {
             "V_R": V_R,
             "V_I": V_I,
@@ -633,6 +728,241 @@ class SympyACOPFModel:
             )
         )
         return vals
+
+    def _clip_to_var_bounds(self, x):
+        x = np.asarray(x, dtype=float).reshape(-1)
+        lb = np.asarray([b[0] for b in self.Var_bound_list], dtype=float)
+        ub = np.asarray([b[1] for b in self.Var_bound_list], dtype=float)
+        return np.minimum(np.maximum(x, lb), ub)
+
+    def project_branch_flows_from_lifted(self, x):
+        """
+        Replace independent branch-flow variables with values implied by W.
+
+        QHD solves a box-constrained ALM subproblem, so the coarse minimizer can
+        leave P_ij/Q_ij on coarse grid points even when the W variables imply
+        nonzero branch flows. This projection keeps the lifted W state and
+        generator values, then synchronizes P_ij, Q_ij, and S_tot_sq.
+        """
+        vals = self._unpack_x(x)
+        nb = self.n_buses
+        ng = self.n_gens
+        na = self.n_arcs
+        ncross = self.n_cross_pairs
+
+        P_ij = np.zeros(na, dtype=float)
+        Q_ij = np.zeros(na, dtype=float)
+        for a in range(na):
+            P_expr, Q_expr = self._branch_flow_expr_lifted(
+                a,
+                vals["Wii_RR"],
+                vals["Wii_II"],
+                vals["Wij_RR"],
+                vals["Wij_RI"],
+                vals["Wij_IR"],
+                vals["Wij_II"],
+            )
+            P_ij[a] = float(P_expr)
+            Q_ij[a] = float(Q_expr)
+
+        S_tot_sq = P_ij ** 2 + Q_ij ** 2
+        x_projected = np.concatenate(
+            [
+                vals["P_G"][:ng],
+                vals["Q_G"][:ng],
+                vals["Wii_RR"][:nb],
+                vals["Wii_RI"][:nb],
+                vals["Wii_II"][:nb],
+                vals["Wij_RR"][:ncross],
+                vals["Wij_RI"][:ncross],
+                vals["Wij_IR"][:ncross],
+                vals["Wij_II"][:ncross],
+                vals["V_sq"][:nb],
+                P_ij,
+                Q_ij,
+                S_tot_sq,
+            ]
+        )
+        return self._clip_to_var_bounds(x_projected)
+
+    def project_rank1_lifted_from_lifted(self, x, vr_nonnegative=True, tol=1e-10):
+        """
+        Project a lifted point onto the nearest rank-1 voltage representation.
+
+        The voltage is recovered from diagonal lifted terms, with slack-bus
+        cross terms used for signs when available. All W blocks are then rebuilt
+        as products of that voltage, and branch-flow variables are synchronized
+        from the rebuilt W afterwards.
+        """
+        vals = self._unpack_x(x)
+        nb = self.n_buses
+        ng = self.n_gens
+        na = self.n_arcs
+        ncross = self.n_cross_pairs
+
+        voltage = self.recover_rank1_voltage_from_lifted(
+            vals=vals,
+            vr_nonnegative=vr_nonnegative,
+            tol=tol,
+        )
+        V_R = voltage["V_R"]
+        V_I = voltage["V_I"]
+
+        v_sq_offset = 2 * ng + 3 * nb + 4 * ncross
+        for i in range(nb):
+            lb, ub = self.Var_bound_list[v_sq_offset + i]
+            mag_sq = float(V_R[i] ** 2 + V_I[i] ** 2)
+            if mag_sq <= tol:
+                V_R[i] = np.sqrt(max(float(lb), 0.0))
+                V_I[i] = 0.0
+                continue
+            if mag_sq < lb:
+                scale = np.sqrt(float(lb) / mag_sq)
+                V_R[i] *= scale
+                V_I[i] *= scale
+            elif mag_sq > ub:
+                scale = np.sqrt(float(ub) / mag_sq)
+                V_R[i] *= scale
+                V_I[i] *= scale
+
+        Wii_RR = V_R ** 2
+        Wii_RI = V_R * V_I
+        Wii_II = V_I ** 2
+        V_sq = Wii_RR + Wii_II
+
+        Wij_RR = np.zeros(ncross, dtype=float)
+        Wij_RI = np.zeros(ncross, dtype=float)
+        Wij_IR = np.zeros(ncross, dtype=float)
+        Wij_II = np.zeros(ncross, dtype=float)
+        for (i, j), p in self.cross_pair_index.items():
+            Wij_RR[p] = V_R[i] * V_R[j]
+            Wij_RI[p] = V_R[i] * V_I[j]
+            Wij_IR[p] = V_I[i] * V_R[j]
+            Wij_II[p] = V_I[i] * V_I[j]
+
+        x_rank1 = np.concatenate(
+            [
+                vals["P_G"][:ng],
+                vals["Q_G"][:ng],
+                Wii_RR[:nb],
+                Wii_RI[:nb],
+                Wii_II[:nb],
+                Wij_RR[:ncross],
+                Wij_RI[:ncross],
+                Wij_IR[:ncross],
+                Wij_II[:ncross],
+                V_sq[:nb],
+                np.zeros(na, dtype=float),
+                np.zeros(na, dtype=float),
+                np.zeros(na, dtype=float),
+            ]
+        )
+        return self.project_branch_flows_from_lifted(self._clip_to_var_bounds(x_rank1))
+
+    def build_rectangular_x_from_lifted(self, x, vr_nonnegative=True, tol=1e-10):
+        """
+        Convert a lifted QrOPF vector into the rectangular OPF variable order:
+        [P_G, Q_G, V_R, V_I, V_sq, P_ij, Q_ij, S_tot_sq].
+        """
+        vals = self._unpack_x(x)
+        voltage = self.recover_voltages_from_lifted(
+            vals=vals,
+            vr_nonnegative=vr_nonnegative,
+            tol=tol,
+        )
+        return np.concatenate(
+            [
+                vals["P_G"],
+                vals["Q_G"],
+                voltage["V_R"],
+                voltage["V_I"],
+                vals["V_sq"],
+                vals["P_ij"],
+                vals["Q_ij"],
+                vals["S_tot_sq"],
+            ]
+        )
+
+    def build_lifted_x_from_rectangular(self, x_rect):
+        """
+        Lift a rectangular OPF vector back to QrOPF variables so it can be used
+        as the next linearization point.
+        """
+        x_rect = np.asarray(x_rect, dtype=float).reshape(-1)
+        nb = self.n_buses
+        ng = self.n_gens
+        na = self.n_arcs
+        ncross = self.n_cross_pairs
+
+        idx = 0
+        P_G = x_rect[idx:idx + ng]; idx += ng
+        Q_G = x_rect[idx:idx + ng]; idx += ng
+        V_R = x_rect[idx:idx + nb].copy(); idx += nb
+        V_I = x_rect[idx:idx + nb].copy(); idx += nb
+        V_sq = x_rect[idx:idx + nb].copy(); idx += nb
+        P_ij = x_rect[idx:idx + na]; idx += na
+        Q_ij = x_rect[idx:idx + na]; idx += na
+        S_tot_sq = x_rect[idx:idx + na]; idx += na
+
+        if idx != x_rect.size:
+            raise ValueError(f"Unexpected rectangular vector length {x_rect.size}; parsed {idx} entries.")
+
+        ref_idx = self.bus_index[self.bus_ids[0]]
+        V_R[ref_idx] = min(max(V_R[ref_idx], 0.99999), 1.0)
+        V_I[ref_idx] = 0.0
+        V_sq[ref_idx] = min(max(V_sq[ref_idx], 0.99999), 1.0)
+
+        Wii_RR = V_R ** 2
+        Wii_RI = V_R * V_I
+        Wii_II = V_I ** 2
+
+        Wij_RR = np.zeros(ncross)
+        Wij_RI = np.zeros(ncross)
+        Wij_IR = np.zeros(ncross)
+        Wij_II = np.zeros(ncross)
+        for (i, j), p in self.cross_pair_index.items():
+            Wij_RR[p] = V_R[i] * V_R[j]
+            Wij_RI[p] = V_R[i] * V_I[j]
+            Wij_IR[p] = V_I[i] * V_R[j]
+            Wij_II[p] = V_I[i] * V_I[j]
+
+        x_lifted = np.concatenate(
+            [
+                P_G,
+                Q_G,
+                Wii_RR,
+                Wii_RI,
+                Wii_II,
+                Wij_RR,
+                Wij_RI,
+                Wij_IR,
+                Wij_II,
+                V_sq,
+                P_ij,
+                Q_ij,
+                S_tot_sq,
+            ]
+        )
+        return self._clip_to_var_bounds(x_lifted)
+
+    def build_rectangular_lambda_vec(self):
+        """
+        Project QrOPF multipliers onto the rectangular OPF constraint order.
+        The lifted-only W multipliers are intentionally omitted.
+        """
+        return np.asarray(
+            [
+                *self.lambda_P_bal,
+                *self.lambda_Q_bal,
+                *self.lambda_P_flow,
+                *self.lambda_Q_flow,
+                *self.lambda_Vsq,
+                *self.lambda_Ssq,
+                0.0,
+                0.0,
+            ],
+            dtype=float,
+        )
 
     def _build_variables(self):
         nb = self.n_buses
@@ -672,6 +1002,11 @@ class SympyACOPFModel:
 
         diag_bound_sq = [[0, 1.21] for _ in range(nb)]
         diag_bound_bi_linear = [[-1.21, 1.21] for _ in range(nb)]
+        ref_idx = self.bus_index[self.bus_ids[0]]
+        diag_bound_sq[ref_idx] = [0.99999, 1.0]
+        diag_bound_bi_linear[ref_idx] = [0.0, 0.0]
+        diag_bound_ii = [list(bound) for bound in diag_bound_sq]
+        diag_bound_ii[ref_idx] = [0.0, 0.0]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
             self.Wii_RR, diag_bound_sq, self.variable_list, self.Var_bound_list
         )
@@ -679,7 +1014,7 @@ class SympyACOPFModel:
             self.Wii_RI, diag_bound_bi_linear, self.variable_list, self.Var_bound_list
         )
         self.variable_list, self.Var_bound_list = self._var_list_insert(
-            self.Wii_II, diag_bound_sq, self.variable_list, self.Var_bound_list
+            self.Wii_II, diag_bound_ii, self.variable_list, self.Var_bound_list
         )
 
         # Directed cross lifted terms: 4 per cross pair
@@ -706,6 +1041,7 @@ class SympyACOPFModel:
         # Voltage magnitude squared: V_sq
         self.V_sq = sp.symbols(f'V_sq0:{nb}')
         V_sq_bound = [[0.9 ** 2, 1.1 ** 2] for _ in range(nb)]
+        V_sq_bound[ref_idx] = [0.99999, 1.0]
         self.variable_list, self.Var_bound_list = self._var_list_insert(
             self.V_sq, V_sq_bound, self.variable_list, self.Var_bound_list
         )
@@ -869,7 +1205,6 @@ class SympyACOPFModel:
 
         # map bus index -> generator sympy index (or None)
         gen_sym_indices_by_bus_idx = {self.bus_index[bid]: gids for bid, gids in self.gen_indices_by_bus.items()}
-
         # ---------------------------
         # (1) Active power balance constraints
         # ---------------------------
@@ -878,15 +1213,16 @@ class SympyACOPFModel:
             if i in gen_sym_indices_by_bus_idx:
                 for gi in gen_sym_indices_by_bus_idx[i]:
                     PG_sum += self.P_G[gi]
+
             h_P = PG_sum - self.P_D[i]
-            # diagonal Y_ii contribution
             Gii = self.G_mat[i, i]
-            Bii = self.B_mat[i, i]
             h_P -= Gii * Wii_RR[i] + Gii * Wii_II[i]
             for j in self.power_balance_pairs_by_bus[i]:
                 Gij = self.G_mat[i, j]
                 Bij = self.B_mat[i, j]
-                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+                    i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+                )
                 h_P -= Gij * Wij_RR_ij - Bij * Wij_RI_ij + Gij * Wij_II_ij + Bij * Wij_IR_ij
             L += self.lambda_P_bal[i] * h_P
 
@@ -898,14 +1234,16 @@ class SympyACOPFModel:
             if i in gen_sym_indices_by_bus_idx:
                 for gi in gen_sym_indices_by_bus_idx[i]:
                     QG_sum += self.Q_G[gi]
+
             h_Q = QG_sum - self.Q_D[i]
-            Gii = self.G_mat[i, i]
             Bii = self.B_mat[i, i]
             h_Q += Bii * Wii_II[i] + Bii * Wii_RR[i]
             for j in self.power_balance_pairs_by_bus[i]:
                 Gij = self.G_mat[i, j]
                 Bij = self.B_mat[i, j]
-                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+                    i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+                )
                 h_Q -= Gij * Wij_IR_ij - Bij * Wij_II_ij - Gij * Wij_RI_ij - Bij * Wij_RR_ij
             L += self.lambda_Q_bal[i] * h_Q
 
@@ -913,16 +1251,8 @@ class SympyACOPFModel:
         # (3) Branch power-flow definition constraints
         # ---------------------------
         for a, (i, j) in enumerate(self.arc_collection):
-            g, b = self._branch_flow_coeffs(a)
-            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-
-            P_expr = (
-                g * ((Wii_RR[i] + Wii_II[i]) - (Wij_RR_ij + Wij_II_ij))
-                + b * (Wij_RI_ij - Wij_IR_ij)
-            )
-            Q_expr = (
-                b * ((Wij_RR_ij + Wij_II_ij) - (Wii_RR[i] + Wii_II[i]))
-                + g * (Wij_RI_ij - Wij_IR_ij)
+            P_expr, Q_expr = self._branch_flow_expr_lifted(
+                a, Wii_RR, Wii_II, Wij_RR, Wij_RI, Wij_IR, Wij_II
             )
 
             L += self.lambda_P_flow[a] * (P_ij[a] - P_expr)
@@ -1231,13 +1561,16 @@ class SympyACOPFModel:
             PG_sum = 0
             for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
                 PG_sum += P_G[gi]
+
             cP = PG_sum - self.P_D[i]
             Gii = self.G_mat[i, i]
             cP -= Gii * Wii_RR[i] + Gii * Wii_II[i]
             for j in self.power_balance_pairs_by_bus[i]:
                 Gij = self.G_mat[i, j]
                 Bij = self.B_mat[i, j]
-                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+                    i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+                )
                 cP -= Gij * Wij_RR_ij - Bij * Wij_RI_ij + Gij * Wij_II_ij + Bij * Wij_IR_ij
             residuals.append(cP)
 
@@ -1245,32 +1578,28 @@ class SympyACOPFModel:
             QG_sum = 0
             for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
                 QG_sum += Q_G[gi]
+
             cQ = QG_sum - self.Q_D[i]
-            Gii = self.G_mat[i, i]
             Bii = self.B_mat[i, i]
             cQ += Bii * Wii_II[i] + Bii * Wii_RR[i]
             for j in self.power_balance_pairs_by_bus[i]:
                 Gij = self.G_mat[i, j]
                 Bij = self.B_mat[i, j]
-                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+                    i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+                )
                 cQ -= Gij * Wij_IR_ij - Bij * Wij_II_ij - Gij * Wij_RI_ij - Bij * Wij_RR_ij
             residuals.append(cQ)
 
         for a, (i, j) in enumerate(self.arc_collection):
-            g, b = self._branch_flow_coeffs(a)
-            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-            P_expr = (
-                g * ((Wii_RR[i] + Wii_II[i]) - (Wij_RR_ij + Wij_II_ij))
-                + b * (Wij_RI_ij - Wij_IR_ij)
+            P_expr, _ = self._branch_flow_expr_lifted(
+                a, Wii_RR, Wii_II, Wij_RR, Wij_RI, Wij_IR, Wij_II
             )
             residuals.append(P_ij[a] - P_expr)
 
         for a, (i, j) in enumerate(self.arc_collection):
-            g, b = self._branch_flow_coeffs(a)
-            Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-            Q_expr = (
-                b * ((Wij_RR_ij + Wij_II_ij) - (Wii_RR[i] + Wii_II[i]))
-                + g * (Wij_RI_ij - Wij_IR_ij)
+            _, Q_expr = self._branch_flow_expr_lifted(
+                a, Wii_RR, Wii_II, Wij_RR, Wij_RI, Wij_IR, Wij_II
             )
             residuals.append(Q_ij[a] - Q_expr)
 
@@ -1335,13 +1664,16 @@ class SympyACOPFModel:
                 PG_sum = 0.0
                 for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
                     PG_sum += P_G[gi]
+
                 cP = PG_sum - self.P_D[i]
                 Gii = self.G_mat[i, i]
                 cP -= Gii * Wii_RR[i] + Gii * Wii_II[i]
                 for j in self.power_balance_pairs_by_bus[i]:
                     Gij = self.G_mat[i, j]
                     Bij = self.B_mat[i, j]
-                    Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                    Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+                        i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+                    )
                     cP -= Gij * Wij_RR_ij - Bij * Wij_RI_ij + Gij * Wij_II_ij + Bij * Wij_IR_ij
                 residuals.append(cP)
 
@@ -1349,32 +1681,28 @@ class SympyACOPFModel:
                 QG_sum = 0.0
                 for gi in self.gen_indices_by_bus.get(self.bus_ids[i], []):
                     QG_sum += Q_G[gi]
+
                 cQ = QG_sum - self.Q_D[i]
-                Gii = self.G_mat[i, i]
                 Bii = self.B_mat[i, i]
                 cQ += Bii * Wii_II[i] + Bii * Wii_RR[i]
                 for j in self.power_balance_pairs_by_bus[i]:
                     Gij = self.G_mat[i, j]
                     Bij = self.B_mat[i, j]
-                    Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
+                    Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(
+                        i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II
+                    )
                     cQ -= Gij * Wij_IR_ij - Bij * Wij_II_ij - Gij * Wij_RI_ij - Bij * Wij_RR_ij
                 residuals.append(cQ)
 
             for a, (i, j) in enumerate(self.arc_collection):
-                g, b = self._branch_flow_coeffs(a)
-                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-                P_expr = (
-                    g * ((Wii_RR[i] + Wii_II[i]) - (Wij_RR_ij + Wij_II_ij))
-                    + b * (Wij_RI_ij - Wij_IR_ij)
+                P_expr, _ = self._branch_flow_expr_lifted(
+                    a, Wii_RR, Wii_II, Wij_RR, Wij_RI, Wij_IR, Wij_II
                 )
                 residuals.append(P_ij[a] - P_expr)
 
             for a, (i, j) in enumerate(self.arc_collection):
-                g, b = self._branch_flow_coeffs(a)
-                Wij_RR_ij, Wij_RI_ij, Wij_IR_ij, Wij_II_ij = self._cross_terms(i, j, Wij_RR, Wij_RI, Wij_IR, Wij_II)
-                Q_expr = (
-                    b * ((Wij_RR_ij + Wij_II_ij) - (Wii_RR[i] + Wii_II[i]))
-                    + g * (Wij_RI_ij - Wij_IR_ij)
+                _, Q_expr = self._branch_flow_expr_lifted(
+                    a, Wii_RR, Wii_II, Wij_RR, Wij_RI, Wij_IR, Wij_II
                 )
                 residuals.append(Q_ij[a] - Q_expr)
 
@@ -1407,7 +1735,7 @@ class SympyACOPFModel:
 
 
 
-def _build_qhd_acopf_log_filename(model, folder="."):
+def _build_qhd_acopf_log_filename(model, folder="QR_logs"):
     """
     日志文件命名规则：
         Buses-n-time-MM-DD-YYYY.txt
@@ -1425,7 +1753,7 @@ def _build_qhd_acopf_log_filename(model, folder="."):
     return str(Path(folder) / filename)
 
 
-def initialize_qhd_acopf_log(model, folder=".", extra_header=None, option=None, qhd_solver=None):
+def initialize_qhd_acopf_log(model, folder="QR_logs", extra_header=None, option=None, qhd_solver=None):
     """
     首次创建日志文件，并把路径挂在 model._qhd_acopf_log_file 上。
     """
@@ -1459,7 +1787,9 @@ def initialize_qhd_acopf_log(model, folder=".", extra_header=None, option=None, 
 
 def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=None,
                              h_x=None, lambda_vec=None, objective_value=None,
-                             feasibility=None, note=None):
+                             feasibility=None, note=None,
+                             include_iteration_header=True,
+                             include_feasibility=True):
     """
     把当前一轮 ALM / QHD 结果整理成字符串，供写入 txt 日志。
     """
@@ -1499,17 +1829,18 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
             objective_value = None
 
     out = []
-    out.append("=" * 120)
-    out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    if iteration is not None:
-        out.append(f"Iteration: {iteration}")
-    if rho is not None:
-        out.append(f"rho: {float(rho):.8g}")
-    if alpha is not None:
-        out.append(f"alpha: {float(alpha):.8g}")
+    out.append("=" * 120 if include_iteration_header else "-" * 120)
+    if include_iteration_header:
+        out.append(f"Update time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        if iteration is not None:
+            out.append(f"Iteration: {iteration}")
+        if rho is not None:
+            out.append(f"rho: {float(rho):.8g}")
+        if alpha is not None:
+            out.append(f"alpha: {float(alpha):.8g}")
     if objective_value is not None:
         out.append(f"objective_value: {float(objective_value):.12g}")
-    if feasibility is not None:
+    if include_feasibility and feasibility is not None:
         out.append(f"feasible: {bool(feasibility)}")
     if note is not None:
         out.append(f"note: {note}")
@@ -1526,7 +1857,7 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
 
     out.append("-" * 120)
     out.append("Bus Results")
-    out.append("BusID\tV_R\t\tV_I\t\tVmag\t\tWii_RR\t\tWii_II\t\tPg\t\tQg\t\tPl\t\tQl")
+    out.append("BusID\tV_R\t\tV_I\t\tVmag\t\tWii_RR\t\tWii_RI\t\tWii_II\t\tWdiagRank\tPg\t\tQg\t\tPl\t\tQl")
 
     Pgtotal = 0.0
     Qgtotal = 0.0
@@ -1534,8 +1865,6 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
     Qloadtotal = 0.0
 
     for bi, bus_id in enumerate(bus_ids):
-        Vmag = np.sqrt(max(V_sq[bi], 0.0))
-
         Pg_i = 0.0
         Qg_i = 0.0
         for gid in gen_ids:
@@ -1553,8 +1882,9 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
         Ploadtotal += Pl_i
         Qloadtotal += Ql_i
 
+        wdiag_rank = Wii_RR[bi] * Wii_II[bi] - Wii_RI[bi] ** 2
         out.append(
-            f"{bus_id}\t{V_R[bi]:.6f}\t{V_I[bi]:.6f}\t{V_mag[bi]:.6f}\t{Wii_RR[bi]:.6f}\t{Wii_II[bi]:.6f}\t{Pg_i:.6f}\t{Qg_i:.6f}\t{Pl_i:.6f}\t{Ql_i:.6f}"
+            f"{bus_id}\t{V_R[bi]:.6f}\t{V_I[bi]:.6f}\t{V_mag[bi]:.6f}\t{Wii_RR[bi]:.6f}\t{Wii_RI[bi]:.6f}\t{Wii_II[bi]:.6f}\t{wdiag_rank:.6e}\t{Pg_i:.6f}\t{Qg_i:.6f}\t{Pl_i:.6f}\t{Ql_i:.6f}"
         )
 
     out.append("")
@@ -1606,7 +1936,7 @@ def format_qhd_acopf_results(model, solution, iteration=None, rho=None, alpha=No
     return "\n".join(out)
 
 
-def append_qhd_acopf_results(model, solution, log_file=None, folder=".", **kwargs):
+def append_qhd_acopf_results(model, solution, log_file=None, folder="QR_logs", **kwargs):
     """
     追加写入一轮结果到 txt。首次调用若没有 log_file，会自动创建。
     """
@@ -1616,13 +1946,35 @@ def append_qhd_acopf_results(model, solution, log_file=None, folder=".", **kwarg
     if log_file is None:
         log_file = initialize_qhd_acopf_log(model, folder=folder)
 
-    text = format_qhd_acopf_results(model, solution, **kwargs)
+    iteration = kwargs.get("iteration")
+    note = kwargs.get("note")
+    previous_iteration = getattr(model, "_qhd_acopf_last_log_iteration", None)
+    previous_note = getattr(model, "_qhd_acopf_last_log_note", None)
+    same_iteration_refined_after_coarse = (
+        iteration is not None
+        and iteration == previous_iteration
+        and previous_note == "coarse_solution_before_refine"
+        and isinstance(note, str)
+        and note.startswith("refined_solution_")
+    )
+    include_iteration_header = not same_iteration_refined_after_coarse
+    include_feasibility = note != "coarse_solution_before_refine"
+
+    text = format_qhd_acopf_results(
+        model,
+        solution,
+        include_iteration_header=include_iteration_header,
+        include_feasibility=include_feasibility,
+        **kwargs,
+    )
 
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(text)
         f.write("\n")
 
     model._qhd_acopf_log_file = log_file
+    model._qhd_acopf_last_log_iteration = iteration
+    model._qhd_acopf_last_log_note = note
     return log_file
 
 
@@ -1724,14 +2076,30 @@ def format_qhd_acopf_console_results(model, solution, iteration=None, rho=None, 
     return "\n".join(out)
 
 
-def PrintQHDACOPFResults(model, solution, iteration=None, log_file=None, folder=".",
-                         print_to_console=True, **kwargs):
+def PrintQHDACOPFResults(model, solution, iteration=None, log_file=None, folder="QR_logs",
+                         print_to_console=True, console_format="compact", **kwargs):
     """
     兼容旧接口：
     - 默认仍可把结果打印到屏幕
     - 同时把结果写入日志 txt
     """
-    text = format_qhd_acopf_console_results(model, solution, iteration=iteration, **kwargs)
+    if console_format == "compact":
+        text = format_qhd_acopf_console_results(model, solution, iteration=iteration, **kwargs)
+    elif console_format == "qr":
+        console_kwargs = dict(kwargs)
+        console_kwargs.setdefault(
+            "include_feasibility",
+            console_kwargs.get("note") != "coarse_solution_before_refine",
+        )
+        text = format_qhd_acopf_results(
+            model,
+            solution,
+            iteration=iteration,
+            include_iteration_header=True,
+            **console_kwargs,
+        )
+    else:
+        raise ValueError("console_format must be 'compact' or 'qr'.")
 
     if print_to_console:
         print(text)

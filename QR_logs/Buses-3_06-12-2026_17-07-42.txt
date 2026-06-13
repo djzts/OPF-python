@@ -1,0 +1,11 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-06-12 17:07:42
+Number of buses: 3
+Number of lines: 3
+Number of generators: 2
+Solver used: 
+--- QHD with simbi solver ---
+========================================================================================================================
+
+[2026-06-12 17:07:43] iteration 0: starting QHD subproblem
+[2026-06-12 17:07:50] iteration 0: QHD coarse minimizer returned
