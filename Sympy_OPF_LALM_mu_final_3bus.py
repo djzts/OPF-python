@@ -31,7 +31,7 @@ class SolverConfig:
     option: int = 1  # 1: QHD, 2: Gurobi
     qhd_solver: str = "simbi"  # simbi / openjij / gurobi
     refine_method: str = "TNC_orig"  # none / ipopt_orig / TNC_orig / GurobiALM / GurobiOrig
-    rho: float = 64.0
+    rho: float = 128.0
     alpha: float = 5.0
     mu_prox: float = 1 #2e-2
     alpha_mode: str = "adaptive"  # adaptive / fixed
