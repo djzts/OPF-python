@@ -45,7 +45,9 @@ import numpy as np
 from scipy.optimize import Bounds, NonlinearConstraint, minimize
 
 
-DEFAULT_LOG = Path(r"E:\ZZQ_python_script\OPF_data\OPF-python\logs\Buses-3_06-13-2026_01-17-16.txt")
+DEFAULT_LOG = Path(__file__).resolve().parent / "logs" / "Buses-3_06-13-2026_01-17-16.txt"
+DEFAULT_LEGEND_FONTSIZE = 14
+DEFAULT_AXIS_FONTSIZE = 14
 
 
 @dataclass
@@ -609,6 +611,24 @@ PLOT_COLORS = {
 }
 
 
+def align_yaxis_values(ax_left, left_value: float, ax_right, right_value: float) -> None:
+    left_min, left_max = ax_left.get_ylim()
+    if left_max == left_min:
+        return
+
+    position = (left_value - left_min) / (left_max - left_min)
+    position = min(max(position, 1e-6), 1.0 - 1e-6)
+
+    right_min, right_max = ax_right.get_ylim()
+    lower_span = (right_value - right_min) / position
+    upper_span = (right_max - right_value) / (1.0 - position)
+    span = max(right_max - right_min, lower_span, upper_span, 1e-12)
+    ax_right.set_ylim(
+        right_value - position * span,
+        right_value + (1.0 - position) * span,
+    )
+
+
 def draw_objective_panel(ax, history: list[dict]) -> None:
     ax2 = ax.twinx()
     for answer_type, color in [("coarse", PLOT_COLORS["coarse"]), ("refined", PLOT_COLORS["refined"])]:
@@ -617,7 +637,7 @@ def draw_objective_panel(ax, history: list[dict]) -> None:
         x, supplied = series(history, answer_type, "active_load_supplied_percent")
         ax2.plot(x, supplied, color=color, lw=1.2, ls="--", alpha=0.75, label=f"{answer_type} load supplied")
     ax.axhline(0.0, color="0.25", lw=1.0, ls=":")
-    ax2.axhline(100.0, color="0.25", lw=1.0, ls="--")
+    align_yaxis_values(ax, 0.0, ax2, 100.0)
     ax.set_title("Objective difference")
     ax.set_xlabel("Iteration")
     ax.set_ylabel("QHD objective - standard objective")
@@ -708,18 +728,22 @@ def plot_convergence_diagnostics(
     standard_solution: dict,
     case_name: str,
     output_dir: Path,
+    legend_fontsize: float = DEFAULT_LEGEND_FONTSIZE,
+    axis_fontsize: float = DEFAULT_AXIS_FONTSIZE,
 ) -> tuple[Path, Path, list[Path]]:
     output_dir.mkdir(parents=True, exist_ok=True)
     plt.rcParams.update({
         "font.size": 10,
         "axes.titlesize": 12,
-        "axes.labelsize": 10,
-        "legend.fontsize": 8,
+        "axes.labelsize": axis_fontsize,
+        "xtick.labelsize": axis_fontsize,
+        "ytick.labelsize": axis_fontsize,
+        "legend.fontsize": legend_fontsize,
         "figure.titlesize": 15,
     })
 
     fig, axes = plt.subplots(2, 2, figsize=(14, 9), constrained_layout=True)
-    fig.suptitle(f"{case_name}: QHD coarse and refined answer", fontweight="bold")
+    #fig.suptitle(f"{case_name}: QHD coarse and refined answer", fontweight="bold")
 
     draw_objective_panel(axes[0, 0], history)
     draw_distance_panel(axes[0, 1], history)
@@ -752,6 +776,18 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Create QHD/Simbi/ALM convergence diagnostic plots.")
     parser.add_argument("--log", type=Path, default=DEFAULT_LOG, help="QHD ACOPF log text file")
     parser.add_argument("--output-dir", type=Path, default=None, help="Directory for CSV/PNG/PDF outputs")
+    parser.add_argument(
+        "--legend-fontsize",
+        type=float,
+        default=DEFAULT_LEGEND_FONTSIZE,
+        help="Legend font size for all generated plots",
+    )
+    parser.add_argument(
+        "--axis-fontsize",
+        type=float,
+        default=DEFAULT_AXIS_FONTSIZE,
+        help="Font size for all x/y axis labels and tick labels",
+    )
     args = parser.parse_args()
 
     log_path = args.log.resolve()
@@ -781,6 +817,8 @@ def main() -> None:
         standard_solution,
         case_name,
         output_dir,
+        legend_fontsize=args.legend_fontsize,
+        axis_fontsize=args.axis_fontsize,
     )
 
     print(f"Parsed records: {len(records)} ({len(records)//2} iterations with coarse/refined pairs)")
