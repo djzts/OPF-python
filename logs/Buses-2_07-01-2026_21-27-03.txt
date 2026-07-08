@@ -1,0 +1,11 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-07-01 21:27:03
+Number of buses: 2
+Number of lines: 1
+Number of generators: 1
+Solver used: QHD with simbi solver
+========================================================================================================================
+
+[step 2026-07-01 21:27:03] run_start n_bus=2, N=10, refine=disabled, alpha_mode=adaptive, alpha=5, rho=64, rho_max=512, bound_shrink_factor=0.5, bound_min_factor=0.0009765625, bound_start_iter=2, bound_requires_residual_improvement=True
+[step 2026-07-01 21:27:03] iteration_start iter=0, parents=1, alpha=5, rho=64
+[step 2026-07-01 21:27:03] qhd_start iter=0, parent=1/1, center=[0.3   ,0.1   ,1.    ,1.01  ,0.    ,0.    ,1.    ,1.0201,0.    ,0.    ,0.    ,0.    ,0.    ,0.    ]

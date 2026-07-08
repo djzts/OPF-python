@@ -1,0 +1,57 @@
+amphost001.sdcc.bnl.local
+Thu Jun 25 14:05:37 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:4B:00.0 Off |                    0 |
+| N/A   29C    P0             65W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Model initialized with 3 buses 3 lines and 2 generators.
+Reference bus 1 bounds: V_R in [0.999999, 1.000001], V_I in [-1e-06, 1e-06]
+Log file: logs/Buses-3_06-25-2026_14-05-42.txt
+Alpha mode: adaptive
+Refine: disabled (coarse answers only)
+Linearization beam width N: 10
+Bound continuation: factor=0.9, minimum=0.100% of original width, start iteration=2, requires residual improvement=True
+Adaptive alpha/rho start: alpha=5.0, rho=2.0
+
+===== Start Coarse-Only Multi-Point Linear ALM Loop =====
+
+
+--- Outer Iteration 0 ---
+linearization points = 1, alpha = 5.000000e+00, rho = 2.000000e+00
+[QHD] linearization 1/1
+Iterations:   0%|          | 0/10500 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  22%|██▏       | 2317/10500 [00:00<00:01, 4633.98it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  50%|█████     | 5269/10500 [00:01<00:00, 5301.99it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][AIterations:  78%|███████▊  | 8216/10500 [00:01<00:00, 5520.06it/s]
+Bifurcated agents:   0%|          | 1/1024 [00:01<26:14,  1.54s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<14:24,  1.18it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<07:37,  2.23it/s][AIterations: 100%|██████████| 10500/10500 [00:01<00:00, 5561.40it/s]
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:59,  4.24it/s]
+slurmstepd: error: *** JOB 366125 ON amphost001 CANCELLED AT 2026-06-25T14:05:54 ***

@@ -59,9 +59,16 @@ class SolverConfig:
     gurobi_time_limit: float | None = 60.0
     gurobi_threads: int = 0
     gurobi_log_to_console: bool = False
+    coarse_beam_search: bool = True
+    n_linearization_points: int = 10
+    candidate_distinct_atol: float = 1e-9
+    beam_refine_candidates: bool = True
+    beam_refine_keep: int = 10
     coarse_repeat_limit: int = 5
     bound_shrink_factor: float = 0.5
     bound_shrink_min_factor: float = 2.0 ** -10
+    bound_shrink_start_iter: int = 2
+    bound_shrink_require_residual_improvement: bool = True
     coarse_repeat_atol: float = 1e-10
     return_best_solution: bool = True
     print_to_console: bool = True
@@ -196,6 +203,45 @@ def coarse_solution_unchanged(x_current, x_previous, ignored_indices: set[int], 
     return bool(np.allclose(x_current, x_previous, rtol=0.0, atol=atol))
 
 
+def candidate_points_equal(x_a, x_b, ignored_indices: set[int], atol: float) -> bool:
+    x_a = np.asarray(x_a, dtype=float).reshape(-1)
+    x_b = np.asarray(x_b, dtype=float).reshape(-1)
+    if x_a.shape != x_b.shape:
+        return False
+
+    if ignored_indices:
+        mask = np.ones(x_a.size, dtype=bool)
+        mask[list(ignored_indices)] = False
+        x_a = x_a[mask]
+        x_b = x_b[mask]
+
+    return bool(np.allclose(x_a, x_b, rtol=0.0, atol=atol))
+
+
+def select_lowest_energy_distinct_candidates(
+    candidates,
+    limit: int,
+    ignored_indices: set[int],
+    atol: float,
+):
+    """Return at most ``limit`` finite-energy, distinct candidates."""
+    ordered = sorted(
+        (item for item in candidates if np.isfinite(item["lalm_energy"])),
+        key=lambda item: item["lalm_energy"],
+    )
+    selected = []
+    for item in ordered:
+        if any(
+            candidate_points_equal(item["x"], kept["x"], ignored_indices, atol)
+            for kept in selected
+        ):
+            continue
+        selected.append(item)
+        if len(selected) >= limit:
+            break
+    return selected
+
+
 def validate_config(config: SolverConfig) -> None:
     if config.alpha_mode not in {"adaptive", "fixed"}:
         raise ValueError("alpha_mode must be 'adaptive' or 'fixed'.")
@@ -220,12 +266,20 @@ def validate_config(config: SolverConfig) -> None:
         raise ValueError("tnc_maxfun must be positive or None.")
     if config.max_runtime_seconds is not None and config.max_runtime_seconds <= 0:
         raise ValueError("max_runtime_seconds must be positive or None.")
+    if config.n_linearization_points <= 0:
+        raise ValueError("n_linearization_points must be positive.")
+    if config.candidate_distinct_atol < 0.0:
+        raise ValueError("candidate_distinct_atol must be nonnegative.")
+    if config.beam_refine_keep <= 0:
+        raise ValueError("beam_refine_keep must be positive.")
     if config.coarse_repeat_limit <= 0:
         raise ValueError("coarse_repeat_limit must be positive.")
     if not 0.0 < config.bound_shrink_factor <= 1.0:
         raise ValueError("bound_shrink_factor must be in (0, 1].")
     if not 0.0 < config.bound_shrink_min_factor <= 1.0:
         raise ValueError("bound_shrink_min_factor must be in (0, 1].")
+    if config.bound_shrink_start_iter < 0:
+        raise ValueError("bound_shrink_start_iter must be nonnegative.")
     if config.coarse_repeat_atol < 0.0:
         raise ValueError("coarse_repeat_atol must be nonnegative.")
     if config.rho_max < config.rho_min:
@@ -264,10 +318,13 @@ def solve_subproblem_qhd(
     rho: float,
     config: SolverConfig,
     refine_var_bound_list=None,
+    return_coarse_samples: bool = False,
 ):
     qhd_model = QHD.SymPy(lagrangian, variable_list, var_bound_list)
     refine_method = canonical_refine_method(config.refine_method)
-    qhd_post_processing_method = "TNC" if refine_method == "none" else refine_method
+    qhd_post_processing_method = (
+        "TNC" if return_coarse_samples or refine_method == "none" else refine_method
+    )
 
     if config.qhd_solver == "simbi":
         qhd_model.simbi_setup(
@@ -314,7 +371,9 @@ def solve_subproblem_qhd(
     else:
         raise ValueError(f"Unsupported qhd_solver={config.qhd_solver!r}.")
 
-    should_refine = bool(config.qhd_refine and refine_method != "none")
+    should_refine = bool(
+        not return_coarse_samples and config.qhd_refine and refine_method != "none"
+    )
     if should_refine:
         tnc_options = {}
         if config.tnc_maxfun is not None:
@@ -342,6 +401,30 @@ def solve_subproblem_qhd(
         )
 
     response = qhd_model.optimize(refine=should_refine, verbose=0)
+    if return_coarse_samples:
+        samples = []
+        for candidate in getattr(response, "coarse_samples", None) or []:
+            if candidate is None:
+                continue
+            vector = np.asarray(candidate, dtype=float).reshape(-1)
+            if vector.size == len(variable_list) and np.all(np.isfinite(vector)):
+                samples.append(vector)
+
+        try:
+            samples.append(
+                extract_qhd_solution_vector(
+                    response,
+                    prefer_refined=False,
+                    expected_len=len(variable_list),
+                )
+            )
+        except ValueError:
+            pass
+
+        if not samples:
+            raise RuntimeError("QHD/Simbi returned no usable coarse samples.")
+        return samples
+
     x_coarse = extract_qhd_solution_vector(
         response,
         prefer_refined=False,
@@ -372,6 +455,34 @@ def evaluate_objective(model: SympyACOPFModel, x_vec) -> float:
 def evaluate_sympy_expression(expr, variable_list, x_vec) -> float:
     subs_dict = {var: val for var, val in zip(variable_list, x_vec)}
     return float(sp.N(expr.subs(subs_dict)))
+
+
+def build_scalar_evaluator(expr, variable_list):
+    """Compile a SymPy scalar once for efficient evaluation of many samples."""
+    raw_func = sp.lambdify(variable_list, expr, modules="numpy")
+
+    def evaluate(x_vec):
+        x_vec = np.asarray(x_vec, dtype=float).reshape(-1)
+        return float(raw_func(*x_vec))
+
+    return evaluate
+
+
+def append_step_log(log_file: str, message: str) -> None:
+    """Append one algorithm step immediately so partial runs remain auditable."""
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    with open(log_file, "a", encoding="utf-8") as stream:
+        stream.write(f"[step {timestamp}] {message.rstrip()}\n")
+        stream.flush()
+
+
+def format_step_vector(x_vec) -> str:
+    return np.array2string(
+        np.asarray(x_vec, dtype=float).reshape(-1),
+        precision=10,
+        separator=",",
+        max_line_width=1_000_000,
+    )
 
 
 def _clip_to_bounds(x, var_bound_list):
@@ -738,7 +849,700 @@ def save_objective_plot(
     plt.close(fig)
 
 
-def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
+def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
+    """Run coarse-only QCE as an N-point linearization beam search."""
+    validate_config(config)
+
+    h_func = model.build_h_func()
+    model.reset_lambdas(0.0)
+    objective_expr = model._build_objective_expr()
+    model.objective = objective_expr
+    objective_func = build_scalar_evaluator(objective_expr, model.variable_list)
+
+    x_initial = np.asarray(model.build_initial_x0(), dtype=float)
+    linearization_points = [x_initial.copy()]
+    previous_evaluation_x = x_initial.copy()
+
+    alpha = config.alpha
+    rho = config.rho
+    alpha_max_current = config.alpha_max
+    log_file = initialize_qhd_acopf_log(
+        model,
+        folder=config.log_folder,
+        option=config.option,
+        qhd_solver=config.qhd_solver,
+    )
+
+    def log_step(message: str) -> None:
+        append_step_log(log_file, message)
+
+    print("Log file:", log_file)
+    print(f"Alpha mode: {config.alpha_mode}")
+    if config.beam_refine_candidates:
+        print(
+            "Beam refine: enabled for selected candidates via "
+            f"{canonical_refine_method(config.refine_method)}"
+        )
+        print(f"Refined objective keep M: {config.beam_refine_keep}")
+    else:
+        print("Beam refine: disabled (coarse answers only)")
+    print(f"Linearization beam width N: {config.n_linearization_points}")
+    print(
+        f"Bound continuation: factor={config.bound_shrink_factor}, "
+        f"minimum={config.bound_shrink_min_factor:.3%} of original width, "
+        f"start iteration={config.bound_shrink_start_iter}, "
+        "requires residual improvement="
+        f"{config.bound_shrink_require_residual_improvement}"
+    )
+    if config.alpha_mode == "fixed":
+        print(f"Fixed alpha: {alpha}")
+    else:
+        print(f"Adaptive alpha/rho start: alpha={alpha}, rho={rho}")
+
+    log_step(
+        "run_start "
+        f"n_bus={config.n_bus}, N={config.n_linearization_points}, "
+        f"beam_refine={config.beam_refine_candidates}, "
+        f"refine_method={canonical_refine_method(config.refine_method)}, "
+        f"beam_refine_keep={config.beam_refine_keep}, "
+        f"alpha_mode={config.alpha_mode}, "
+        f"alpha={alpha:.12g}, rho={rho:.12g}, rho_max={config.rho_max:.12g}, "
+        f"bound_shrink_factor={config.bound_shrink_factor:.12g}, "
+        f"bound_min_factor={config.bound_shrink_min_factor:.12g}, "
+        f"bound_start_iter={config.bound_shrink_start_iter}, "
+        "bound_requires_residual_improvement="
+        f"{config.bound_shrink_require_residual_improvement}"
+    )
+
+    print("\n===== Start Multi-Point Linear ALM Beam Loop =====\n")
+    start_time = time.monotonic()
+    runtime_timeout = False
+    converged = False
+    xk = x_initial.copy()
+    objective_history = []
+    metric_history = []
+    candidate_history = []
+    plateau_count = 0
+    worsen_count = 0
+    stable_count = 0
+    prev_norm_h = None
+    prev_lambda_inf = None
+    best_residual_iter = None
+    best_residual = float("inf")
+
+    original_var_bound_list = [
+        [float(bound[0]), float(bound[1])] for bound in model.Var_bound_list
+    ]
+    qhd_var_bound_list = [bound.copy() for bound in original_var_bound_list]
+    fixed_bound_indices = reference_voltage_bound_indices(model)
+    bounds_shrink_count = 0
+
+    best_record = {
+        "iter": None,
+        "metric": float("inf"),
+        "x": None,
+        "objective": float("inf"),
+        "h_x": None,
+        "lambda_vec": None,
+        "feasible": False,
+        "rho": None,
+        "alpha": None,
+    }
+
+    for k in range(config.max_outer):
+        elapsed_seconds = time.monotonic() - start_time
+        if (
+            config.max_runtime_seconds is not None
+            and elapsed_seconds >= config.max_runtime_seconds
+        ):
+            runtime_timeout = True
+            print("\nRuntime limit reached before the next generation.")
+            log_step(
+                f"runtime_limit before_iteration={k}, "
+                f"elapsed_seconds={elapsed_seconds:.6f}"
+            )
+            break
+
+        if config.alpha_mode == "fixed":
+            alpha = config.alpha
+
+        alpha_used = alpha
+        rho_used = rho
+        parent_points = [np.asarray(x, dtype=float).copy() for x in linearization_points]
+        all_candidates = []
+        raw_solver_sample_count = 0
+        local_candidate_counts = []
+
+        print(f"\n--- Outer Iteration {k} ---")
+        print(
+            f"linearization points = {len(parent_points)}, "
+            f"alpha = {alpha_used:.6e}, rho = {rho_used:.6e}"
+        )
+        log_step(
+            f"iteration_start iter={k}, parents={len(parent_points)}, "
+            f"alpha={alpha_used:.12g}, rho={rho_used:.12g}"
+        )
+
+        for parent_index, x_center in enumerate(parent_points):
+            if (
+                config.max_runtime_seconds is not None
+                and time.monotonic() - start_time >= config.max_runtime_seconds
+            ):
+                runtime_timeout = True
+                print(
+                    f"[runtime] stopped after {parent_index}/{len(parent_points)} "
+                    "linearization solves in this generation."
+                )
+                log_step(
+                    f"runtime_limit iter={k}, completed_parents={parent_index}/"
+                    f"{len(parent_points)}"
+                )
+                break
+
+            print(
+                f"[QHD] linearization {parent_index + 1}/{len(parent_points)}"
+            )
+            log_step(
+                f"qhd_start iter={k}, parent={parent_index + 1}/"
+                f"{len(parent_points)}, center={format_step_vector(x_center)}"
+            )
+            lagrangian, variable_list, var_bound_list = (
+                model.build_linear_ALM_Lagrangian_syms(
+                    x_center=x_center,
+                    rho=rho_used,
+                    ref_bus_id=None,
+                    mu_prox=config.mu_prox,
+                )
+            )
+            solve_bounds = qhd_var_bound_list if config.option == 1 else var_bound_list
+            validate_bounds(variable_list, solve_bounds)
+
+            try:
+                if config.option == 1:
+                    coarse_samples = solve_subproblem_qhd(
+                        lagrangian,
+                        variable_list,
+                        solve_bounds,
+                        model=model,
+                        x_center=x_center,
+                        rho=rho_used,
+                        config=config,
+                        refine_var_bound_list=model.Var_bound_list,
+                        return_coarse_samples=True,
+                    )
+                else:
+                    coarse_samples = [
+                        solve_subproblem_gurobi(
+                            lagrangian,
+                            variable_list,
+                            solve_bounds,
+                        )
+                    ]
+            except Exception as exc:
+                log_step(
+                    f"qhd_error iter={k}, parent={parent_index + 1}, "
+                    f"error={type(exc).__name__}: {exc}"
+                )
+                raise
+
+            raw_solver_sample_count += len(coarse_samples)
+            energy_func = build_scalar_evaluator(lagrangian, variable_list)
+            parent_candidates = []
+            for sample in coarse_samples:
+                sample = np.asarray(sample, dtype=float).reshape(-1)
+                try:
+                    energy = energy_func(sample)
+                except (FloatingPointError, OverflowError, TypeError, ValueError):
+                    continue
+                parent_candidates.append(
+                    {
+                        "x": sample.copy(),
+                        "lalm_energy": energy,
+                        "parent_index": parent_index,
+                    }
+                )
+
+            # Stage 1: retain N distinct low-energy answers from this LALM.
+            # With N parents, the global stage receives the requested N*N pool.
+            parent_selected = select_lowest_energy_distinct_candidates(
+                parent_candidates,
+                limit=config.n_linearization_points,
+                ignored_indices=fixed_bound_indices,
+                atol=config.candidate_distinct_atol,
+            )
+            local_candidate_counts.append(len(parent_selected))
+            all_candidates.extend(parent_selected)
+            print(
+                f"[local beam {parent_index + 1}] "
+                f"raw={len(parent_candidates)}, "
+                f"distinct selected={len(parent_selected)}/"
+                f"{config.n_linearization_points}"
+            )
+            log_step(
+                f"local_beam_complete iter={k}, parent={parent_index + 1}, "
+                f"raw={len(parent_candidates)}, selected={len(parent_selected)}/"
+                f"{config.n_linearization_points}"
+            )
+            for local_rank, item in enumerate(parent_selected, start=1):
+                log_step(
+                    f"local_candidate iter={k}, parent={parent_index + 1}, "
+                    f"rank={local_rank}, energy={item['lalm_energy']:.15g}, "
+                    f"x={format_step_vector(item['x'])}"
+                )
+            if len(parent_selected) < config.n_linearization_points:
+                print(
+                    f"[local beam {parent_index + 1}] warning: only "
+                    f"{len(parent_selected)} distinct points were available."
+                )
+                log_step(
+                    f"local_beam_warning iter={k}, parent={parent_index + 1}, "
+                    f"requested={config.n_linearization_points}, "
+                    f"available={len(parent_selected)}"
+                )
+
+        if not all_candidates:
+            if runtime_timeout:
+                break
+            log_step(f"error iter={k}: no finite local candidates")
+            raise RuntimeError("No finite coarse candidates were produced in this generation.")
+
+        selected = select_lowest_energy_distinct_candidates(
+            all_candidates,
+            limit=config.n_linearization_points,
+            ignored_indices=fixed_bound_indices,
+            atol=config.candidate_distinct_atol,
+        )
+        if not selected:
+            raise RuntimeError("No finite, distinct coarse candidates remained after filtering.")
+        if len(selected) < config.n_linearization_points:
+            print(
+                f"[beam] warning: requested {config.n_linearization_points} distinct "
+                f"points, but only {len(selected)} were available."
+            )
+            log_step(
+                f"global_beam_warning iter={k}, "
+                f"requested={config.n_linearization_points}, available={len(selected)}"
+            )
+
+        for energy_rank, item in enumerate(selected, start=1):
+            item["energy_rank"] = energy_rank
+            item["coarse_x"] = item["x"].copy()
+            item["coarse_lalm_energy"] = item["lalm_energy"]
+            item["coarse_objective"] = objective_func(item["coarse_x"])
+
+        if config.beam_refine_candidates:
+            refine_method = canonical_refine_method(config.refine_method)
+            print(
+                f"[beam refine] refining {len(selected)} selected candidates "
+                f"with {refine_method}"
+            )
+            log_step(
+                f"beam_refine_start iter={k}, candidates={len(selected)}, "
+                f"method={refine_method}"
+            )
+            for item in selected:
+                parent_center = parent_points[item["parent_index"]]
+                refined_x = refine_acopf_solution(
+                    model,
+                    item["coarse_x"],
+                    x_center=parent_center,
+                    rho=rho_used,
+                    config=config,
+                )
+                refined_x = np.asarray(refined_x, dtype=float).reshape(-1).copy()
+                item["x"] = refined_x
+                item["refined"] = True
+                item["objective"] = objective_func(refined_x)
+                item["refined_objective"] = item["objective"]
+                log_step(
+                    f"beam_refined_candidate iter={k}, "
+                    f"energy_rank={item['energy_rank']}, "
+                    f"parent={item['parent_index'] + 1}, "
+                    f"coarse_objective={item['coarse_objective']:.15g}, "
+                    f"refined_objective={item['objective']:.15g}, "
+                    f"x={format_step_vector(refined_x)}"
+                )
+        else:
+            for item in selected:
+                item["refined"] = False
+                item["objective"] = item["coarse_objective"]
+                item["refined_objective"] = None
+
+        active_candidate_count = min(config.beam_refine_keep, len(selected))
+        active_candidates = sorted(
+            selected,
+            key=lambda item: item["objective"],
+        )[:active_candidate_count]
+        active_ids = {id(item) for item in active_candidates}
+        evaluation = active_candidates[0]
+        evaluation_rank = evaluation["energy_rank"] - 1
+        x_new = evaluation["x"].copy()
+        h_val = np.asarray(h_func(x_new), dtype=float).reshape(-1)
+        norm_h = float(np.linalg.norm(h_val))
+        objective_value = evaluation["objective"]
+        _, check_flag = model.check_constraints(x_new)
+        step_norm = float(np.linalg.norm(x_new - previous_evaluation_x))
+        residual_improved = (
+            prev_norm_h is not None
+            and norm_h <= prev_norm_h * (1.0 - config.improve_tol)
+        )
+
+        print(
+            f"[beam] solver samples={raw_solver_sample_count}, "
+            f"candidate pool={len(all_candidates)}, "
+            f"global distinct selected={len(selected)}, "
+            f"active objective top-M={len(active_candidates)}, "
+            f"evaluation energy rank={evaluation_rank + 1}"
+        )
+        log_step(
+            f"global_beam_complete iter={k}, "
+            f"solver_samples={raw_solver_sample_count}, "
+            f"candidate_pool={len(all_candidates)}, selected={len(selected)}, "
+            f"active={len(active_candidates)}, "
+            f"evaluation_rank={evaluation_rank + 1}, "
+            f"local_counts={local_candidate_counts}"
+        )
+        for rank, item in enumerate(selected, start=1):
+            marker_parts = []
+            if id(item) in active_ids:
+                marker_parts.append("active")
+            if item is evaluation:
+                marker_parts.append("objective/h(x)")
+            marker = " <-- " + ", ".join(marker_parts) if marker_parts else ""
+            if item["refined"]:
+                print(
+                    f"  #{rank:02d} energy={item['lalm_energy']:.12g}, "
+                    f"coarse_obj={item['coarse_objective']:.9g}, "
+                    f"refined_obj={item['objective']:.9g}{marker}"
+                )
+            else:
+                print(
+                    f"  #{rank:02d} energy={item['lalm_energy']:.12g}, "
+                    f"obj={item['objective']:.9g}{marker}"
+                )
+            log_step(
+                f"global_candidate iter={k}, rank={rank}, "
+                f"parent={item['parent_index'] + 1}, "
+                f"energy={item['lalm_energy']:.15g}, "
+                f"coarse_objective={item['coarse_objective']:.15g}, "
+                f"objective={item['objective']:.15g}, "
+                f"refined={item['refined']}, "
+                f"active_choice={id(item) in active_ids}, "
+                f"evaluation_choice={item is evaluation}, "
+                f"coarse_x={format_step_vector(item['coarse_x'])}, "
+                f"x={format_step_vector(item['x'])}"
+            )
+        print(
+            f"[evaluation] objective={objective_value:.9g}, "
+            f"||h(x)||={norm_h:.6e}, step={step_norm:.6e}"
+        )
+        log_step(
+            f"evaluation iter={k}, rank={evaluation_rank + 1}, "
+            f"objective={objective_value:.15g}, lalm_energy="
+            f"{evaluation['lalm_energy']:.15g}, l2_norm_h={norm_h:.15g}, "
+            f"max_abs_h={float(np.max(np.abs(h_val))):.15g}, "
+            f"step_norm={step_norm:.15g}, feasible={check_flag}, "
+            f"active_candidates={len(active_candidates)}, "
+            f"x={format_step_vector(x_new)}"
+        )
+
+        lambda_new, _ = model.update_lambda(
+            x_new,
+            alpha=alpha_used,
+            h_func=lambda _x: h_val,
+        )
+        lambda_inf = float(np.max(np.abs(lambda_new)))
+
+        alpha, rho, stable_count, plateau_count, worsen_count = adapt_alpha_rho(
+            norm_h=norm_h,
+            lambda_inf=lambda_inf,
+            prev_norm_h=prev_norm_h,
+            prev_lambda_inf=prev_lambda_inf,
+            alpha=alpha_used,
+            rho=rho_used,
+            stable_count=stable_count,
+            plateau_count=plateau_count,
+            worsen_count=worsen_count,
+            config=config,
+            alpha_max=alpha_max_current,
+        )
+        log_step(
+            f"adaptive_update iter={k}, alpha_used={alpha_used:.15g}, "
+            f"rho_used={rho_used:.15g}, next_alpha={alpha:.15g}, "
+            f"next_rho={rho:.15g}, lambda_inf={lambda_inf:.15g}, "
+            f"stable_count={stable_count}, plateau_count={plateau_count}, "
+            f"worsen_count={worsen_count}"
+        )
+        prev_norm_h = norm_h
+        prev_lambda_inf = lambda_inf
+
+        # The objective-best M candidates become linearization points for the
+        # next generation. Bounds remain wide during the warm-up and only
+        # shrink after an accepted improvement in the true nonlinear residual.
+        linearization_points = [item["x"].copy() for item in active_candidates]
+        shrink_bounds_this_round = (
+            k >= config.bound_shrink_start_iter
+            and (
+                not config.bound_shrink_require_residual_improvement
+                or residual_improved
+            )
+        )
+        if shrink_bounds_this_round:
+            bounds_shrink_count += 1
+            qhd_var_bound_list = shrink_bounds_around_refined_solution(
+                original_var_bound_list,
+                qhd_var_bound_list,
+                x_new,
+                shrink_factor=config.bound_shrink_factor,
+                min_shrink_factor=config.bound_shrink_min_factor,
+                fixed_indices=fixed_bound_indices,
+            )
+            validate_bounds(model.variable_list, qhd_var_bound_list)
+
+        effective_cumulative_shrink = max(
+            config.bound_shrink_min_factor,
+            config.bound_shrink_factor ** bounds_shrink_count,
+        )
+        if shrink_bounds_this_round:
+            print(
+                f"[bounds] accepted residual improvement; shrink "
+                f"#{bounds_shrink_count} around objective-best solution; "
+                f"width factor={config.bound_shrink_factor:.6g}, "
+                f"cumulative~={effective_cumulative_shrink:.6g}"
+            )
+            log_step(
+                f"bounds_shrink iter={k}, applied=True, "
+                f"shrink_count={bounds_shrink_count}, "
+                f"factor={config.bound_shrink_factor:.15g}, "
+                f"cumulative_factor={effective_cumulative_shrink:.15g}, "
+                f"center={format_step_vector(x_new)}"
+            )
+        else:
+            if k < config.bound_shrink_start_iter:
+                hold_reason = (
+                    f"warm-up ({k + 1}/{config.bound_shrink_start_iter} rounds)"
+                )
+            else:
+                hold_reason = "nonlinear residual did not improve enough"
+            print(
+                f"[bounds] unchanged: {hold_reason}; "
+                f"cumulative factor={effective_cumulative_shrink:.6g}"
+            )
+            log_step(
+                f"bounds_shrink iter={k}, applied=False, reason={hold_reason}, "
+                f"shrink_count={bounds_shrink_count}, "
+                f"cumulative_factor={effective_cumulative_shrink:.15g}"
+            )
+
+        objective_history.append({"iter": k, "objective": objective_value})
+        candidate_history.append(
+            {
+                "iter": k,
+                "raw_solver_sample_count": raw_solver_sample_count,
+                "pooled_candidate_count": len(all_candidates),
+                "local_candidate_counts": local_candidate_counts.copy(),
+                "selected": [
+                    {
+                        "x": item["x"].copy(),
+                        "coarse_x": item["coarse_x"].copy(),
+                        "lalm_energy": item["lalm_energy"],
+                        "coarse_objective": item["coarse_objective"],
+                        "objective": item["objective"],
+                        "refined": item["refined"],
+                        "parent_index": item["parent_index"],
+                        "active": id(item) in active_ids,
+                        "evaluation_choice": item is evaluation,
+                    }
+                    for item in selected
+                ],
+                "active_candidate_count": len(active_candidates),
+                "evaluation_rank": evaluation_rank,
+            }
+        )
+        metric_history.append(
+            {
+                "iter": k,
+                "max_abs_h": float(np.max(np.abs(h_val))),
+                "l2_norm_h": norm_h,
+                "objective": objective_value,
+                "lalm_energy": evaluation["lalm_energy"],
+                "evaluation_energy_rank": evaluation_rank + 1,
+                "selected_candidate_count": len(selected),
+                "active_candidate_count": len(active_candidates),
+                "beam_refine_candidates": config.beam_refine_candidates,
+                "beam_refine_keep": config.beam_refine_keep,
+                "raw_solver_sample_count": raw_solver_sample_count,
+                "pooled_candidate_count": len(all_candidates),
+                "local_candidate_counts": local_candidate_counts.copy(),
+                "alpha": float(alpha_used),
+                "rho": float(rho_used),
+                "next_alpha": float(alpha),
+                "next_rho": float(rho),
+                "lambda_inf": lambda_inf,
+                "residual_improved": residual_improved,
+                "bound_shrink_applied": shrink_bounds_this_round,
+                "bounds_shrink_count": bounds_shrink_count,
+                "cumulative_bound_factor": effective_cumulative_shrink,
+            }
+        )
+
+        objective_is_better = objective_value < best_record["objective"] - 1e-12
+        objective_tied_with_better_residual = (
+            abs(objective_value - best_record["objective"]) <= 1e-12
+            and norm_h < best_record["metric"]
+        )
+        if objective_is_better or objective_tied_with_better_residual:
+            best_record.update(
+                {
+                    "iter": k,
+                    "metric": norm_h,
+                    "x": x_new.copy(),
+                    "objective": objective_value,
+                    "h_x": h_val.copy(),
+                    "lambda_vec": np.asarray(lambda_new, dtype=float).copy(),
+                    "feasible": check_flag,
+                    "rho": float(rho_used),
+                    "alpha": float(alpha_used),
+                }
+            )
+            print(
+                f"[best objective] iter={k}, objective={objective_value:.9g}, "
+                f"||h||={norm_h:.6e}"
+            )
+            log_step(
+                f"best_objective_update iter={k}, "
+                f"objective={objective_value:.15g}, l2_norm_h={norm_h:.15g}, "
+                f"feasible={check_flag}, x={format_step_vector(x_new)}"
+            )
+
+        if norm_h < best_residual - 1e-12:
+            best_residual = norm_h
+            best_residual_iter = k
+
+        result_note = (
+            ("refined" if config.beam_refine_candidates else "coarse")
+            + "_objective_best_from_top_"
+            + f"{len(active_candidates)}_active_beam_candidates"
+        )
+        log_file = PrintQHDACOPFResults(
+            model,
+            x_new,
+            log_file=log_file,
+            iteration=k,
+            folder=config.log_folder,
+            print_to_console=config.print_to_console,
+            rho=rho_used,
+            alpha=alpha_used,
+            h_x=h_val,
+            lambda_vec=lambda_new,
+            objective_value=objective_value,
+            lalm_energy=evaluation["lalm_energy"],
+            feasibility=check_flag,
+            note=result_note,
+        )
+        log_step(f"iteration_result_written iter={k}, note={result_note}")
+
+        xk = x_new.copy()
+        previous_evaluation_x = x_new.copy()
+
+        if check_flag or (norm_h < config.tol and step_norm < config.tol):
+            converged = True
+            print("\nConverged!")
+            log_step(
+                f"converged iter={k}, feasible={check_flag}, "
+                f"l2_norm_h={norm_h:.15g}, step_norm={step_norm:.15g}"
+            )
+            break
+
+        if (
+            config.early_stop_patience > 0
+            and best_residual_iter is not None
+            and k - best_residual_iter >= config.early_stop_patience
+        ):
+            print(
+                "\nEarly stop: no h(x) residual improvement for "
+                f"{config.early_stop_patience} iterations."
+            )
+            log_step(
+                f"early_stop iter={k}, patience={config.early_stop_patience}, "
+                f"best_residual_iter={best_residual_iter}, "
+                f"best_residual={best_residual:.15g}"
+            )
+            break
+
+        if runtime_timeout:
+            break
+
+    print("\n===== End Loop =====\n")
+    if runtime_timeout:
+        print("Stopped because max_runtime_seconds was reached.")
+    elif not converged:
+        print("Stopped without satisfying the convergence test.")
+    print("Final log file:", log_file)
+    log_step(
+        f"run_end converged={converged}, runtime_timeout={runtime_timeout}, "
+        f"completed_iterations={len(metric_history)}, final_alpha={alpha:.15g}, "
+        f"final_rho={rho:.15g}"
+    )
+
+    if best_record["iter"] is not None:
+        print(
+            "Best objective iteration:",
+            best_record["iter"],
+            f"objective={best_record['objective']:.9g}",
+            f"l2_norm_h={best_record['metric']:.6e}",
+        )
+        log_file = PrintQHDACOPFResults(
+            model,
+            best_record["x"],
+            log_file=log_file,
+            iteration=best_record["iter"],
+            folder=config.log_folder,
+            print_to_console=False,
+            rho=best_record["rho"],
+            alpha=best_record["alpha"],
+            h_x=best_record["h_x"],
+            lambda_vec=best_record["lambda_vec"],
+            objective_value=best_record["objective"],
+            feasibility=best_record["feasible"],
+            note="best_iteration_by_objective",
+        )
+        log_step(
+            f"best_result_written iter={best_record['iter']}, "
+            f"objective={best_record['objective']:.15g}, "
+            f"l2_norm_h={best_record['metric']:.15g}, "
+            f"feasible={best_record['feasible']}"
+        )
+        if config.return_best_solution:
+            xk = best_record["x"].copy()
+
+    save_objective_plot(
+        objective_history,
+        log_file,
+        config.log_folder,
+        show=config.show_plot,
+    )
+    log_step(
+        f"objective_plot_written path="
+        f"{Path(config.log_folder) / (Path(log_file).stem + '-Obj.png')}"
+    )
+
+    return {
+        "x": xk,
+        "linearization_points": linearization_points,
+        "log_file": log_file,
+        "objective_history": objective_history,
+        "metric_history": metric_history,
+        "candidate_history": candidate_history,
+        "best_record": best_record,
+        "final_alpha": alpha,
+        "final_rho": rho,
+        "converged": converged,
+    }
+
+
+
+def run_single_point_linear_alm(model: SympyACOPFModel, config: SolverConfig):
     validate_config(config)
 
     h_func = model.build_h_func()
@@ -1124,6 +1928,12 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
         "final_rho": rho,
     }
 
+
+
+def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
+    if config.coarse_beam_search:
+        return run_coarse_beam_search_alm(model, config)
+    return run_single_point_linear_alm(model, config)
 
 def main():
     config = SolverConfig()

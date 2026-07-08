@@ -25,7 +25,7 @@ from Sympy_OPF_LALM_class import (
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 2
+    n_bus: int = 3
     max_outer: int = 2000
     tol: float = 1e-5
     option: int = 1  # 1: QHD, 2: Gurobi
@@ -63,8 +63,8 @@ class SolverConfig:
     n_linearization_points: int = 10
     candidate_distinct_atol: float = 1e-9
     bound_shrink_factor: float = 0.9
-    bound_shrink_min_factor: float = 0.01
-    bound_shrink_start_iter: int = 3
+    bound_shrink_min_factor: float = 0.001
+    bound_shrink_start_iter: int = 2
     bound_shrink_require_residual_improvement: bool = True
     return_best_solution: bool = True
     print_to_console: bool = True
