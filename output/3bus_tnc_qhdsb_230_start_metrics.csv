@@ -1,0 +1,3 @@
+method,plot_iteration,solver_iteration,objective,objective_gap_pct_vs_sqp,l2_h,max_abs_h,load_supplied_pct,same_as_other_start,source
+Truncated Newton,0,0,0.5629781250000001,5.880542109934228,0.46222498069440227,0.3,100.0,True,TNC rerun from the exact same initial center used by QHD-SB
+QHD-SB coarse-only,0,0,0.5629781250000001,5.880542109934228,0.46222498069440227,0.3,100.0,True,Common QHD-SB initial center before the first beam-search update

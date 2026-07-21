@@ -1,0 +1,463 @@
+label,method,source,start_name,plot_iteration,solver_iteration,stage,objective,l2_h,max_abs_h,load_supplied_pct
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,0,0,initial,0.5629781250000001,0.46222498069440227,0.3,100.0
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,1,1,rho=1e+02,0.5322261663709653,0.14253181586262276,0.0631477100312477,95.20227161933676
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,2,2,rho=1e+02,0.49460500383345696,0.0512736086406911,0.023905270225651552,97.89611152488348
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,3,3,rho=1e+02,0.49068164894569694,0.04373037902245745,0.02244343041210104,94.19043141060594
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,4,4,rho=1e+02,0.22910424718441091,0.06457355425009463,0.02298407467291022,77.7703932051236
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,5,5,rho=1e+02,0.22910424718441091,0.06457355425009463,0.02298407467291022,77.7703932051236
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,6,6,rho=1e+02,0.21830853400421948,0.06383991629524421,0.022915217455175135,80.61963096917155
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,7,7,rho=1e+02,0.23374691621858157,0.060120393401715495,0.021036752800521807,80.37071029397843
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,8,8,rho=1e+02,0.2402116783736179,0.058156733543347626,0.02032032486999233,81.0406047179314
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,9,9,rho=1e+02,0.2402116783736179,0.058156733543347626,0.02032032486999233,81.0406047179314
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,10,10,rho=1e+02,0.2545452568744436,0.055401360934726716,0.019813218721223352,81.66581066506407
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,11,11,rho=1e+02,0.24722350188565956,0.054434680129336735,0.019533708459647012,81.88950764483117
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,12,12,rho=1e+02,0.24799944308305413,0.05407155681981174,0.01840127542525087,82.11964691250338
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,13,13,rho=1e+02,0.25204541270403236,0.05322126439786734,0.01781487985411931,82.40190597743752
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,14,14,rho=1e+02,0.2531011961278814,0.052983068902508104,0.017901057994384045,82.51549222092623
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,15,15,rho=1e+02,0.25309218057007715,0.052948673099536187,0.01781936582259619,82.55810863719012
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,16,16,rho=1e+02,0.2525023282105183,0.05299190099606113,0.017811096302417687,82.39251747205722
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,17,17,rho=1e+02,0.24552104535525993,0.053963230914661174,0.018350208623522983,82.10529748653306
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,18,18,rho=1e+02,0.24473450063157154,0.0540739090168076,0.018286659911691358,82.11401947380521
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,19,19,rho=1e+02,0.24668423354095964,0.05369037277339032,0.018132461378309386,82.18555546460341
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,20,20,rho=1e+02,0.24715105750170563,0.053594001528985434,0.018108945716749425,82.214566774033
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,21,21,rho=1e+02,0.24776983066330763,0.053476407056731144,0.018038028700149852,82.21249220002704
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,22,22,rho=1e+02,0.24799591711725488,0.053433992668317505,0.018019768981443196,82.21674446923777
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,23,23,rho=1e+02,0.24919905032998707,0.053206817469766854,0.017951676158762975,82.24954852180488
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,24,24,rho=1e+02,0.2503233466384102,0.052992871567820315,0.017844805087405213,82.32722530558138
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,25,25,rho=1e+02,0.25053743788948685,0.052952271131706426,0.017815837966077316,82.36032252036536
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,26,26,rho=1e+02,0.2505223239341727,0.052955057779872756,0.01781063770125091,82.34956566992861
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,27,27,rho=1e+02,0.25050121522704505,0.05295902038480313,0.017807625249376957,82.34614774985437
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,28,28,rho=1e+02,0.25050167306892085,0.052958826472260856,0.017801481991682744,82.35057316126137
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,29,29,rho=1e+02,0.25051016849781066,0.052957199120891044,0.017806121937760377,82.34893402789571
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,30,30,rho=1e+02,0.2505191975092663,0.05295544736156624,0.017803439310262736,82.34875565429844
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,31,31,rho=1e+02,0.2505303238202592,0.052953308293767994,0.017800000968315632,82.34987731042192
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,32,32,rho=1e+02,0.25053397021547164,0.05295261135190815,0.017802992708120663,82.34972653605294
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,33,33,rho=1e+02,0.250535484771353,0.052952322176615295,0.017803958994660127,82.34978029593711
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,34,34,rho=1e+02,0.25053238652466964,0.052952769165183114,0.01780804448509371,82.34901254720329
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,35,35,rho=1e+02,0.25053206887870294,0.052952828051691124,0.01780767957366508,82.34901216227874
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,36,36,rho=1e+02,0.25053275221203175,0.05295269551118256,0.017806415811506104,82.34900462714579
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,37,37,rho=1e+02,0.25053411569480283,0.05295243689512664,0.017805755080251118,82.35016586147586
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,38,38,rho=1e+02,0.25053058554348506,0.0529531022322663,0.017805348615858863,82.34887311344647
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,39,39,rho=1e+02,0.2505315439554406,0.052952912905130683,0.017810574445281002,82.34779339663496
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,40,40,rho=1e+02,0.2505300402922851,0.05295319627026812,0.01780655618367258,82.34909065323632
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,41,41,rho=1e+02,0.25053114966099044,0.052952986581005224,0.01780662732077587,82.35014557668377
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,42,42,rho=1e+02,0.25053054528296165,0.05295310046879408,0.017806212626404527,82.34972295734444
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,43,43,rho=1e+02,0.25052949962588095,0.052953297829812,0.01780632059031001,82.34926415526762
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,44,44,rho=1e+02,0.2505272193965618,0.05295372820137048,0.017806037694295396,82.3481568589305
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,45,45,rho=1e+02,0.25053099239243765,0.05295301540593621,0.01780571144072006,82.34935738883172
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,46,46,rho=1e+02,0.2505313372591516,0.052952950174454026,0.017805639400180387,82.34953384520924
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,47,47,rho=1e+02,0.25052948052806784,0.05295330067949478,0.0178054499535341,82.34921145963925
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,48,48,rho=1e+02,0.25052906015987425,0.05295337995738691,0.017805126147589848,82.34920091870957
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,49,49,rho=1e+02,0.2505289014192564,0.05295340987132457,0.01780505377251286,82.34927068098257
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,50,50,rho=1e+02,0.2505289432649135,0.05295340190525478,0.01780522122751281,82.3493867918828
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,51,51,rho=1e+02,0.25052897080697195,0.05295339667893122,0.017805195039703514,82.34939787751395
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,52,52,rho=1e+02,0.25052896869779273,0.05295339707309794,0.017805197046604826,82.34939702815943
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,53,53,rho=1e+02,0.250529300186098,0.05295333440107824,0.017805489907196437,82.34937013974584
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,54,54,rho=1e+02,0.2505299553616175,0.05295321028501515,0.017806321060348296,82.34918110149486
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,55,55,rho=1e+02,0.25052894753468374,0.052953400188045674,0.017808397985148716,82.34875208045565
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,56,56,rho=1e+02,0.2505251627575899,0.052954113619171427,0.017811371075749205,82.34809087499136
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,57,57,rho=1e+02,0.2505185397347645,0.05295536232537881,0.01781504372249121,82.34714923193673
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,58,58,rho=1e+02,0.2505146632752371,0.05295609278461714,0.017816459808561114,82.34662645402578
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,59,59,rho=1e+02,0.25052048424814793,0.05295499030274764,0.017817521202551923,82.34612915664356
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,60,60,rho=1e+02,0.2505212595726862,0.052954843792395206,0.017816566326520455,82.34644303113461
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,61,61,rho=1e+02,0.25052020078193804,0.05295504297039204,0.017818083933176576,82.3469660461326
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,62,62,rho=1e+02,0.2505135214727684,0.05295629962521477,0.017823041198282652,82.34525668211737
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,63,63,rho=1e+02,0.25051878581894405,0.05295530356611377,0.01782076027274143,82.34712298661114
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,64,64,rho=1e+02,0.25050939465655025,0.05295707224163412,0.017836168101203587,82.34502410451624
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,65,65,rho=1e+02,0.25050112298568183,0.052958628937483224,0.01783834655489508,82.34226026927058
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,66,66,rho=1e+02,0.25047944361699004,0.05296270360924451,0.017844168236470337,82.34029774855365
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,67,67,rho=1e+02,0.250499314683208,0.05295892621503322,0.017816581293976064,82.34730278642336
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,68,68,rho=1e+02,0.25044137294190805,0.05296980755179489,0.017842549981795963,82.3423984172509
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,69,69,rho=1e+02,0.25042435426752185,0.052972998258884275,0.017846349945407902,82.34091273108851
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,70,70,rho=1e+02,0.25040070433350586,0.052977442697689926,0.017845581522723752,82.33927902109502
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,71,71,rho=1e+02,0.2504248996365848,0.05297286264812042,0.01783072906889327,82.34170378392457
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,72,72,rho=1e+02,0.250396844243798,0.05297814588555734,0.017838652680271766,82.34026355703803
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,73,73,rho=1e+02,0.25039824149746726,0.05297787602760002,0.01783565735749723,82.34056811553661
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,74,74,rho=1e+02,0.25038751774789414,0.05297989210850237,0.01783133382284957,82.33999549324828
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,75,75,rho=1e+02,0.25038628096189064,0.05298012058945902,0.01782282685712755,82.3391986084431
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,76,76,rho=1e+02,0.25038612680191497,0.052980147424221954,0.017819415498911334,82.33955430169529
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,77,77,rho=1e+02,0.25039332588984925,0.052978787081072024,0.017815182004252028,82.34075828016957
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,78,78,rho=1e+02,0.25041468653519017,0.05297475141888189,0.017812294500721554,82.34274133005619
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,79,79,rho=1e+02,0.25042633888055726,0.05297255112999349,0.017812108266978238,82.34322118982492
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,80,80,rho=1e+02,0.25044073280320045,0.05296983348980264,0.017811729824146305,82.34412693391643
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,81,81,rho=1e+02,0.2504417408888376,0.05296964293748807,0.01781153931193502,82.34412434689054
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,82,82,rho=1e+02,0.2504401938920032,0.05296993489259889,0.017811861611663843,82.34359758886866
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,83,83,rho=1e+02,0.2504480944571119,0.052968443090146984,0.017812120847000942,82.34410013577639
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,84,84,rho=1e+02,0.25045583921813036,0.0529669806338695,0.01781163918484613,82.3448567099736
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,85,85,rho=1e+02,0.25047325329140674,0.052963692571312476,0.01781107150277239,82.34531757358923
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,86,86,rho=1e+02,0.25047696241523726,0.052962991709001636,0.017811216160304177,82.34570478036646
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,87,87,rho=1e+02,0.2504782225057747,0.05296275356892636,0.01781136663240082,82.34592720965487
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,88,88,rho=1e+02,0.25050390111132537,0.052957904662946996,0.017810844746774024,82.34782182634125
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,89,89,rho=1e+02,0.2505080410120859,0.05295712288208335,0.017810593778738074,82.34802882496686
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,90,90,rho=1e+02,0.2504978703694269,0.05295904331052793,0.017810544544790877,82.3473133372131
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,91,91,rho=1e+02,0.2505009696176508,0.052958458041758964,0.017809945601685667,82.34740063288054
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,92,92,rho=1e+02,0.25050044919961223,0.05295855625091575,0.01780969436733705,82.34746050203198
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,93,93,rho=1e+02,0.2505059074023363,0.05295752553860894,0.01780916397984085,82.34774615649036
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,94,94,rho=1e+02,0.2505066101346451,0.052957392818664364,0.01780895655255739,82.34767921492177
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,95,95,rho=1e+02,0.2505070929337627,0.052957301618924084,0.0178087694799417,82.34777217224865
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,96,96,rho=1e+02,0.2505080604773422,0.05295711889286976,0.01780855624153023,82.34806848306788
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,97,97,rho=1e+02,0.250506509728465,0.05295741171354131,0.01780850669080923,82.34797329692991
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,98,98,rho=1e+02,0.2505059710251606,0.05295751342626338,0.017808406994238732,82.3479206775716
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,99,99,rho=1e+02,0.25050561861627463,0.052957579970020395,0.01780839367186103,82.34788773807898
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,100,100,rho=1e+02,0.25050590963513375,0.05295752501316199,0.017808402937640605,82.34787926144959
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,101,101,rho=1e+02,0.25050572825829204,0.0529575592608051,0.01780838707375286,82.34781389486315
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,102,102,rho=1e+02,0.25050569384929844,0.05295756574676842,0.017808365350355987,82.34780868180444
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,103,103,rho=1e+02,0.25050553777398965,0.052957595207438056,0.017808273099371774,82.34763038289906
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,104,104,rho=1e+02,0.25050585477867104,0.05295753533877258,0.017808284813853104,82.34777626413872
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,105,105,rho=1e+02,0.25050707317861065,0.052957305244616434,0.01780763886401228,82.34800895722299
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,106,106,rho=1e+02,0.25050921060936254,0.05295690143092432,0.017806919747803074,82.34778156099786
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,107,107,rho=1e+02,0.25051160632124125,0.05295644888663496,0.017806445408634686,82.34768853830411
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,108,108,rho=1e+02,0.2505118101171881,0.05295641034995223,0.017806497809161714,82.34780732283325
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,109,109,rho=1e+02,0.25051656478770357,0.052955512393333216,0.017805860049232625,82.34796246227418
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,110,110,rho=1e+02,0.2505155341352808,0.052955707005202184,0.017806036648507606,82.34792605342453
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,111,111,rho=1e+02,0.25051783869742345,0.052955271780125476,0.01780571791733171,82.34786712990142
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,112,112,rho=1e+02,0.25051973983386056,0.05295491274062701,0.017805521548745817,82.34793650072777
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,113,113,rho=1e+02,0.25052186987355435,0.05295451045881925,0.017805493964848818,82.34839819735188
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,114,114,rho=1e+02,0.2505270531713269,0.05295353156024656,0.01780492247205412,82.34841308573215
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,115,115,rho=1e+02,0.2505310857393465,0.05295276996541361,0.01780457708824451,82.34843250459059
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,116,116,rho=1e+02,0.25053160355792936,0.05295267209905997,0.01780464846418356,82.34872218241377
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,117,117,rho=1e+02,0.25053957895383383,0.052951165858539435,0.017803741923268335,82.34942185037261
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,118,118,rho=1e+02,0.2505384346160631,0.05295138184437811,0.017803668360230618,82.34934020531888
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,119,119,rho=1e+02,0.250546238415722,0.05294990791120997,0.017802478248374498,82.34977982835815
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,120,120,rho=1e+02,0.25054608786292115,0.05294993625158665,0.017802310739284066,82.35018254404538
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,121,121,rho=1e+02,0.25055385340323866,0.05294846953124397,0.017801070397463092,82.35091431538672
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,122,122,rho=1e+02,0.250561457153575,0.05294703312776662,0.017802515444582556,82.35161026667348
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,123,123,rho=1e+02,0.25056454856589994,0.052946449140425046,0.017802985180974035,82.35206379369791
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,124,124,rho=1e+02,0.2505604722360434,0.05294721895748044,0.017803758353193172,82.3520535229669
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,125,125,rho=1e+02,0.2505685232186973,0.05294569820384974,0.01780369135599938,82.35314611070459
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,126,126,rho=1e+02,0.2505659829491366,0.05294617790411747,0.017803973751710722,82.35254193348439
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,127,127,rho=1e+02,0.25056187073781555,0.05294695425433473,0.017804930998880142,82.35216391177624
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,128,128,rho=1e+02,0.25056577786537976,0.05294621543844981,0.01780620175027675,82.35455743051932
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,129,129,rho=1e+02,0.2505722926794975,0.05294498368885446,0.01780788300308367,82.35427482541274
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,130,130,rho=1e+02,0.25057012214594,0.052945393570175976,0.0178072600048515,82.35398083340095
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,131,131,rho=1e+02,0.2505666352443233,0.052946051825778724,0.01780684550472081,82.3533962882458
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,132,132,rho=1e+02,0.2505707728766846,0.05294526874034628,0.017808576366293793,82.35254771598554
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,133,133,rho=1e+02,0.2505779496317564,0.05294390872456022,0.017807918521937527,82.35528559384895
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,134,134,rho=1e+02,0.25058408970132406,0.05294274619058276,0.017805755592493117,82.35396961740604
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,135,135,rho=1e+02,0.2505808302587921,0.05294336029446657,0.017805200933364962,82.35366010564664
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,136,136,rho=1e+02,0.25058757181278113,0.05294208502826291,0.017803363839932473,82.35401551933921
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,137,137,rho=1e+02,0.2506063425863379,0.052938536337054656,0.017801835131700805,82.353958508573
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,138,138,rho=1e+02,0.2506083600384296,0.052938154367519155,0.017805881349904434,82.35362188779273
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,139,139,rho=1e+02,0.25060827634090144,0.05293817017523607,0.01780591909980353,82.35360995778328
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,140,140,rho=1e+02,0.25059669903688864,0.05294035186449814,0.017801864861856725,82.35381860894391
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,141,141,rho=1e+02,0.250583032997177,0.05294293239183268,0.017804694021408163,82.35334795376026
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,142,142,rho=1e+02,0.250584514463824,0.052942652012843885,0.017804680772038922,82.3528796803485
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,143,143,rho=1e+02,0.2505771032455219,0.052944051495006354,0.017805041096672136,82.35142348427945
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,144,144,rho=1e+02,0.2505696488161997,0.05294545921127583,0.017807375280297688,82.35038284573348
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,145,145,rho=1e+02,0.25056053487094365,0.052947179948314806,0.017808194465929017,82.34994271822958
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,146,146,rho=1e+02,0.25054051253636755,0.05295096085459065,0.017810677957304788,82.34804266924812
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,147,147,rho=1e+02,0.2505330863695077,0.05295236310892219,0.017810652694987772,82.34810924290905
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,148,148,rho=1e+02,0.2505366309305779,0.05295169356577661,0.017808297965561548,82.34827564293654
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,149,149,rho=1e+02,0.2505417806616485,0.05295072090307872,0.017807274308677123,82.34906399564079
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,150,150,rho=1e+02,0.2505388007163007,0.052951283606149445,0.017807365784226092,82.34905313951177
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,151,151,rho=1e+02,0.2505376710051816,0.05295149693344001,0.017807389028857118,82.34936421267393
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,152,152,rho=1e+02,0.2505377584309273,0.052951480420982674,0.017807378647542615,82.34934084502041
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,153,153,rho=1e+02,0.2505356432785797,0.05295187984630865,0.017807212207642698,82.34899837573194
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,154,154,rho=1e+02,0.25053597178815773,0.052951817799720836,0.017807227722404256,82.3489747166443
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,155,155,rho=1e+02,0.25053637886195584,0.05295174092076161,0.01780720732150809,82.34916171354116
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,156,156,rho=1e+02,0.25053508347387593,0.05295198555134256,0.017807234697403418,82.34900640418613
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,157,157,rho=1e+02,0.25053416928372024,0.05295215819119566,0.017807173267832543,82.34906724640895
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,158,158,rho=1e+02,0.25053542708124354,0.052951920647509775,0.017807196527927727,82.34915562516332
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,159,159,rho=1e+02,0.25053543563239056,0.05295191903218104,0.017807208844835637,82.34913454304636
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,160,160,rho=1e+02,0.2505347053660746,0.0529520569378405,0.01780708758501226,82.34904817707816
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,161,161,rho=1e+02,0.25053112063123467,0.05295273388920859,0.01780697701409867,82.34871627660957
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,162,162,rho=1e+02,0.25053363061723505,0.05295225985904699,0.017806929780839253,82.34884648010807
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,163,163,rho=1e+02,0.2505324835960854,0.05295247643500568,0.017807223239726333,82.34901910585509
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,164,164,rho=1e+02,0.2505328308981643,0.05295241084677613,0.017807199069516055,82.34901552746412
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,165,165,rho=1e+02,0.25052982213686376,0.05295297900556839,0.017807481026813232,82.34865120518631
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,166,166,rho=1e+02,0.2505261319904901,0.05295367581218488,0.01780814280469073,82.34814207146414
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,167,167,rho=1e+02,0.25052942250420573,0.05295305429309088,0.017808593670177564,82.3480346767168
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,168,168,rho=1e+02,0.25052632419204623,0.05295363935224272,0.01780934072849677,82.3476623874285
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,169,169,rho=1e+02,0.2505269113714939,0.05295352845074166,0.017809292013658162,82.34802137076377
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,170,170,rho=1e+02,0.25052814059152534,0.05295329629861905,0.017808833895243736,82.34814723840226
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,171,171,rho=1e+02,0.25052741218573477,0.052953433848499654,0.017808945121847886,82.34786723691684
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,172,172,rho=1e+02,0.2505247889763017,0.052953929204362656,0.017809560530845203,82.34773243292906
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,173,173,rho=1e+02,0.2505264277387562,0.052953619726648,0.017809311342637024,82.34798675629034
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,174,174,rho=1e+02,0.2505259667735804,0.052953706773525615,0.017809413943172647,82.34780656601234
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,175,175,rho=1e+02,0.2505254499803611,0.05295380436108941,0.017809409207906246,82.3477474050228
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,176,176,rho=1e+02,0.2505256555616893,0.05295376553674191,0.017809343375025766,82.34768974675063
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,177,177,rho=1e+02,0.25052681662020243,0.05295354627024233,0.017809108854534406,82.3479394863133
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,178,178,rho=1e+02,0.2505259874372519,0.05295370284661518,0.017809254906853755,82.3480229453549
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,179,179,rho=1e+02,0.25052282419412375,0.05295430016386722,0.01780903387696453,82.3475089715419
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,180,180,rho=1e+02,0.25052181691477476,0.05295449030935178,0.01780755814718099,82.34796285117295
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,181,181,rho=1e+02,0.25052128943404733,0.052954589909939405,0.01780738271348631,82.34803364571967
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,182,182,rho=1e+02,0.25052195547270184,0.052954464108590345,0.017807180695877,82.34847390908368
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,183,183,rho=1e+02,0.2505221333343525,0.05295443052039488,0.01780723575653481,82.3484457275997
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,184,184,rho=1e+02,0.2505220521062156,0.05295444584207583,0.017806841915740612,82.34881124979282
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,185,185,rho=1e+02,0.25052206856606235,0.05295444273000085,0.01780677760770838,82.34887545793842
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,186,186,rho=1e+02,0.2505218404102559,0.05295448579926658,0.017806567647765614,82.34891659522944
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,187,187,rho=1e+02,0.25052173634757074,0.05295450544704496,0.017806432881432133,82.34896307351961
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,188,188,rho=1e+02,0.2505216412334793,0.05295452340269343,0.017806311903008076,82.3488811372398
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,189,189,rho=1e+02,0.25052220759515625,0.05295441643525712,0.01780644725471292,82.34885890665436
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,190,190,rho=1e+02,0.2505221903250614,0.05295441969594599,0.017806468027965205,82.34881919121312
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,191,191,rho=1e+02,0.2505223153691366,0.052954396076816984,0.017806720350530353,82.34901175827392
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,192,192,rho=1e+02,0.25052231477351644,0.052954396189218614,0.01780671681497395,82.34902697738609
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,193,193,rho=1e+04,0.3265299855562889,0.045664374149083295,0.017818971082801602,94.08520672682933
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,194,194,rho=1e+04,0.48411301176640403,0.024355055462497957,0.012662646162817509,97.443081040576
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,195,195,rho=1e+04,0.5451408848252194,0.0037558944514663488,0.0016299488317154387,99.35302482527304
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,196,196,rho=1e+04,0.5463387120513548,0.0012670367486835084,0.0005597822906650562,99.85677635059459
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,197,197,rho=1e+04,0.5467543143799843,0.0006505747665694281,0.0002386961640786639,99.79751654432484
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,198,198,rho=1e+04,0.5467866715004753,0.0006156486993837863,0.00020455797802465536,99.81293131039921
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,199,199,rho=1e+04,0.5467786502105303,0.0006046247137981455,0.00020446748386049318,99.82489483313324
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,200,200,rho=1e+04,0.546666219373525,0.0006032893483808113,0.00021124276999626157,99.8048368277592
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,201,201,rho=1e+04,0.5467259126131103,0.0005754870509074664,0.00019975937463308918,99.81475607496915
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,202,202,rho=1e+04,0.5426386523032376,0.0007918416885322873,0.00030642338900876975,99.88577493984509
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,203,203,rho=1e+04,0.5371353025471084,0.0009665835711307957,0.00033722383195034997,99.79866337431909
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,204,204,rho=1e+04,0.5308122245099088,0.0011451578065327084,0.0004903759724498302,99.71811270900487
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,205,205,rho=1e+04,0.5273512867117879,0.001138711344006279,0.0006587223746027382,99.75672591953165
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,206,206,rho=1e+04,0.5277014807555556,0.0010495561299881592,0.000667682738601294,99.75804143214162
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,207,207,rho=1e+04,0.5280186921260884,0.0009847719349066386,0.0006723381007082141,99.76310196031118
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,208,208,rho=1e+04,0.5287839014202224,0.0008698898844272518,0.0006556693862349583,99.81463384495127
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,209,209,rho=1e+04,0.5292878013276909,0.0006426583719455801,0.00036629733612913995,99.83531444540398
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,210,210,rho=1e+04,0.529339906028887,0.0006221060180879865,0.00027919721498792516,99.83099952627853
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,211,211,rho=1e+04,0.5289188317628594,0.0006761451010767466,0.0002824582845398771,99.81195731601534
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,212,212,rho=1e+04,0.5287012807573144,0.0006182175577171352,0.0002036881607432317,99.81142592009802
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,213,213,rho=1e+04,0.5286438758387285,0.0006259456299537668,0.00020592159922705466,99.81159309534678
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,214,214,rho=1e+04,0.5290863780737847,0.0005440125548029681,0.0001819750346043758,99.83267020318958
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,215,215,rho=1e+04,0.5290395860723779,0.0005450913042278954,0.0001862378969821746,99.8322856070345
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,216,216,rho=1e+04,0.5288559920167436,0.0005395991292662819,0.00019469272347216737,99.82528965314671
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,217,217,rho=1e+04,0.5288085298320823,0.0005452686423314969,0.00018974688405765106,99.81914107799719
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,218,218,rho=1e+04,0.5288178431901471,0.0005434392500110272,0.0001885155552214246,99.81926711841155
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,219,219,rho=1e+04,0.5288182706338993,0.0005433602964303883,0.00018840276857021165,99.81927373149676
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,220,220,rho=1e+04,0.5288173160482795,0.0005434876005138165,0.00018611017066705315,99.8193093974084
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,221,221,rho=1e+04,0.5288241840484378,0.0005421817534338924,0.0001837539233538743,99.81963652277001
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,222,222,rho=1e+04,0.5288267048655332,0.0005416922951967741,0.00018411240461754796,99.8196556957965
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,223,223,rho=1e+04,0.5288345297864394,0.0005402254166774206,0.0001827683192299201,99.82006696986487
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,224,224,rho=1e+04,0.5288426083094021,0.0005387162875204037,0.0001832817558402311,99.82110718448236
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,225,225,rho=1e+04,0.5288488543437299,0.0005375299480509147,0.00018228242833501218,99.82147191141993
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,226,226,rho=1e+04,0.5288488805979887,0.000537515909799427,0.00018148287363434212,99.82058730208504
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,227,227,rho=1e+04,0.5288524630471203,0.0005368418126137023,0.0001816201651388405,99.82114364770011
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,228,228,rho=1e+04,0.5288803353494533,0.0005315941182484344,0.00017897160085561525,99.82258680807153
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,229,229,rho=1e+04,0.5288774100639405,0.0005321429406103484,0.0001793252595571615,99.82243934637512
+Truncated Newton,Truncated Newton (TNC penalty),TNC rerun from the exact same initial center used by QHD-SB,qhdsb_initial_center,230,230,rho=1e+04,0.5288786922114542,0.0005318992101169087,0.000179242439064059,99.8228479268865
+QHD-SB coarse-only,QCE coarse-only,Common QHD-SB initial center before the first beam-search update,QCE beam,0,0,initial,0.5629781250000001,0.46222498069440227,0.3,100.0
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,1,0,,0.0,0.8431942016919624,0.32929871989395576,80.0
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,2,1,,0.0,1.3679708137890614,0.6420207480539549,80.0
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,3,2,,0.0,2.0034955432623254,0.7671458234211125,0.0
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,4,3,,0.0,1.7026166486885406,0.7270001596315895,80.0
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,5,4,,0.0,1.2934717799927946,0.8549966289744467,152.0
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,6,5,,0.0,1.152719651430395,0.5049325637406049,-107.19999999999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,7,6,,0.0,1.1309473819051954,0.5654936075936413,184.4
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,8,7,,0.0,0.9374833723072421,0.4669403493816688,26.935999999999996
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,9,8,,0.0,0.5248184139347776,0.22288467051608246,26.936
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,10,9,,0.0,0.5975132138794325,0.22517352,111.96656
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,11,10,,0.0,0.6341535380287128,0.34609530609166184,26.936
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,12,11,,0.0,0.5684335283556723,0.23718727011546725,69.45128
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,13,12,,0.0,0.4277715647646672,0.23389777807176929,69.45128
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,14,13,,0.060286163226115144,0.6025967899609246,0.3198587351979829,115.36778240000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,15,14,,0.0,0.35093395643360625,0.22153470423692867,69.45128000000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,16,15,,0.05425567905915326,0.26480126898377415,0.10064536777489337,79.78249304
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,17,16,,0.04882859819931414,0.3041587830244828,0.13594601258599998,50.85509652733334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,18,17,,0.1465674941098273,0.2635219059555103,0.14368410867152714,97.34555521
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,19,18,,0.35217375140770213,0.26129472945700793,0.09662455199505907,61.08299744233333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,20,19,,0.31689284672648865,0.19920727765638468,0.09534956891246749,99.57709722633332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,21,20,,0.3565848571441196,0.34592867523728027,0.24973916848388655,86.77362490633334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,22,21,,0.6787486549720061,0.22605718793873064,0.1240775519002104,86.77362490666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,23,22,,0.6948876177006948,0.2045566798857759,0.1134353500155566,108.12529785666665
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,24,23,,0.65131914438996,0.2167374872774218,0.12166449932906742,99.88965257333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,25,24,,0.6222853650345779,0.14891481245944843,0.07223355577010737,110.87051295333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,26,25,,0.5308910258174797,0.13615262387665655,0.05962947040105537,93.57565786166666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,27,26,,0.5191471608389971,0.15108857357650868,0.08734186456516546,104.69377899366667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,28,27,,0.5896337134946068,0.12400466724761956,0.05720956769773605,104.69377899333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,29,28,,0.5156243050686948,0.1320673995961972,0.07056741673011269,102.69251719133332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,30,29,,0.494490114104947,0.14372413747723092,0.0901713522304326,98.68999357999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,31,30,,0.45223687129714174,0.11669394050715147,0.054144922503158055,90.68494636666665
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,32,31,,0.4617420910120858,0.0904671978936428,0.032130184317157785,114.09970947066667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,33,32,,0.45318734727135374,0.11766844534881311,0.05723308079597034,83.300290307
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,34,33,,0.4360803430134043,0.10710880327943774,0.04556313816353885,80.05824618700002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,35,34,,0.48997861804941345,0.06850226088062464,0.031691252075736864,99.02420430200002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,36,35,,0.42761360096593154,0.09486371519888155,0.035269034397599375,87.20695347466668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,37,36,,0.3999099355107685,0.08672789796899619,0.040803746681095696,97.711176432
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,38,37,,0.4310771701162675,0.05966599148621736,0.029407873730824,89.43910085499999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,39,38,,0.3918082558645025,0.08434375279188187,0.04334491751178003,88.37554828
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,40,39,,0.38059177286421325,0.08464885133132243,0.04334491751178003,86.24844313000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,41,40,,0.38059177286421325,0.08018285865378723,0.04334491751178003,86.24844313000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,42,41,,0.40583086383880423,0.05399386012321574,0.029801202823076897,91.034429714
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,43,42,,0.4376423915987732,0.06079079725994746,0.02503827307436743,91.8959073
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,44,43,,0.48310730215658904,0.05253963499834949,0.02199056815310546,95.34181764333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,45,44,,0.47901450289746744,0.050187616518009785,0.0249445154384218,94.56648781666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,46,45,,0.5121716218876425,0.03077437792040652,0.012315398209999995,96.65987834333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,47,46,,0.5154880170960405,0.047561796100076464,0.02201264150005655,97.28789550666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,48,47,,0.5154880170960405,0.04078177190862858,0.02200527700321464,93.51979254999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,49,48,,0.5184728790033538,0.03255600110919761,0.012315398209999995,97.47630065333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,50,49,,0.5157864987530251,0.041710853177813784,0.019644999473983904,96.96760675666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,51,50,,0.5856588766994015,0.03586860855122068,0.020429784240999282,101.03715795000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,52,51,,0.5687232037882494,0.026554186944530007,0.00882807975727228,100.57933344000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,53,52,,0.5796100506999778,0.02357931064492029,0.010087190858999978,100.16729138666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,54,53,,0.5698118283176328,0.02933080959805319,0.014486027883098829,100.53812924
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,55,54,,0.5698118283176328,0.02963917936257812,0.014486027883098829,100.53812924
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,56,55,,0.5698118283176328,0.029615198119184363,0.014486027883098829,100.53812924
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,57,56,,0.5658928425908218,0.029413585685080946,0.014486027883098829,99.79645353333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,58,57,,0.5747108041280462,0.01622753711563451,0.008638268393375476,101.46522386666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,59,58,,0.5858226846499358,0.0218373325159662,0.01137400961438384,103.56787449333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,60,59,,0.5921729559177751,0.021159197258402956,0.01137400961438384,101.16484520666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,61,60,,0.5793141285201276,0.01970801014410064,0.009621690560105867,101.97586759333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,62,61,,0.572885414090733,0.016044408403927676,0.006205287296155604,100.75933401
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,63,62,,0.5670999697052027,0.021360100189652828,0.009882211688489906,102.29216632000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,64,63,,0.5670999697052027,0.02140136550126007,0.009904825361868763,102.29216632000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,65,64,,0.5670999697052027,0.02137233099402409,0.009904825361868763,102.29216632000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,66,65,,0.5670999697052027,0.021409966621195903,0.009887805244548131,102.29216632000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,67,66,,0.5670999697052027,0.021128015331194613,0.009900733431923103,102.29216632000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,68,67,,0.570224062772435,0.01576357038525477,0.005650800408108447,100.51846036333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,69,68,,0.5805343511593196,0.014412305869074068,0.0069728381466902245,102.46953691666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,70,69,,0.5746292211000738,0.01518968574691161,0.008149183331050386,101.35210216333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,71,70,,0.569567994093716,0.016416935837224506,0.006439205715696783,100.39430095
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,72,71,,0.5628201409480672,0.01448373202933997,0.005842535382616587,100.07503387666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,73,72,,0.5666157451400688,0.010401217553690462,0.004228943855218492,101.65540588333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,74,73,,0.5741315209650191,0.009660535674015942,0.005184514255452771,102.30192170333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,75,74,,0.5685971150814098,0.009760311911245522,0.004499680132531131,101.95280316
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,76,75,,0.567367294044263,0.011416242307118022,0.004969468168294244,101.02182038000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,77,76,,0.5685971150814098,0.01376334062311335,0.007080196970686181,101.25456607333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,78,77,,0.5612184447615791,0.010889534018842571,0.004820422628560472,99.85809190333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,79,78,,0.5584516017665504,0.008179618933914275,0.0039735201650181184,101.21965422000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,80,79,,0.5609417565817908,0.009112650486518416,0.0039527471156611815,100.55982017666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,81,80,,0.5649261498102013,0.011100212775574662,0.005646259655501029,100.74834418666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,82,81,,0.5559615169232512,0.007386444952365456,0.0031659135888330303,100.74834418666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,83,82,,0.5564097270346381,0.007606726802896799,0.004258844916181531,100.32416515999998
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,84,83,,0.5582025901334831,0.009149508327278368,0.004266976163181058,100.66350838333331
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,85,84,,0.5582025901334831,0.009149508327278368,0.004266976163181058,100.66350838333331
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,86,85,,0.551927727975083,0.009028053762242378,0.004385379865589192,100.49383677
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,87,86,,0.5507176270958113,0.008264559058105553,0.004946389955406361,99.34855339
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,88,87,,0.5518067171487198,0.009454587662301539,0.003957840617831332,99.55470439666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,89,88,,0.5525327846211837,0.011054784641722187,0.005197674091850679,99.69213840333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,90,89,,0.5518067171487198,0.008072417286095876,0.0043281911367740455,99.96700641333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,91,90,,0.5514799887254569,0.008567454336567153,0.0035440368315153847,99.90516111666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,92,91,,0.5514799887254569,0.00897235828664945,0.003558312773480621,99.5340893
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,93,92,,0.5508265355110165,0.00976137827743136,0.005992959986588747,99.41039869666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,94,93,,0.5508265355110165,0.01006471844894212,0.005992959986588747,99.41039869666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,95,94,,0.5495196435224263,0.007721911203403881,0.0037412134784967632,100.64730474333331
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,96,95,,0.5486375023282108,0.0072391739057110945,0.0031943460476036023,99.47842852333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,97,96,,0.5489021437554374,0.006865703484094255,0.002790436155219095,99.52852322333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,98,97,,0.5481876136914373,0.006069764934769592,0.0031354841678490064,99.66377890000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,99,98,,0.5492594109572327,0.006080142144984437,0.003492894600727242,99.6232021966667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,100,99,,0.5496881334764051,0.00600696236155805,0.002769970278342193,100.19127603666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,101,100,,0.5483376645333816,0.005996432232027193,0.003170115565209075,99.71652861000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,102,101,,0.5479518200347526,0.0064511717493877865,0.003170115565209075,99.64349054333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,103,102,,0.5479518200347526,0.00686269189100251,0.003181285009890622,99.64349054333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,104,103,,0.5479518200347526,0.0064033762219984644,0.003170115565209075,99.64349054333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,105,104,,0.5488199725021016,0.005901624831534496,0.003343873979159806,100.00502896666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,106,105,,0.5486637044287568,0.006377859780803596,0.002806644143271919,99.97544855
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,107,106,,0.5474135697821194,0.006299722102237394,0.0031711363903985657,99.56132272333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,108,107,,0.5475542090424196,0.005629557114314145,0.0031434275184705207,100.22688209333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,109,108,,0.546415037404423,0.005355116223340603,0.0030610166667204286,99.72371921000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,110,109,,0.5463011210462556,0.00520117655405404,0.0025917716166858895,100.21969405666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,111,110,,0.546403645756732,0.004979916829301101,0.002594886676129615,100.12265549333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,112,111,,0.5463113735066815,0.004439348794554656,0.002513809105713083,100.62919676
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,113,112,,0.5445674460325465,0.0044603998793967745,0.0024597272928494895,99.82746420333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,114,113,,0.5445674460325465,0.0044603998793967745,0.0024597272928494895,99.82746420333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,115,114,,0.5445674460325465,0.0044603998793967745,0.0024597272928494895,99.82746420333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,116,115,,0.5445674460325465,0.0044603998793967745,0.0024597272928494895,99.82746420333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,117,116,,0.5462283285602835,0.004459636087817462,0.002440862992849402,100.04754765000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,118,117,,0.5462283285602835,0.004459636087817462,0.002440862992849402,100.04754765000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,119,118,,0.5462283285602835,0.004459636087817462,0.002440862992849402,100.04754765000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,120,119,,0.5462283285602835,0.004459636087817462,0.002440862992849402,100.04754765000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,121,120,,0.5447335328893976,0.004144839454653483,0.0024597272928494895,99.95322617333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,122,121,,0.5433135003733344,0.0038484916064819396,0.0021858217949903835,100.10885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,123,122,,0.5422570070281809,0.0035629633198991165,0.0021079513871762323,99.90885661666665
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,124,123,,0.5410596631356737,0.0030453531011917514,0.002094052127083579,100.00218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,125,124,,0.5409892316459967,0.0032721366326449956,0.0020161739752693197,99.82885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,126,125,,0.5409892316459967,0.0033085889527777546,0.0020161739752693197,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,127,126,,0.5409892316459967,0.0033085889527777546,0.0020161739752693197,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,128,127,,0.5409892316459967,0.0033085889527777546,0.0020161739752693197,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,129,128,,0.5409892316459967,0.0033085889527777546,0.0020161739752693197,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,130,129,,0.5409892316459967,0.003086433246055632,0.0020161739752693197,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,131,130,,0.5409188002123199,0.0030263503229748094,0.0017260521270834328,99.97552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,132,131,,0.5407075062472891,0.003297693122225054,0.0017281739752694758,99.85552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,133,132,,0.5407075062472891,0.003297693122225054,0.0017281739752694758,99.85552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,134,133,,0.5407075062472891,0.003297693122225054,0.0017281739752694758,99.85552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,135,134,,0.5407075062472891,0.003297693122225054,0.0017281739752694758,99.85552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,136,135,,0.5407075062472891,0.003297693122225054,0.0017281739752694758,99.85552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,137,136,,0.5398623354271664,0.002838610201560931,0.0016481739752693958,99.77552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,138,137,,0.5403553507589047,0.002487806859789891,0.0016182669711761744,99.94885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,139,138,,0.5401440581378739,0.0026927230193889724,0.0014401451229901774,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,140,139,,0.5401440581378739,0.0026927230193889724,0.0014401451229901774,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,141,140,,0.5401440581378739,0.0026927230193889724,0.0014401451229901774,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,142,141,,0.5401440581378739,0.0026927230193889724,0.0014401451229901774,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,143,142,,0.5401440581378739,0.0026927230193889724,0.0014401451229901774,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,144,143,,0.5390171726710435,0.0028717473195217016,0.0013281739752695199,99.77552328333331
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,145,144,,0.5388763129956897,0.0028702917972882277,0.0013281739752695199,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,146,145,,0.5388763129956897,0.0028694058424069235,0.0013281739752695199,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,147,146,,0.5388763129956897,0.0028694058424069235,0.0013281739752695199,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,148,147,,0.5388763129956897,0.0028306423010998312,0.0013921739752693618,99.58885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,149,148,,0.5396510439821357,0.0020070837726810305,0.0012822669711760604,100.05552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,150,149,,0.5385945943169822,0.0026013244126877953,0.0010605609620261691,99.77552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,151,150,,0.5384537353136284,0.0025997174912758304,0.0010605609620261691,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,152,151,,0.5384537353136284,0.0025997174912758304,0.0010605609620261691,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,153,152,,0.5384537353136284,0.0025997174912758304,0.0010605609620261691,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,154,153,,0.5384537353136284,0.0025997174912758304,0.0010605609620261691,99.74885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,155,154,,0.5388763129956897,0.0023426693149014117,0.0010561739752694699,99.66885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,156,155,,0.5382424472285977,0.001786304881364076,0.0010102669711760104,99.78885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,157,156,,0.5377494436568594,0.00191791435573911,0.0009986743200000037,99.61552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,158,157,,0.5377494436568594,0.00191791435573911,0.0009986743200000037,99.61552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,159,158,,0.5377494436568594,0.00191791435573911,0.0009986743200000037,99.61552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,160,159,,0.5377494436568594,0.00191791435573911,0.0009986743200000037,99.61552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,161,160,,0.5377494436568594,0.00191791435573911,0.0009986743200000037,99.61552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,162,161,,0.5378903015402132,0.0021663475929335264,0.0009986743200000037,99.72218995
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,163,162,,0.5378903015402132,0.0020829495325935792,0.0009986743200000037,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,164,163,,0.5376790147991825,0.0017033341450487958,0.0009184663272689964,99.76218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,165,164,,0.5374677285621519,0.0018395615567684672,0.0009525229973631477,99.72218995
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,166,165,,0.5384537353136284,0.0018587598454341935,0.000935979871543674,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,167,166,,0.5384537353136284,0.0018587598454341935,0.000935979871543674,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,168,167,,0.5384537353136284,0.0018587598454341935,0.000935979871543674,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,169,168,,0.5374677285621519,0.0018230901928621035,0.0009525229973631477,99.72218995
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,170,169,,0.5375381572518287,0.001911561628922109,0.0007586743199999857,99.81552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,171,170,,0.5375381572518287,0.0020053130849832894,0.0007586743199999857,99.81552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,172,171,,0.5375381572518287,0.001911561628922109,0.0007586743199999857,99.81552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,173,172,,0.5376085859975057,0.0015477552016205497,0.0007285438351756213,99.82885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,174,173,,0.5375381572518287,0.0018040870962152478,0.0009986743200000037,99.81552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,175,174,,0.5375381572518287,0.0019541726350298027,0.0009986743200000037,99.81552328333335
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,176,175,,0.5376790147991825,0.0020554509063869346,0.0012386743199999939,99.84218994999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,177,176,,0.5376790147991825,0.0020554509063869346,0.0012386743199999939,99.84218994999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,178,177,,0.5376790147991825,0.0020554509063869346,0.0012386743199999939,99.84218994999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,179,178,,0.5376790147991825,0.0020554509063869346,0.0012386743199999939,99.84218994999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,180,179,,0.5376790147991825,0.0020554509063869346,0.0012386743199999939,99.84218994999999
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,181,180,,0.5376790147991825,0.0014379160969042843,0.0007987819791754891,99.84218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,182,181,,0.5377494436568594,0.001650763588517521,0.0009649814031751358,99.77552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,183,182,,0.5383128765342747,0.001614092424038605,0.0009809814031751518,99.88218995000003
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,184,183,,0.5376790147991825,0.0016570916186702514,0.0011791421071747354,99.76218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,185,184,,0.5376790147991825,0.0016570916186702514,0.0011791421071747354,99.76218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,186,185,,0.5376790147991825,0.0016570916186702514,0.0011791421071747354,99.76218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,187,186,,0.5376790147991825,0.0016570916186702514,0.0011791421071747354,99.76218995000002
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,188,187,,0.5378198725705364,0.0015474577384860008,0.0010511421071748295,99.78885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,189,188,,0.5377494436568594,0.0016244747732065683,0.0009412252353606654,99.85552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,190,189,,0.5384537353136284,0.0016845384386034255,0.001233264091174302,99.98885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,191,190,,0.5377494436568594,0.0016917909251260215,0.001217264091174508,99.85552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,192,191,,0.5377494436568594,0.0016917909251260215,0.001217264091174508,99.85552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,193,192,,0.5377494436568594,0.0017177225667700182,0.001265264091174334,99.85552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,194,193,,0.5377494436568594,0.0017177225667700182,0.001265264091174334,99.85552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,195,194,,0.5378903015402132,0.0016494830328342357,0.001153264091174444,99.88218995000003
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,196,195,,0.5378198725705364,0.001698527488324402,0.0012393473551741696,99.86885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,197,196,,0.5378198725705364,0.0016885841396319875,0.0012233473551741536,99.78885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,198,197,,0.5378903015402132,0.0016104829834325163,0.0011133396790807826,99.88218995000003
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,199,198,,0.5378198725705364,0.001493777516617822,0.0010994073192667209,99.86885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,200,199,,0.5374677285621519,0.0016168089213920375,0.0011854286312662499,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,201,200,,0.5374677285621519,0.0016168089213920375,0.0011854286312662499,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,202,201,,0.5374677285621519,0.0016168089213920375,0.0011854286312662499,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,203,202,,0.5374677285621519,0.0016168089213920375,0.0011854286312662499,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,204,203,,0.5374677285621519,0.0016168089213920375,0.0011854286312662499,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,205,204,,0.5374677285621519,0.0015883514385659219,0.0011694286312662339,99.80218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,206,205,,0.537397299928475,0.0014937338753305892,0.0010593977231736496,99.86885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,207,206,,0.537326871350798,0.001627127273259957,0.001129364827173296,99.85552328333337
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,208,207,,0.537326871350798,0.001627127273259957,0.001129364827173296,99.85552328333337
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,209,208,,0.537326871350798,0.001627127273259957,0.001129364827173296,99.85552328333337
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,210,209,,0.537326871350798,0.001627127273259957,0.001129364827173296,99.85552328333337
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,211,210,,0.537326871350798,0.001627127273259957,0.001129364827173296,99.85552328333337
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,212,211,,0.5374677285621519,0.0012333702022412356,0.0007854286312662939,99.88218995
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,213,212,,0.5369747293024134,0.0013128530373528442,0.0007073977231735196,99.78885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,214,213,,0.5369747293024134,0.0013128530373528442,0.0007073977231735196,99.78885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,215,214,,0.5369747293024134,0.0013128530373528442,0.0007073977231735196,99.78885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,216,215,,0.5369747293024134,0.0013128530373528442,0.0007073977231735196,99.78885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,217,216,,0.5369747293024134,0.0013128530373528442,0.0007073977231735196,99.78885661666666
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,218,217,,0.5365521606923522,0.001139826671883333,0.0008554112232661559,99.94885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,219,218,,0.5366225886540291,0.0010369173545332318,0.000745364827173356,99.96218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,220,219,,0.5350027597034605,0.000982359850161602,0.0006354092353588747,99.97552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,221,220,,0.5359183115572601,0.0009464872754140424,0.0005253550952655228,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,222,221,,0.5366930166717059,0.0009699652725217977,0.00047929321117234913,100.05552328333334
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,223,222,,0.5368338728750598,0.000954596516734663,0.00046329321117233313,100.08218995000001
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,224,223,,0.5350731864331373,0.0008582539619189769,0.00035332987535863225,99.90885661666667
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,225,224,,0.5354253209215218,0.0009595361431216795,0.00048721179535826664,99.97552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,226,225,,0.5344393478820452,0.001021239570625793,0.00048699124000001204,99.86885661666668
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,227,226,,0.5354253209215218,0.0009682942161576824,0.00048721179535826664,99.89552328333332
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,228,227,,0.5353548939118449,0.0008735795181868242,0.0005051266792650555,99.96218994999998
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,229,228,,0.5350027597034605,0.0006794968208931418,0.0003258882768932547,99.97552328333333
+QHD-SB coarse-only,QCE coarse-only,QHD-SB/QCE beam search trajectory,QCE beam,230,229,,0.5354957479871987,0.0008684086033167836,0.000557054995357964,99.90885661666665
