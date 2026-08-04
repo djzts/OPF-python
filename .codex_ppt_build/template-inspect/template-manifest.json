@@ -1,0 +1,179 @@
+{
+  "sourcePptx": "E:\\OneDrive - Brookhaven National Laboratory\\Documents\\ZZQ_bnl_files\\Weekly Report\\QHDALMACOPF.pptx",
+  "workspace": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build",
+  "outDir": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect",
+  "generatedAt": "2026-08-04T03:03:04.096Z",
+  "slideCount": 3,
+  "slideArtifacts": [
+    {
+      "slide": 1,
+      "previewPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\source-slides\\source-slide-01.png",
+      "previewRelativePath": "template-inspect/source-slides/source-slide-01.png",
+      "layoutPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\layouts\\source-slide-01.layout.json",
+      "layoutRelativePath": "template-inspect/layouts/source-slide-01.layout.json"
+    },
+    {
+      "slide": 2,
+      "previewPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\source-slides\\source-slide-02.png",
+      "previewRelativePath": "template-inspect/source-slides/source-slide-02.png",
+      "layoutPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\layouts\\source-slide-02.layout.json",
+      "layoutRelativePath": "template-inspect/layouts/source-slide-02.layout.json"
+    },
+    {
+      "slide": 3,
+      "previewPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\source-slides\\source-slide-03.png",
+      "previewRelativePath": "template-inspect/source-slides/source-slide-03.png",
+      "layoutPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\layouts\\source-slide-03.layout.json",
+      "layoutRelativePath": "template-inspect/layouts/source-slide-03.layout.json"
+    }
+  ],
+  "inspectPath": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\template-inspect.ndjson",
+  "inspectRelativePath": "template-inspect/template-inspect.ndjson",
+  "inspectTruncated": false,
+  "inspectMetadata": {
+    "revision": "t718ql",
+    "target": {
+      "id": "pr/98ifu5"
+    },
+    "kind": {
+      "requested": "slide,textbox,shape,image,table,chart",
+      "tokens": [
+        "slide",
+        "textbox",
+        "shape",
+        "image",
+        "table",
+        "chart"
+      ]
+    },
+    "include": {
+      "tokens": []
+    },
+    "exclude": {
+      "tokens": []
+    },
+    "notices": []
+  },
+  "extractedMedia": [
+    {
+      "entry": "ppt/media/image6.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image6.png",
+      "relativePath": "template-inspect/assets/ppt/media/image6.png",
+      "bytes": 2997
+    },
+    {
+      "entry": "ppt/media/image1.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image1.png",
+      "relativePath": "template-inspect/assets/ppt/media/image1.png",
+      "bytes": 749
+    },
+    {
+      "entry": "ppt/media/image2.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image2.png",
+      "relativePath": "template-inspect/assets/ppt/media/image2.png",
+      "bytes": 1374
+    },
+    {
+      "entry": "ppt/media/image3.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image3.png",
+      "relativePath": "template-inspect/assets/ppt/media/image3.png",
+      "bytes": 1256
+    },
+    {
+      "entry": "ppt/media/image4.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image4.png",
+      "relativePath": "template-inspect/assets/ppt/media/image4.png",
+      "bytes": 1572
+    },
+    {
+      "entry": "ppt/media/image5.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image5.png",
+      "relativePath": "template-inspect/assets/ppt/media/image5.png",
+      "bytes": 750
+    },
+    {
+      "entry": "ppt/media/image7.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image7.png",
+      "relativePath": "template-inspect/assets/ppt/media/image7.png",
+      "bytes": 1515
+    },
+    {
+      "entry": "ppt/media/image8.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image8.png",
+      "relativePath": "template-inspect/assets/ppt/media/image8.png",
+      "bytes": 1400
+    },
+    {
+      "entry": "ppt/media/image9.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image9.png",
+      "relativePath": "template-inspect/assets/ppt/media/image9.png",
+      "bytes": 750
+    },
+    {
+      "entry": "ppt/media/image10.png",
+      "path": "E:\\ZZQ_python_script\\OPF_data\\OPF-python\\.codex_ppt_build\\template-inspect\\assets\\ppt\\media\\image10.png",
+      "relativePath": "template-inspect/assets/ppt/media/image10.png",
+      "bytes": 2314
+    }
+  ],
+  "fonts": [
+    "+mj-cs",
+    "+mj-ea",
+    "+mj-lt",
+    "+mn-cs",
+    "+mn-ea",
+    "+mn-lt",
+    "Angsana New",
+    "Aptos",
+    "Aptos Display",
+    "Arial",
+    "Cambria Math",
+    "Cordia New",
+    "DaunPenh",
+    "DokChampa",
+    "Ebrima",
+    "Estrangelo Edessa",
+    "Euphemia",
+    "Gautami",
+    "Iskoola Pota",
+    "Javanese Text",
+    "Kalinga",
+    "Kartika",
+    "Latha",
+    "Leelawadee UI",
+    "MV Boli",
+    "Mangal",
+    "Microsoft Himalaya",
+    "Microsoft JhengHei",
+    "Microsoft New Tai Lue",
+    "Microsoft Tai Le",
+    "Microsoft Uighur",
+    "Microsoft Yi Baiti",
+    "Mongolian Baiti",
+    "MoolBoran",
+    "Myanmar Text",
+    "Nirmala UI",
+    "Nyala",
+    "Phagspa",
+    "Plantagenet Cherokee",
+    "Raavi",
+    "Segoe UI",
+    "Shruti",
+    "Sylfaen",
+    "Times New Roman",
+    "Tunga",
+    "Vrinda",
+    "新細明體",
+    "游ゴシック",
+    "游ゴシック Light",
+    "等线",
+    "等线 Light",
+    "맑은 고딕"
+  ],
+  "packageParts": {
+    "mediaCount": 10,
+    "slideXmlCount": 3,
+    "chartCount": 0,
+    "tableSlideCount": 1
+  }
+}

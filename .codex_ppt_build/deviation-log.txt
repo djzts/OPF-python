@@ -1,0 +1,1 @@
+Slides 1-5: additional bounded titles, explanatory text, and result graphics are necessary because the source slides are diagrams rather than presentation layouts and do not contain enough inherited text/image slots for the requested information-rich five-page report. The inherited diagrams remain visible and are used as the visual anchor.

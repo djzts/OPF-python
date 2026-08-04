@@ -1,0 +1,10 @@
+{
+  "outputSlides": [
+    {"outputSlide":1,"sourceSlide":1,"narrativeRole":"opening thesis and motivation","reuseMode":"duplicate-slide","editTargets":[{"sourceElementId":"sh/f6x0zu58","action":"rewrite"},{"sourceElementId":"sh/k3yl0zql","action":"rewrite"}]},
+    {"outputSlide":2,"sourceSlide":2,"narrativeRole":"core idea","reuseMode":"duplicate-slide","editTargets":[{"sourceElementId":"sh/cv6lwjuh","action":"rewrite"},{"sourceElementId":"sh/qt43u9cb","action":"rewrite"},{"sourceElementId":"sh/ormlsju5","action":"rewrite"}]},
+    {"outputSlide":3,"sourceSlide":3,"narrativeRole":"algorithm and method","reuseMode":"duplicate-slide","editTargets":[{"sourceElementId":"sh/qp8f654v","action":"rewrite"},{"sourceElementId":"sh/uhszit0z","action":"rewrite"},{"sourceElementId":"sh/83ulovat","action":"rewrite"},{"sourceElementId":"sh/x8nml0ra","action":"rewrite"},{"sourceElementId":"sh/tgry9ofu","action":"rewrite"},{"sourceElementId":"sh/hwzihwzi","action":"rewrite"}]},
+    {"outputSlide":4,"sourceSlide":2,"narrativeRole":"results","reuseMode":"duplicate-slide","editTargets":[{"sourceElementId":"sh/cv6lwjuh","action":"rewrite"},{"sourceElementId":"sh/qt43u9cb","action":"rewrite"},{"sourceElementId":"sh/ormlsju5","action":"rewrite"}]},
+    {"outputSlide":5,"sourceSlide":3,"narrativeRole":"analysis and implications","reuseMode":"duplicate-slide","editTargets":[{"sourceElementId":"sh/qp8f654v","action":"rewrite"},{"sourceElementId":"sh/uhszit0z","action":"rewrite"},{"sourceElementId":"sh/83ulovat","action":"rewrite"},{"sourceElementId":"sh/x8nml0ra","action":"rewrite"},{"sourceElementId":"sh/tgry9ofu","action":"rewrite"},{"sourceElementId":"sh/hwzihwzi","action":"rewrite"}]}
+  ],
+  "omittedSourceSlides": []
+}

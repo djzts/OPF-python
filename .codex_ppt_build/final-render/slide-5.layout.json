@@ -1,0 +1,3052 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/i107q5of",
+    "id": "i107q5of",
+    "slide": 5,
+    "layoutId": "/ppt/slideLayouts/slideLayout1.xml",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Office",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Aptos Display"
+      },
+      "minorFont": {
+        "latinTypeface": "Aptos"
+      }
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout1.xml",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "elements": [
+        {
+          "order": 1,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/2",
+          "id": "2",
+          "name": "Title 1",
+          "bbox": [
+            160,
+            117.83,
+            960,
+            250.67
+          ],
+          "text": "Click to edit Master title style",
+          "textPreview": "Click to edit Master title style",
+          "resolvedTextStyle": {
+            "anchor": 3,
+            "verticalAlignment": "bottom"
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master title style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master title style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/3",
+          "id": "3",
+          "name": "Subtitle 2",
+          "bbox": [
+            160,
+            378.17,
+            960,
+            173.83
+          ],
+          "text": "Click to edit Master subtitle style",
+          "textPreview": "Click to edit Master subtitle style",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master subtitle style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master subtitle style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/4",
+          "id": "4",
+          "name": "Date Placeholder 3",
+          "bbox": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "text": "7/17/2026",
+          "textPreview": "7/17/2026",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "7/17/2026",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "7/17/2026"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/5",
+          "id": "5",
+          "name": "Footer Placeholder 4",
+          "bbox": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "order": 5,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/6",
+          "id": "6",
+          "name": "Slide Number Placeholder 5",
+          "bbox": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "text": "‹#›",
+          "textPreview": "‹#›",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "‹#›",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": [
+        {
+          "order": 1,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/2",
+          "id": "2",
+          "name": "Title Placeholder 1",
+          "bbox": [
+            88,
+            38.33,
+            1104,
+            139.17
+          ],
+          "geometry": "rect",
+          "text": "Click to edit Master title style",
+          "textPreview": "Click to edit Master title style",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master title style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master title style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/3",
+          "id": "3",
+          "name": "Text Placeholder 2",
+          "bbox": [
+            88,
+            191.67,
+            1104,
+            456.83
+          ],
+          "geometry": "rect",
+          "text": "Click to edit Master text styles\nSecond level\nThird level\nFourth level\nFifth level",
+          "textPreview": "Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level",
+          "resolvedTextStyle": {
+            "vertical": 1,
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master text styles",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master text styles"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "text": "Second level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Second level"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "text": "Third level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Third level"
+                }
+              ]
+            },
+            {
+              "index": 4,
+              "text": "Fourth level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Fourth level"
+                }
+              ]
+            },
+            {
+              "index": 5,
+              "text": "Fifth level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Fifth level"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/4",
+          "id": "4",
+          "name": "Date Placeholder 3",
+          "bbox": [
+            88,
+            667.33,
+            288,
+            38.33
+          ],
+          "geometry": "rect",
+          "text": "7/17/2026",
+          "textPreview": "7/17/2026",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "7/17/2026",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "7/17/2026"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/5",
+          "id": "5",
+          "name": "Footer Placeholder 4",
+          "bbox": [
+            424,
+            667.33,
+            432,
+            38.33
+          ],
+          "geometry": "rect",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          }
+        },
+        {
+          "order": 5,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/6",
+          "id": "6",
+          "name": "Slide Number Placeholder 5",
+          "bbox": [
+            904,
+            667.33,
+            288,
+            38.33
+          ],
+          "geometry": "rect",
+          "text": "‹#›",
+          "textPreview": "‹#›",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "‹#›",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9szax4na",
+      "id": "190",
+      "name": "TextBox 189",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        70.23
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "𝑥_(𝑘 − 1)^(∗)",
+      "textPreview": "𝑥_(𝑘 − 1)^(∗)",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "none",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "𝑥_(𝑘 − 1)^(∗)"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "𝑥_(𝑘 − 1)^(∗)",
+          "runs": [],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/o7qtoz6p",
+      "id": "191",
+      "name": "Freeform: Shape 190",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "custom",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "bg1",
+      "lineColor": {
+        "type": "theme",
+        "value": "bg1",
+        "transform": {
+          "darken": 0.5
+        }
+      },
+      "lineWidth": 3
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/n6hsvu54",
+      "id": "192",
+      "name": "Oval 191",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "tx1"
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cb6pwvmh",
+      "id": "186",
+      "name": "Oval 185",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#215F9A"
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tkvmhwzi",
+      "id": "271",
+      "name": "Connector: Curved 186",
+      "bbox": [
+        -1999.75,
+        -1999.6,
+        0.85,
+        0.35
+      ],
+      "rotation": 90,
+      "geometry": "curvedConnector3",
+      "lineColor": "#215F9A",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/edo7y54n",
+      "id": "188",
+      "name": "Oval 187",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": {
+        "type": "theme",
+        "value": "accent6",
+        "transform": {
+          "darken": 0.25
+        }
+      }
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7id4fmhc",
+      "id": "273",
+      "name": "Connector: Curved 188",
+      "bbox": [
+        -1999.75,
+        -2000.1,
+        0.35,
+        0.85
+      ],
+      "rotation": 90,
+      "geometry": "curvedConnector3",
+      "lineColor": "#3B7D23",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vyx4v6pg",
+      "id": "178",
+      "name": "TextBox 177",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        38.4
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "Stop when ",
+      "textPreview": "Stop when",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "none",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Stop when"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Stop when ",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Stop when "
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5gvmdczm",
+      "id": "275",
+      "name": "Connector: Curved 180",
+      "bbox": [
+        -1999.5,
+        -2000,
+        0.5,
+        0.5
+      ],
+      "rotation": 270,
+      "horizontalFlip": true,
+      "geometry": "curvedConnector3",
+      "lineColor": "#215F9A",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/47mpsvml",
+      "id": "182",
+      "name": "Oval 181",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#215F9A"
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p8vql036",
+      "id": "183",
+      "name": "Oval 182",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#3B7D23"
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4b65gby5",
+      "id": "278",
+      "name": "Connector: Curved 183",
+      "bbox": [
+        -1999.5,
+        -2000,
+        0,
+        1
+      ],
+      "rotation": 0,
+      "verticalFlip": true,
+      "geometry": "curvedConnector2",
+      "lineColor": "#3B7D23",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ne5oja5w",
+      "id": "220",
+      "name": "Rectangle 219",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": {
+        "type": "theme",
+        "value": "accent2",
+        "transform": {
+          "darken": 0.5
+        }
+      },
+      "lineWidth": 2.67
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pg76lkn2",
+      "id": "222",
+      "name": "Rectangle 221",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": {
+        "type": "theme",
+        "value": "bg1",
+        "transform": {
+          "darken": 0.5
+        }
+      },
+      "lineWidth": 2.67
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fq5ofa50",
+      "id": "224",
+      "name": "Rectangle 223",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineWidth": 2.67
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qlcni5o3",
+      "id": "229",
+      "name": "Oval 228",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#3B7D23"
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hsjmlw3m",
+      "id": "231",
+      "name": "Oval 230",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#215F9A"
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gzilsrq1",
+      "id": "249",
+      "name": "Oval 248",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#215F9A"
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7u5sfy18",
+      "id": "251",
+      "name": "Oval 250",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#3B7D23"
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ze10rip0",
+      "id": "286",
+      "name": "Connector: Curved 251",
+      "bbox": [
+        -1999.75,
+        -1999.75,
+        0.35,
+        0.85
+      ],
+      "rotation": 270,
+      "horizontalFlip": true,
+      "geometry": "curvedConnector3",
+      "lineColor": "#215F9A",
+      "lineWidth": 1
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ydszix8f",
+      "id": "287",
+      "name": "Connector: Curved 254",
+      "bbox": [
+        -1999.85,
+        -1999.85,
+        0,
+        0.71
+      ],
+      "rotation": 0,
+      "geometry": "curvedConnector2",
+      "lineColor": "#3B7D23",
+      "lineWidth": 1
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/v2ls7el0",
+      "id": "259",
+      "name": "TextBox 258",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        816
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "Repeat LALM/Classical Update",
+      "textPreview": "Repeat LALM/Classical Update",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "square",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 28,
+        "lines": [
+          {
+            "index": 1,
+            "text": "R"
+          },
+          {
+            "index": 2,
+            "text": "e"
+          },
+          {
+            "index": 3,
+            "text": "p"
+          },
+          {
+            "index": 4,
+            "text": "e"
+          },
+          {
+            "index": 5,
+            "text": "a"
+          },
+          {
+            "index": 6,
+            "text": "t"
+          },
+          {
+            "index": 7,
+            "text": " "
+          },
+          {
+            "index": 8,
+            "text": "L"
+          },
+          {
+            "index": 9,
+            "text": "A"
+          },
+          {
+            "index": 10,
+            "text": "L"
+          },
+          {
+            "index": 11,
+            "text": "M"
+          },
+          {
+            "index": 12,
+            "text": "/"
+          },
+          {
+            "index": 13,
+            "text": "C"
+          },
+          {
+            "index": 14,
+            "text": "l"
+          },
+          {
+            "index": 15,
+            "text": "a"
+          },
+          {
+            "index": 16,
+            "text": "s"
+          },
+          {
+            "index": 17,
+            "text": "s"
+          },
+          {
+            "index": 18,
+            "text": "i"
+          },
+          {
+            "index": 19,
+            "text": "c"
+          },
+          {
+            "index": 20,
+            "text": "a"
+          },
+          {
+            "index": 21,
+            "text": "l"
+          },
+          {
+            "index": 22,
+            "text": " "
+          },
+          {
+            "index": 23,
+            "text": "U"
+          },
+          {
+            "index": 24,
+            "text": "p"
+          },
+          {
+            "index": 25,
+            "text": "d"
+          },
+          {
+            "index": 26,
+            "text": "a"
+          },
+          {
+            "index": 27,
+            "text": "t"
+          },
+          {
+            "index": 28,
+            "text": "e"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Repeat LALM/Classical Update",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Repeat LALM/Classical Update",
+              "color": "tx1"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/18jqhkjy",
+      "id": "262",
+      "name": "Rectangle 261",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": {
+        "type": "theme",
+        "value": "accent2",
+        "transform": {
+          "lighten": 0.4
+        }
+      },
+      "lineWidth": 2
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6p4fi9of",
+      "id": "290",
+      "name": "Connector: Curved 262",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 90,
+      "geometry": "curvedConnector3",
+      "lineColor": "#215F9A",
+      "lineWidth": 1
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rqdwre5k",
+      "id": "291",
+      "name": "Connector: Curved 265",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 270,
+      "horizontalFlip": true,
+      "geometry": "curvedConnector3",
+      "lineColor": "#3B7D23",
+      "lineWidth": 1
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cf2tcr61",
+      "id": "3",
+      "name": "Oval 2",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#3B7D23"
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/w32dkbuh",
+      "id": "10",
+      "name": "Oval 9",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#3B7D23"
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ahkvi1cb",
+      "id": "12",
+      "name": "Oval 11",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "ellipse",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "#215F9A"
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/v2twb6dw",
+      "id": "13",
+      "name": "TextBox 12",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        528
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "Converged solution",
+      "textPreview": "Converged solution",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "square",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 18,
+        "lines": [
+          {
+            "index": 1,
+            "text": "C"
+          },
+          {
+            "index": 2,
+            "text": "o"
+          },
+          {
+            "index": 3,
+            "text": "n"
+          },
+          {
+            "index": 4,
+            "text": "v"
+          },
+          {
+            "index": 5,
+            "text": "e"
+          },
+          {
+            "index": 6,
+            "text": "r"
+          },
+          {
+            "index": 7,
+            "text": "g"
+          },
+          {
+            "index": 8,
+            "text": "e"
+          },
+          {
+            "index": 9,
+            "text": "d"
+          },
+          {
+            "index": 10,
+            "text": " "
+          },
+          {
+            "index": 11,
+            "text": "s"
+          },
+          {
+            "index": 12,
+            "text": "o"
+          },
+          {
+            "index": 13,
+            "text": "l"
+          },
+          {
+            "index": 14,
+            "text": "u"
+          },
+          {
+            "index": 15,
+            "text": "t"
+          },
+          {
+            "index": 16,
+            "text": "i"
+          },
+          {
+            "index": 17,
+            "text": "o"
+          },
+          {
+            "index": 18,
+            "text": "n"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Converged solution",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Converged solution"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i54fmlc7",
+      "id": "16",
+      "name": "TextBox 15",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        816
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "Classically refined solution",
+      "textPreview": "Classically refined solution",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "square",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 28,
+        "lines": [
+          {
+            "index": 1,
+            "text": "C"
+          },
+          {
+            "index": 2,
+            "text": "l"
+          },
+          {
+            "index": 3,
+            "text": "a"
+          },
+          {
+            "index": 4,
+            "text": "s"
+          },
+          {
+            "index": 5,
+            "text": "s"
+          },
+          {
+            "index": 6,
+            "text": "i"
+          },
+          {
+            "index": 7,
+            "text": "c"
+          },
+          {
+            "index": 8,
+            "text": "a"
+          },
+          {
+            "index": 9,
+            "text": "l"
+          },
+          {
+            "index": 10,
+            "text": "l"
+          },
+          {
+            "index": 11,
+            "text": "y"
+          },
+          {
+            "index": 12,
+            "text": " "
+          },
+          {
+            "index": 13,
+            "text": "r"
+          },
+          {
+            "index": 14,
+            "text": "e"
+          },
+          {
+            "index": 15,
+            "text": "f"
+          },
+          {
+            "index": 16,
+            "text": "i"
+          },
+          {
+            "index": 17,
+            "text": "n"
+          },
+          {
+            "index": 18,
+            "text": "e"
+          },
+          {
+            "index": 19,
+            "text": "d"
+          },
+          {
+            "index": 20,
+            "text": " "
+          },
+          {
+            "index": 21,
+            "text": "s"
+          },
+          {
+            "index": 22,
+            "text": "o"
+          },
+          {
+            "index": 23,
+            "text": "l"
+          },
+          {
+            "index": 24,
+            "text": "u"
+          },
+          {
+            "index": 25,
+            "text": "t"
+          },
+          {
+            "index": 26,
+            "text": "i"
+          },
+          {
+            "index": 27,
+            "text": "o"
+          },
+          {
+            "index": 28,
+            "text": "n"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Classically refined solution",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Classically refined solution"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2h0ni107",
+      "id": "27",
+      "name": "TextBox 26",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        556.8
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "QHD coarse solution",
+      "textPreview": "QHD coarse solution",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "square",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 19,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Q"
+          },
+          {
+            "index": 2,
+            "text": "H"
+          },
+          {
+            "index": 3,
+            "text": "D"
+          },
+          {
+            "index": 4,
+            "text": " "
+          },
+          {
+            "index": 5,
+            "text": "c"
+          },
+          {
+            "index": 6,
+            "text": "o"
+          },
+          {
+            "index": 7,
+            "text": "a"
+          },
+          {
+            "index": 8,
+            "text": "r"
+          },
+          {
+            "index": 9,
+            "text": "s"
+          },
+          {
+            "index": 10,
+            "text": "e"
+          },
+          {
+            "index": 11,
+            "text": " "
+          },
+          {
+            "index": 12,
+            "text": "s"
+          },
+          {
+            "index": 13,
+            "text": "o"
+          },
+          {
+            "index": 14,
+            "text": "l"
+          },
+          {
+            "index": 15,
+            "text": "u"
+          },
+          {
+            "index": 16,
+            "text": "t"
+          },
+          {
+            "index": 17,
+            "text": "i"
+          },
+          {
+            "index": 18,
+            "text": "o"
+          },
+          {
+            "index": 19,
+            "text": "n"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "QHD coarse solution",
+          "runs": [
+            {
+              "index": 1,
+              "text": "QHD coarse solution"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kjelony9",
+      "id": "36",
+      "name": "Rectangle 35",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": {
+        "type": "theme",
+        "value": "bg1",
+        "transform": {
+          "darken": 0.5
+        }
+      },
+      "lineWidth": 2.67
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e1sjatgz",
+      "id": "38",
+      "name": "TextBox 37",
+      "bbox": [
+        -2000,
+        -2000,
+        1,
+        585.6
+      ],
+      "rotation": 0,
+      "geometry": "rect",
+      "text": "Localized QHD bounds",
+      "textPreview": "Localized QHD bounds",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "wrap": "square",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 20,
+        "lines": [
+          {
+            "index": 1,
+            "text": "L"
+          },
+          {
+            "index": 2,
+            "text": "o"
+          },
+          {
+            "index": 3,
+            "text": "c"
+          },
+          {
+            "index": 4,
+            "text": "a"
+          },
+          {
+            "index": 5,
+            "text": "l"
+          },
+          {
+            "index": 6,
+            "text": "i"
+          },
+          {
+            "index": 7,
+            "text": "z"
+          },
+          {
+            "index": 8,
+            "text": "e"
+          },
+          {
+            "index": 9,
+            "text": "d"
+          },
+          {
+            "index": 10,
+            "text": " "
+          },
+          {
+            "index": 11,
+            "text": "Q"
+          },
+          {
+            "index": 12,
+            "text": "H"
+          },
+          {
+            "index": 13,
+            "text": "D"
+          },
+          {
+            "index": 14,
+            "text": " "
+          },
+          {
+            "index": 15,
+            "text": "b"
+          },
+          {
+            "index": 16,
+            "text": "o"
+          },
+          {
+            "index": 17,
+            "text": "u"
+          },
+          {
+            "index": 18,
+            "text": "n"
+          },
+          {
+            "index": 19,
+            "text": "d"
+          },
+          {
+            "index": 20,
+            "text": "s"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Localized QHD bounds",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Localized QHD bounds"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/srmxkz65",
+      "id": "292",
+      "name": "section-kicker",
+      "bbox": [
+        64,
+        28,
+        400,
+        24
+      ],
+      "geometry": "rect",
+      "text": "ANALYSIS & NEXT DECISIONS",
+      "textPreview": "ANALYSIS & NEXT DECISIONS",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#0070C0",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ANALYSIS & NEXT DECISIONS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ANALYSIS & NEXT DECISIONS",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#0070C0",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "ANALYSIS & NEXT DECISIONS",
+              "fontSize": 13,
+              "color": "#0070C0",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tsfet4nq",
+      "id": "293",
+      "name": "slide-title",
+      "bbox": [
+        64,
+        52,
+        1152,
+        58
+      ],
+      "geometry": "rect",
+      "text": "The hybrid architecture works; beam policy and stopping logic now dominate",
+      "textPreview": "The hybrid architecture works; beam policy and stopping logic now dominate",
+      "resolvedFontSize": 32,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 32,
+        "typeface": "Aptos",
+        "color": "#171717",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The hybrid architecture works; beam policy and stopping logic now dominate"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The hybrid architecture works; beam policy and stopping logic now dominate",
+          "resolvedTextStyle": {
+            "fontSize": 32,
+            "color": "#171717",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "The hybrid architecture works; beam policy and stopping logic now dominate",
+              "fontSize": 32,
+              "color": "#171717",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 36,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/etofm9ob",
+      "id": "294",
+      "name": "rule",
+      "bbox": [
+        64,
+        110,
+        1152,
+        18
+      ],
+      "geometry": "rect",
+      "text": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "textPreview": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "resolvedFontSize": 10,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 10,
+        "typeface": "Aptos",
+        "color": "#E9EEF3",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+          "resolvedTextStyle": {
+            "fontSize": 10,
+            "color": "#E9EEF3",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+              "fontSize": 10,
+              "color": "#E9EEF3",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 37,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/itk3mp0r",
+      "id": "295",
+      "bbox": [
+        64,
+        150,
+        610,
+        400
+      ],
+      "alt": "3-bus TNC versus QHD-SB convergence",
+      "contentType": "image/png",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "ece4dbe8-d9f4-473c-a7b0-eb7f3d2069db",
+        "contentType": "image/png",
+        "byteLength": 247493
+      }
+    },
+    {
+      "order": 38,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gv6xoj6h",
+      "id": "296",
+      "name": "a1",
+      "bbox": [
+        710,
+        150,
+        430,
+        28
+      ],
+      "geometry": "rect",
+      "text": "What the evidence says",
+      "textPreview": "What the evidence says",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 20,
+        "typeface": "Aptos",
+        "color": "#0070C0",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "What the evidence says"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "What the evidence says",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "color": "#0070C0",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "What the evidence says",
+              "fontSize": 20,
+              "color": "#0070C0",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 39,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1wfyxon2",
+      "id": "297",
+      "name": "a1b",
+      "bbox": [
+        710,
+        188,
+        450,
+        205
+      ],
+      "geometry": "rect",
+      "text": "• Multi-beam wins on 2- and 3-bus residuals.\n• Single-beam wins on 5- and 9-bus residuals.\n• Best-residual iterates can be better than the final iterate; retain and return the incumbent.\n• 9-bus remains above the 10⁻⁵ target, indicating scaling and conditioning limits.",
+      "textPreview": "• Multi-beam wins on 2- and 3-bus residuals. | • Single-beam wins on 5- and 9-bus residuals. | • Best-residual iterates can be better tha...",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#171717",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 6,
+        "lines": [
+          {
+            "index": 1,
+            "text": "• Multi-beam wins on 2- and 3-bus residuals."
+          },
+          {
+            "index": 2,
+            "text": "• Single-beam wins on 5- and 9-bus residuals."
+          },
+          {
+            "index": 3,
+            "text": "• Best-residual iterates can be better than the final iterate;"
+          },
+          {
+            "index": 4,
+            "text": "retain and return the incumbent."
+          },
+          {
+            "index": 5,
+            "text": "• 9-bus remains above the 10⁻⁵ target, indicating scaling"
+          },
+          {
+            "index": 6,
+            "text": "and conditioning limits."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "• Multi-beam wins on 2- and 3-bus residuals.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "• Multi-beam wins on 2- and 3-bus residuals.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "• Single-beam wins on 5- and 9-bus residuals.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "• Single-beam wins on 5- and 9-bus residuals.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "• Best-residual iterates can be better than the final iterate; retain and return the incumbent.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "• Best-residual iterates can be better than the final iterate; retain and return the incumbent.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "• 9-bus remains above the 10⁻⁵ target, indicating scaling and conditioning limits.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "• 9-bus remains above the 10⁻⁵ target, indicating scaling and conditioning limits.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 40,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/uxkvapo7",
+      "id": "298",
+      "name": "a2",
+      "bbox": [
+        710,
+        420,
+        430,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Recommended changes",
+      "textPreview": "Recommended changes",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 20,
+        "typeface": "Aptos",
+        "color": "#2E7D17",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Recommended changes"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Recommended changes",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "color": "#2E7D17",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Recommended changes",
+              "fontSize": 20,
+              "color": "#2E7D17",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 41,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vytwju5s",
+      "id": "299",
+      "name": "a2b",
+      "bbox": [
+        710,
+        458,
+        450,
+        178
+      ],
+      "geometry": "rect",
+      "text": "1. Make beam width adaptive to candidate diversity and recent residual progress.\n2. Trigger refinement earlier when coarse progress plateaus.\n3. Rank lexicographically: max|h| → L₂(h) → objective.\n4. Normalize runtime comparisons across hardware/backends.\n5. Use SQP/interior-point as deterministic validation references.",
+      "textPreview": "1. Make beam width adaptive to candidate diversity and recent residual progress. | 2. Trigger refinement earlier when coarse progress pla...",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#171717",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 9,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1. Make beam width adaptive to candidate diversity and"
+          },
+          {
+            "index": 2,
+            "text": "recent residual progress."
+          },
+          {
+            "index": 3,
+            "text": "2. Trigger refinement earlier when coarse progress"
+          },
+          {
+            "index": 4,
+            "text": "plateaus."
+          },
+          {
+            "index": 5,
+            "text": "3. Rank lexicographically: max|h| → L₂(h) → objective."
+          },
+          {
+            "index": 6,
+            "text": "4. Normalize runtime comparisons across"
+          },
+          {
+            "index": 7,
+            "text": "hardware/backends."
+          },
+          {
+            "index": 8,
+            "text": "5. Use SQP/interior-point as deterministic validation"
+          },
+          {
+            "index": 9,
+            "text": "references."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1. Make beam width adaptive to candidate diversity and recent residual progress.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1. Make beam width adaptive to candidate diversity and recent residual progress.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "2. Trigger refinement earlier when coarse progress plateaus.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "2. Trigger refinement earlier when coarse progress plateaus.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "3. Rank lexicographically: max|h| → L₂(h) → objective.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "3. Rank lexicographically: max|h| → L₂(h) → objective.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "4. Normalize runtime comparisons across hardware/backends.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "4. Normalize runtime comparisons across hardware/backends.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "5. Use SQP/interior-point as deterministic validation references.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "color": "#171717",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "5. Use SQP/interior-point as deterministic validation references.",
+              "fontSize": 17,
+              "color": "#171717",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 42,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0n2xs3e9",
+      "id": "300",
+      "name": "close",
+      "bbox": [
+        64,
+        585,
+        610,
+        62
+      ],
+      "geometry": "rect",
+      "text": "Bottom line: QHD is most valuable as a basin-discovery mechanism; continuous refinement is what delivers ACOPF-grade feasibility.",
+      "textPreview": "Bottom line: QHD is most valuable as a basin-discovery mechanism; continuous refinement is what delivers ACOPF-grade feasibility.",
+      "resolvedFontSize": 19,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 19,
+        "typeface": "Aptos",
+        "color": "#171717",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Bottom line: QHD is most valuable as a basin-discovery mechanism;"
+          },
+          {
+            "index": 2,
+            "text": "continuous refinement is what delivers ACOPF-grade feasibility."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Bottom line: QHD is most valuable as a basin-discovery mechanism; continuous refinement is what delivers ACOPF-grade feasibility.",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "color": "#171717",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Bottom line: QHD is most valuable as a basin-discovery mechanism; continuous refinement is what delivers ACOPF-grade feasibility.",
+              "fontSize": 19,
+              "color": "#171717",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 43,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1oby18fu",
+      "id": "301",
+      "name": "footer-left",
+      "bbox": [
+        64,
+        684,
+        720,
+        18
+      ],
+      "geometry": "rect",
+      "text": "QHD–LALM–SB for ACOPF  |  repository results",
+      "textPreview": "QHD–LALM–SB for ACOPF  |  repository results",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 11,
+        "typeface": "Aptos",
+        "color": "#777777",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "QHD–LALM–SB for ACOPF  |  repository results"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "QHD–LALM–SB for ACOPF  |  repository results",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "color": "#777777",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "QHD–LALM–SB for ACOPF  |  repository results",
+              "fontSize": 11,
+              "color": "#777777",
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 44,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/el0fqdwj",
+      "id": "302",
+      "name": "footer-page",
+      "bbox": [
+        1150,
+        684,
+        66,
+        18
+      ],
+      "geometry": "rect",
+      "text": "05",
+      "textPreview": "05",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 11,
+        "typeface": "Aptos",
+        "color": "#666666",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "05"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "05",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "color": "#666666",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "05",
+              "fontSize": 11,
+              "color": "#666666",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

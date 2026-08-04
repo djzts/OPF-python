@@ -1,0 +1,1 @@
+Internal sources only: QHDALMACOPF.pptx; repository Python source; output/analysis.md; output/3bus_classical_vs_qce_analysis.md; output/3bus_tnc_qhdsb_230_summary.md; output CSV and PNG artifacts. No external claims or external assets.

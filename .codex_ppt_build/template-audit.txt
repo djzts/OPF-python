@@ -1,0 +1,4 @@
+Communication job: By the end, a technical research audience should understand why hybrid QHD-LALM with classical refinement is being explored for nonconvex ACOPF, how the loop works, what the latest 2/3/5/9-bus evidence shows, and what remains to be improved.
+Source deck: 3 minimalist white-background scientific diagrams, 16:9, Aptos/Arial family, gray feasible-region outlines, black lattice/bounds, blue QHD path, green classical-refinement path. No master title placeholders; content is slide-local.
+Reusable patterns: slide 1 for motivation/current-box concept; slide 2 for localized lattice and bounds; slide 3 for iterative loop plus right-side legend.
+Insertion contract: duplicate mapped slides, preserve the scientific diagram vocabulary, rewrite inherited labels, and use source-derived colors and typography for any bounded explanatory text or data visuals.
