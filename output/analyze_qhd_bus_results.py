@@ -1038,31 +1038,47 @@ def plot_convergence_by_bus(selected_rows: list[dict[str, Any]], iteration_rows:
         if row.get("stage")
     }
     filter_stage = bool(selected_log_stages)
+    stage_labels = {
+        "coarse_pre_refine": "coarse",
+        "post_refine_or_final": "hybrid",
+    }
+    stage_linestyles = {
+        "coarse_pre_refine": "--",
+        "post_refine_or_final": "-",
+    }
     for bus in BUS_LIST:
         fig, ax = plt.subplots(figsize=(10, 5.5), constrained_layout=True)
-        for exp, _path in EXPERIMENTS:
-            matching = [
-                row
-                for row in iteration_rows
-                if row.get("is_main_record")
-                and int(row["bus"]) == bus
-                and (row["experiment"], int(row["bus"]), row["log_name"]) in selected_logs
-                and row["experiment"] == exp
-                and (
-                    not filter_stage
-                    or (row["experiment"], int(row["bus"]), row["log_name"], str(row.get("stage", ""))) in selected_log_stages
+        for exp_index, (exp, _path) in enumerate(EXPERIMENTS):
+            for stage in ("coarse_pre_refine", "post_refine_or_final"):
+                # The "coarse only" series must never display a refined result,
+                # even when a misfiled source log happens to contain refinement.
+                if exp == "coarse only" and stage != "coarse_pre_refine":
+                    continue
+                matching = [
+                    row
+                    for row in iteration_rows
+                    if row.get("is_main_record")
+                    and int(row["bus"]) == bus
+                    and (row["experiment"], int(row["bus"]), row["log_name"]) in selected_logs
+                    and row["experiment"] == exp
+                    and str(row.get("stage", "")) == stage
+                    and (
+                        not filter_stage
+                        or (row["experiment"], int(row["bus"]), row["log_name"], stage) in selected_log_stages
+                    )
+                    and math.isfinite(float(row.get("l2_norm_h_used", math.nan)))
+                ]
+                if not matching:
+                    continue
+                matching.sort(key=lambda row: (int(row.get("iteration") or 0), int(row.get("record_index") or 0)))
+                ax.plot(
+                    [int(row["iteration"]) for row in matching],
+                    [float(row["l2_norm_h_used"]) for row in matching],
+                    linewidth=1.6,
+                    color=f"C{exp_index}",
+                    linestyle=stage_linestyles[stage],
+                    label=f"{exp} {stage_labels[stage]}",
                 )
-                and math.isfinite(float(row.get("l2_norm_h_used", math.nan)))
-            ]
-            if not matching:
-                continue
-            matching.sort(key=lambda row: (int(row.get("iteration") or 0), int(row.get("record_index") or 0)))
-            ax.plot(
-                [int(row["iteration"]) for row in matching],
-                [float(row["l2_norm_h_used"]) for row in matching],
-                linewidth=1.6,
-                label=exp,
-            )
         ax.set_yscale("log")
         ax.set_xlabel("Iteration")
         ax.set_ylabel("L2 constraint residual")
@@ -1073,29 +1089,35 @@ def plot_convergence_by_bus(selected_rows: list[dict[str, Any]], iteration_rows:
         plt.close(fig)
 
         fig, ax = plt.subplots(figsize=(10, 5.5), constrained_layout=True)
-        for exp, _path in EXPERIMENTS:
-            matching = [
-                row
-                for row in iteration_rows
-                if row.get("is_main_record")
-                and int(row["bus"]) == bus
-                and (row["experiment"], int(row["bus"]), row["log_name"]) in selected_logs
-                and row["experiment"] == exp
-                and (
-                    not filter_stage
-                    or (row["experiment"], int(row["bus"]), row["log_name"], str(row.get("stage", ""))) in selected_log_stages
+        for exp_index, (exp, _path) in enumerate(EXPERIMENTS):
+            for stage in ("coarse_pre_refine", "post_refine_or_final"):
+                if exp == "coarse only" and stage != "coarse_pre_refine":
+                    continue
+                matching = [
+                    row
+                    for row in iteration_rows
+                    if row.get("is_main_record")
+                    and int(row["bus"]) == bus
+                    and (row["experiment"], int(row["bus"]), row["log_name"]) in selected_logs
+                    and row["experiment"] == exp
+                    and str(row.get("stage", "")) == stage
+                    and (
+                        not filter_stage
+                        or (row["experiment"], int(row["bus"]), row["log_name"], stage) in selected_log_stages
+                    )
+                    and math.isfinite(float(row.get("objective_gap_pct", math.nan)))
+                ]
+                if not matching:
+                    continue
+                matching.sort(key=lambda row: (int(row.get("iteration") or 0), int(row.get("record_index") or 0)))
+                ax.plot(
+                    [int(row["iteration"]) for row in matching],
+                    [float(row["objective_gap_pct"]) for row in matching],
+                    linewidth=1.6,
+                    color=f"C{exp_index}",
+                    linestyle=stage_linestyles[stage],
+                    label=f"{exp} {stage_labels[stage]}",
                 )
-                and math.isfinite(float(row.get("objective_gap_pct", math.nan)))
-            ]
-            if not matching:
-                continue
-            matching.sort(key=lambda row: (int(row.get("iteration") or 0), int(row.get("record_index") or 0)))
-            ax.plot(
-                [int(row["iteration"]) for row in matching],
-                [float(row["objective_gap_pct"]) for row in matching],
-                linewidth=1.6,
-                label=exp,
-            )
         ax.axhline(0.0, color="black", linewidth=0.9)
         ax.set_xlabel("Iteration")
         ax.set_ylabel("Objective gap (%)")
@@ -1583,9 +1605,15 @@ def main() -> None:
     ]
     write_csv(OUTPUT_DIR / "paired_coarse_post_latest.csv", paired_latest, paired_fields)
 
+    selected_for_convergence = [
+        row
+        for row in selected_latest_stage
+        if row.get("stage") in {"coarse_pre_refine", "post_refine_or_final"}
+        and not (row.get("experiment") == "coarse only" and row.get("stage") != "coarse_pre_refine")
+    ]
     selected_keys = {
         (row["experiment"], int(row["bus"]), row["log_name"], row["stage"])
-        for row in selected_latest_post
+        for row in selected_for_convergence
     }
     selected_iteration_rows = [
         row
@@ -1599,7 +1627,7 @@ def main() -> None:
     plot_objective_gap(selected_latest_post, OUTPUT_DIR / "objective_gap_pct_by_experiment.png")
     plot_threshold_iterations(selected_latest_post, OUTPUT_DIR / "iterations_to_1e4_by_experiment.png")
     plot_coarse_vs_post(paired_latest, OUTPUT_DIR / "coarse_vs_post_refine_improvement.png")
-    plot_convergence_by_bus(selected_latest_post, all_round_records)
+    plot_convergence_by_bus(selected_for_convergence, all_round_records)
 
     write_analysis(selected_latest_post, best_across, summaries, all_round_records, paired_latest)
 
