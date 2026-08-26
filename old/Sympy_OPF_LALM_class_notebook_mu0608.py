@@ -97,7 +97,7 @@ def build_model(n_bus: int) -> SympyACOPFModel:
     if n_bus == 3:
         return SympyACOPFModel()
 
-    sbase, buses, lines, gens = load_matpower_json(f"case{n_bus}_custom.json")
+    sbase, buses, lines, gens = load_matpower_json(f"case_data/case{n_bus}_custom.json")
     return SympyACOPFModel(Sbase=sbase, buses=buses, lines=lines, gens=gens)
 
 

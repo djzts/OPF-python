@@ -28,7 +28,7 @@ from Sympy_OPF_LALM_class import SympyACOPFModel as RectangularACOPFModel
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 9
+    n_bus: int = 14
     max_outer: int = 900
     tol: float = 1e-4
     option: int = 1  # 1: QHD, 2: Gurobi
@@ -51,7 +51,7 @@ class SolverConfig:
     simbi_resolution: int = 14
     simbi_shots: int = 128
     simbi_agents: int = 4096
-    simbi_max_steps: int = 40000
+    simbi_max_steps: int = 42000
     simbi_seed: int | None = 42
     simbi_best_only: bool = False
     simbi_ballistic: bool = False
@@ -103,8 +103,8 @@ def build_model(n_bus: int) -> SympyACOPFModel:
     if n_bus == 3:
         return SympyACOPFModel()
 
-    pretty_file = Path(f"case{n_bus}_custom_pretty.json")
-    compact_file = Path(f"case{n_bus}_custom.json")
+    pretty_file = Path(f"case_data/case{n_bus}_custom_pretty.json")
+    compact_file = Path(f"case_data/case{n_bus}_custom.json")
     json_file = pretty_file if pretty_file.exists() else compact_file
     sbase, buses, lines, gens = load_matpower_json(str(json_file))
     return SympyACOPFModel(Sbase=sbase, buses=buses, lines=lines, gens=gens)

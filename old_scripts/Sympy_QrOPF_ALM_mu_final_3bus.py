@@ -102,8 +102,8 @@ def build_model(n_bus: int) -> SympyACOPFModel:
     if n_bus == 3:
         return SympyACOPFModel()
 
-    pretty_file = Path(f"case{n_bus}_custom_pretty.json")
-    compact_file = Path(f"case{n_bus}_custom.json")
+    pretty_file = Path(f"case_data/case{n_bus}_custom_pretty.json")
+    compact_file = Path(f"case_data/case{n_bus}_custom.json")
     json_file = pretty_file if pretty_file.exists() else compact_file
     sbase, buses, lines, gens = load_matpower_json(str(json_file))
     return SympyACOPFModel(Sbase=sbase, buses=buses, lines=lines, gens=gens)

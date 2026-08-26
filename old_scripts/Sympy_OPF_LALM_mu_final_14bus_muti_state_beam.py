@@ -25,7 +25,7 @@ from Sympy_OPF_LALM_class import (
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 2
+    n_bus: int = 14
     max_outer: int = 2000
     tol: float = 1e-5
     option: int = 1  # 1: QHD, 2: Gurobi
@@ -112,7 +112,7 @@ def build_model(n_bus: int) -> SympyACOPFModel:
     if n_bus == 3:
         return SympyACOPFModel()
 
-    sbase, buses, lines, gens = load_matpower_json(f"case{n_bus}_custom.json")
+    sbase, buses, lines, gens = load_matpower_json(f"case_data/case{n_bus}_custom.json")
     return SympyACOPFModel(Sbase=sbase, buses=buses, lines=lines, gens=gens)
 
 

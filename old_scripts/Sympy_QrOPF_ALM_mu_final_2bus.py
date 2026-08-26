@@ -4,33 +4,36 @@
 import json
 import time
 from dataclasses import dataclass
-from math import pi
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
-from pyomo.environ import *
-from qhdopt import QHD
 from scipy.optimize import Bounds, minimize
 
-from Sympy_OPF_LALM_class import (
+try:
+    from qhdopt import QHD
+except ImportError:
+    QHD = None
+
+from Sympy_QrOPF_ALM_class_notebook_mu_deps import (
     PrintQHDACOPFResults,
     SympyACOPFModel,
     extract_qhd_solution_vector,
     initialize_qhd_acopf_log,
     solve_with_gurobi_from_sympy,
 )
+from Sympy_OPF_LALM_class import SympyACOPFModel as RectangularACOPFModel
 
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 3
-    max_outer: int = 2000
-    tol: float = 1e-5
+    n_bus: int = 2
+    max_outer: int = 900
+    tol: float = 1e-4
     option: int = 1  # 1: QHD, 2: Gurobi
     qhd_solver: str = "simbi"  # simbi / openjij / gurobi
-    refine_method: str = "TNC_orig"  # none / ipopt_orig / TNC_orig / GurobiALM / GurobiOrig
+    refine_method: str = "TNC_orig"  # none / TNC_lifted / ipopt_orig / TNC_orig / GurobiALM / GurobiOrig
     rho: float = 80.0
     alpha: float = 5.0
     mu_prox: float = 1 #2e-2
@@ -38,35 +41,36 @@ class SolverConfig:
     alpha_min: float = 1e-2
     alpha_max: float = 8.0
     rho_min: float = 20.0
-    rho_max: float = 120.0
+    rho_max: float = 100.0
     plateau_window: int = 4
     worsen_window: int = 2
     stable_window: int = 4
-    improve_tol: float = 0.005
+    improve_tol: float = 0.02
     worsen_tol: float = 0.03
     qhd_refine: bool = True
-    simbi_resolution: int = 40
+    simbi_resolution: int = 14
     simbi_shots: int = 128
-    simbi_agents: int = 1024
-    simbi_max_steps: int = 12000
+    simbi_agents: int = 4096
+    simbi_max_steps: int = 40000
     simbi_seed: int | None = 42
     simbi_best_only: bool = False
     simbi_ballistic: bool = False
     simbi_heated: bool | None = None
-    early_stop_patience: int = 350
+    early_stop_patience: int = 300
     tnc_maxfun: int | None = None
-    ipopt_max_iter: int = 300
+    ipopt_max_iter: int = 350
     gurobi_time_limit: float | None = 60.0
     gurobi_threads: int = 0
     gurobi_log_to_console: bool = False
     return_best_solution: bool = True
     print_to_console: bool = True
     show_plot: bool = True
-    log_folder: str = "logs"
+    log_folder: str = "QR_logs"
+    pg_zero_warn_tol: float = 1e-8
     max_runtime_seconds: float | None = 23 * 60 * 60
 
 
-REFINE_METHODS = {"none", "ipopt_orig", "TNC_orig", "GurobiALM", "GurobiOrig"}
+REFINE_METHODS = {"none", "TNC_lifted", "ipopt_orig", "TNC_orig", "GurobiALM", "GurobiOrig"}
 REFINE_METHOD_ALIASES = {method.lower(): method for method in REFINE_METHODS}
 
 
@@ -99,7 +103,10 @@ def build_model(n_bus: int) -> SympyACOPFModel:
     if n_bus == 3:
         return SympyACOPFModel()
 
-    sbase, buses, lines, gens = load_matpower_json(f"case{n_bus}_custom.json")
+    pretty_file = Path(f"case_data/case{n_bus}_custom_pretty.json")
+    compact_file = Path(f"case_data/case{n_bus}_custom.json")
+    json_file = pretty_file if pretty_file.exists() else compact_file
+    sbase, buses, lines, gens = load_matpower_json(str(json_file))
     return SympyACOPFModel(Sbase=sbase, buses=buses, lines=lines, gens=gens)
 
 
@@ -112,11 +119,15 @@ def validate_config(config: SolverConfig) -> None:
         raise ValueError("rho must be positive.")
     if config.option not in {1, 2}:
         raise ValueError("option must be 1 (QHD) or 2 (Gurobi).")
+    if config.option == 1 and QHD is None:
+        raise ImportError("qhdopt is required when option=1.")
     if config.qhd_solver not in {"simbi", "openjij", "gurobi"}:
         raise ValueError("qhd_solver must be 'simbi', 'openjij', or 'gurobi'.")
     canonical_refine_method(config.refine_method)
     if config.max_outer <= 0:
         raise ValueError("max_outer must be positive.")
+    if config.mu_prox < 0:
+        raise ValueError("mu_prox must be nonnegative.")
     if config.simbi_resolution <= 0:
         raise ValueError("simbi_resolution must be positive.")
     if config.simbi_shots <= 0:
@@ -138,6 +149,12 @@ def canonical_refine_method(method: str) -> str:
 
 
 def validate_bounds(variable_list, var_bound_list) -> None:
+    if len(variable_list) != len(var_bound_list):
+        raise ValueError(
+            f"Bounds length mismatch: {len(variable_list)} variables, "
+            f"{len(var_bound_list)} bounds."
+        )
+
     bad_bounds = []
     for i, (var, bnd) in enumerate(zip(variable_list, var_bound_list)):
         lb, ub = float(bnd[0]), float(bnd[1])
@@ -147,7 +164,7 @@ def validate_bounds(variable_list, var_bound_list) -> None:
     if bad_bounds:
         for item in bad_bounds:
             print("Invalid bound:", item)
-        raise ValueError("Var_bound_list contains invalid bounds (ub < lb).")
+        raise ValueError("var_bound_list contains invalid bounds (ub < lb).")
 
 
 def solve_subproblem_qhd(
@@ -159,9 +176,11 @@ def solve_subproblem_qhd(
     rho: float,
     config: SolverConfig,
 ):
+    if QHD is None:
+        raise ImportError("qhdopt is required for QHD subproblem solving.")
+
     qhd_model = QHD.SymPy(lagrangian, variable_list, var_bound_list)
-    refine_method = canonical_refine_method(config.refine_method)
-    qhd_post_processing_method = "TNC" if refine_method == "none" else refine_method
+    qhd_post_processing_method = "TNC"
 
     if config.qhd_solver == "simbi":
         qhd_model.simbi_setup(
@@ -208,44 +227,13 @@ def solve_subproblem_qhd(
     else:
         raise ValueError(f"Unsupported qhd_solver={config.qhd_solver!r}.")
 
-    should_refine = bool(config.qhd_refine and refine_method != "none")
-    if should_refine:
-        tnc_options = {}
-        if config.tnc_maxfun is not None:
-            tnc_options["maxfun"] = config.tnc_maxfun
-        qhd_model.set_acopf_refine_problem(
-            objective=model._build_objective_expr(),
-            constraints=model.build_h_symbolic(ref_bus_id=None),
-            lambda_vec=np.asarray(model.lambda_vec, dtype=float),
-            rho=rho,
-            x_center=x_center,
-            mu_prox=config.mu_prox,
-            best_only=True,
-            tnc_options=tnc_options,
-            ipopt_options={
-                "tol": config.tol,
-                "max_iter": config.ipopt_max_iter,
-                "hessian_approximation": "limited-memory",
-            },
-            gurobi_options={
-                "time_limit": config.gurobi_time_limit,
-                "threads": config.gurobi_threads,
-                "log_to_console": config.gurobi_log_to_console,
-            },
-        )
-
-    response = qhd_model.optimize(refine=should_refine, verbose=0)
+    response = qhd_model.optimize(refine=False, verbose=0)
     x_coarse = extract_qhd_solution_vector(
         response,
         prefer_refined=False,
         expected_len=len(variable_list),
     )
-    x_new = extract_qhd_solution_vector(
-        response,
-        prefer_refined=True,
-        expected_len=len(variable_list),
-    )
-    return x_coarse, x_new
+    return x_coarse
 
 
 def solve_subproblem_gurobi(lagrangian, variable_list, var_bound_list):
@@ -257,9 +245,31 @@ def solve_subproblem_gurobi(lagrangian, variable_list, var_bound_list):
     )
 
 
-def evaluate_objective(model: SympyACOPFModel, x_vec) -> float:
-    subs_dict = {var: val for var, val in zip(model.variable_list, x_vec)}
-    return float(sp.N(model.objective.subs(subs_dict)))
+def build_rectangular_model_from_qropf(model: SympyACOPFModel) -> RectangularACOPFModel:
+    rect_model = RectangularACOPFModel(
+        Sbase=model.Sbase,
+        buses=model.buses,
+        lines=model.lines,
+        gens=model.gens,
+    )
+    ref_idx = rect_model.bus_index[rect_model.bus_ids[0]]
+    rect_model.Var_bound_list[rect_model.variable_list.index(rect_model.V_R[ref_idx])] = [0.99999, 1.0]
+    rect_model.Var_bound_list[rect_model.variable_list.index(rect_model.V_I[ref_idx])] = [0.0, 0.0]
+    rect_model.Var_bound_list[rect_model.variable_list.index(rect_model.V_sq[ref_idx])] = [0.99999 ** 2, 1.0]
+    return rect_model
+
+
+def sync_rectangular_lambdas(qr_model: SympyACOPFModel, rect_model: RectangularACOPFModel) -> None:
+    rect_model.reset_lambdas(qr_model.build_rectangular_lambda_vec())
+
+
+def _build_model_objective_expr(model):
+    if hasattr(model, "build_objective_expr"):
+        obj = model.build_objective_expr()
+    else:
+        obj = model._build_objective_expr()
+    model.objective = obj
+    return obj
 
 
 def _clip_to_bounds(x, var_bound_list):
@@ -309,10 +319,9 @@ def _lambdify_constraints_and_jac(h_exprs, variable_list):
     return cons, jac
 
 
-def build_full_acopf_alm_expr(model: SympyACOPFModel, rho: float, x_center=None, mu_prox: float = 0.0):
+def build_full_acopf_alm_expr(model: RectangularACOPFModel, rho: float, x_center=None, mu_prox: float = 0.0):
     variable_list = model.variable_list
-    obj = model._build_objective_expr()
-    model.objective = obj
+    obj = _build_model_objective_expr(model)
     h_exprs = model.build_h_symbolic(ref_bus_id=None)
     lam = np.asarray(model.lambda_vec, dtype=float).reshape(-1)
 
@@ -335,7 +344,7 @@ def build_full_acopf_alm_expr(model: SympyACOPFModel, rho: float, x_center=None,
     return sp.expand(alm_expr)
 
 
-def solve_refine_tnc_orig(model: SympyACOPFModel, x0, x_center, rho: float, config: SolverConfig):
+def solve_refine_tnc_orig(model: RectangularACOPFModel, x0, x_center, rho: float, config: SolverConfig):
     alm_expr = build_full_acopf_alm_expr(
         model,
         rho=rho,
@@ -362,14 +371,56 @@ def solve_refine_tnc_orig(model: SympyACOPFModel, x0, x_center, rho: float, conf
     return _clip_to_bounds(result.x, model.Var_bound_list)
 
 
-def solve_refine_ipopt_orig(model: SympyACOPFModel, x0, config: SolverConfig):
+def solve_refine_tnc_lifted(model: SympyACOPFModel, x0, x_center, rho: float, config: SolverConfig):
+    variable_list = model.variable_list
+    var_bound_list = model.Var_bound_list
+    obj = _build_model_objective_expr(model)
+    h_exprs = model.build_h_symbolic(ref_bus_id=None)
+    lam = np.asarray(model.lambda_vec, dtype=float).reshape(-1)
+
+    if lam.size != len(h_exprs):
+        raise ValueError(f"lambda size {lam.size} != number of QrOPF constraints {len(h_exprs)}")
+
+    alm_expr = obj
+    for lam_i, h_i in zip(lam, h_exprs):
+        if lam_i != 0.0:
+            alm_expr += sp.Float(lam_i) * h_i
+        alm_expr += sp.Float(rho) * sp.Rational(1, 2) * h_i**2
+
+    if config.mu_prox > 0.0 and x_center is not None:
+        x_center = np.asarray(x_center, dtype=float).reshape(-1)
+        if x_center.size != len(variable_list):
+            raise ValueError(f"x_center length mismatch: expected {len(variable_list)}, got {x_center.size}")
+        for var, val in zip(variable_list, x_center):
+            alm_expr += sp.Float(config.mu_prox) * sp.Rational(1, 2) * (var - sp.Float(val)) ** 2
+
+    fun, jac = _lambdify_scalar_and_grad(alm_expr, variable_list)
+    x0 = _clip_to_bounds(x0, var_bound_list)
+    options = {"gtol": 1e-6, "eps": 1e-9}
+    if config.tnc_maxfun is not None:
+        options["maxfun"] = config.tnc_maxfun
+
+    result = minimize(
+        fun,
+        x0,
+        method="TNC",
+        jac=jac,
+        bounds=_scipy_bounds(var_bound_list),
+        options=options,
+    )
+    print(f"[refine:TNC_lifted] full QR lifted ALM success={result.success}, status={result.status}, fun={float(result.fun):.9g}")
+    if not result.success:
+        print(f"[refine:TNC_lifted] message={result.message}")
+    return _clip_to_bounds(result.x, var_bound_list)
+
+
+def solve_refine_ipopt_orig(model: RectangularACOPFModel, x0, config: SolverConfig):
     try:
         import cyipopt
     except ImportError as exc:
         raise RuntimeError("refine_method='ipopt_orig' requires cyipopt in the active Python environment.") from exc
 
-    obj_expr = model._build_objective_expr()
-    model.objective = obj_expr
+    obj_expr = _build_model_objective_expr(model)
     h_exprs = model.build_h_symbolic(ref_bus_id=None)
     fun, jac = _lambdify_scalar_and_grad(obj_expr, model.variable_list)
     cons_fun, cons_jac = _lambdify_constraints_and_jac(h_exprs, model.variable_list)
@@ -449,8 +500,8 @@ def _add_gurobi_decision_vars(model_g, variable_list, var_bound_list, prefix="x"
     return variables
 
 
-def solve_refine_gurobi_orig(model: SympyACOPFModel, x0, config: SolverConfig):
-    _, _, model_g = _setup_gurobi_model("GurobiOrig_ACOPF_QCQP", config)
+def solve_refine_gurobi_orig(model: RectangularACOPFModel, x0, config: SolverConfig):
+    _, _, model_g = _setup_gurobi_model("GurobiOrig_rectangular_ACOPF_QCQP", config)
     x_vars = _add_gurobi_decision_vars(
         model_g,
         model.variable_list,
@@ -458,15 +509,14 @@ def solve_refine_gurobi_orig(model: SympyACOPFModel, x0, config: SolverConfig):
         start_values=x0,
     )
 
-    obj_expr = model._build_objective_expr()
-    model.objective = obj_expr
+    obj_expr = _build_model_objective_expr(model)
     model_g.setObjective(
         _sympy_poly_to_gurobi_expr(obj_expr, model.variable_list, x_vars, max_degree=2)
     )
 
     for idx, h_expr in enumerate(model.build_h_symbolic(ref_bus_id=None)):
         h_gurobi = _sympy_poly_to_gurobi_expr(h_expr, model.variable_list, x_vars, max_degree=2)
-        model_g.addConstr(h_gurobi == 0.0, name=f"acopf_h_{idx}")
+        model_g.addConstr(h_gurobi == 0.0, name=f"qropf_h_{idx}")
 
     model_g.optimize()
     if model_g.SolCount < 1:
@@ -476,8 +526,8 @@ def solve_refine_gurobi_orig(model: SympyACOPFModel, x0, config: SolverConfig):
     return np.asarray([var.X for var in x_vars], dtype=float)
 
 
-def solve_refine_gurobi_alm(model: SympyACOPFModel, x0, x_center, rho: float, config: SolverConfig):
-    _, GRB, model_g = _setup_gurobi_model("GurobiALM_full_ACOPF_ALM", config)
+def solve_refine_gurobi_alm(model: RectangularACOPFModel, x0, x_center, rho: float, config: SolverConfig):
+    _, GRB, model_g = _setup_gurobi_model("GurobiALM_full_rectangular_ACOPF_ALM", config)
     x0 = _clip_to_bounds(x0, model.Var_bound_list)
     x_vars = _add_gurobi_decision_vars(
         model_g,
@@ -486,14 +536,13 @@ def solve_refine_gurobi_alm(model: SympyACOPFModel, x0, x_center, rho: float, co
         start_values=x0,
     )
 
-    obj_expr = model._build_objective_expr()
-    model.objective = obj_expr
+    obj_expr = _build_model_objective_expr(model)
     gurobi_obj = _sympy_poly_to_gurobi_expr(obj_expr, model.variable_list, x_vars, max_degree=2)
 
     h_exprs = model.build_h_symbolic(ref_bus_id=None)
     lam = np.asarray(model.lambda_vec, dtype=float).reshape(-1)
     if lam.size != len(h_exprs):
-        raise ValueError(f"lambda size {lam.size} != number of ACOPF constraints {len(h_exprs)}")
+        raise ValueError(f"lambda size {lam.size} != number of QrOPF constraints {len(h_exprs)}")
 
     h_func_start = np.asarray(model.build_h_func(ref_bus_id=None)(x0), dtype=float).reshape(-1)
     for idx, (lam_i, h_expr) in enumerate(zip(lam, h_exprs)):
@@ -521,22 +570,41 @@ def solve_refine_gurobi_alm(model: SympyACOPFModel, x0, x_center, rho: float, co
     return np.asarray([var.X for var in x_vars], dtype=float)
 
 
-def refine_acopf_solution(model: SympyACOPFModel, x_coarse, x_center, rho: float, config: SolverConfig):
+def refine_acopf_solution(
+    qr_model: SympyACOPFModel,
+    rect_model: RectangularACOPFModel,
+    x_coarse,
+    x_center,
+    rho: float,
+    config: SolverConfig,
+    allow_refine: bool = True,
+):
     method = canonical_refine_method(config.refine_method)
-    x_coarse = _clip_to_bounds(x_coarse, model.Var_bound_list)
+    x_coarse = _clip_to_bounds(x_coarse, qr_model.Var_bound_list)
 
-    if method == "none":
+    if method == "none" or not allow_refine:
         return x_coarse
-    if method == "TNC_orig":
-        return solve_refine_tnc_orig(model, x_coarse, x_center=x_center, rho=rho, config=config)
-    if method == "ipopt_orig":
-        return solve_refine_ipopt_orig(model, x_coarse, config=config)
-    if method == "GurobiALM":
-        return solve_refine_gurobi_alm(model, x_coarse, x_center=x_center, rho=rho, config=config)
-    if method == "GurobiOrig":
-        return solve_refine_gurobi_orig(model, x_coarse, config=config)
 
-    raise ValueError(f"Unsupported refine_method={method!r}.")
+    if method == "TNC_lifted":
+        return solve_refine_tnc_lifted(qr_model, x_coarse, x_center=x_center, rho=rho, config=config)
+
+    sync_rectangular_lambdas(qr_model, rect_model)
+    x0_rect = qr_model.build_rectangular_x_from_lifted(x_coarse)
+    x_center_rect = qr_model.build_rectangular_x_from_lifted(x_center)
+
+    if method == "TNC_orig":
+        x_rect = solve_refine_tnc_orig(rect_model, x0_rect, x_center=x_center_rect, rho=rho, config=config)
+    elif method == "ipopt_orig":
+        x_rect = solve_refine_ipopt_orig(rect_model, x0_rect, config=config)
+    elif method == "GurobiALM":
+        x_rect = solve_refine_gurobi_alm(rect_model, x0_rect, x_center=x_center_rect, rho=rho, config=config)
+    elif method == "GurobiOrig":
+        x_rect = solve_refine_gurobi_orig(rect_model, x0_rect, config=config)
+    else:
+        raise ValueError(f"Unsupported refine_method={method!r}.")
+
+    print(f"[refine:{method}] rectangular V_R/V_I solution lifted back to QrOPF W variables.")
+    return qr_model.build_lifted_x_from_rectangular(x_rect)
 
 
 def adapt_alpha_rho(
@@ -582,7 +650,7 @@ def adapt_alpha_rho(
             stable_count = 0
             worsen_count = 0
             if plateau_count >= config.plateau_window:
-                rho = min(rho * 1.2, config.rho_max)
+                rho = min(rho * 2.0, config.rho_max)
                 alpha = max(alpha * 0.9, config.alpha_min)
                 plateau_count = 0
                 print(f"[adaptive] Plateau detected, rho -> {rho:.6e}, alpha -> {alpha:.6e}")
@@ -593,12 +661,15 @@ def adapt_alpha_rho(
         worsen_count = 0
         print(f"[adaptive] Lambda growth too fast, alpha -> {alpha:.6e}")
 
+    rho = min(max(rho, config.rho_min), config.rho_max)
+    alpha = min(max(alpha, config.alpha_min), config.alpha_max)
     return alpha, rho, stable_count, plateau_count, worsen_count
 
 
 def save_objective_plot(
     objective_history, log_file: str, log_folder: str, show: bool = True
 ) -> None:
+    Path(log_folder).mkdir(parents=True, exist_ok=True)
     valid_history = [item for item in objective_history if np.isfinite(item["objective"])]
     if not valid_history:
         print("Objective history plot skipped: no valid objective values recorded.")
@@ -623,11 +694,17 @@ def save_objective_plot(
     plt.close(fig)
 
 
+def evaluate_objective(model: SympyACOPFModel, x_vec) -> float:
+    subs_dict = {var: val for var, val in zip(model.variable_list, x_vec)}
+    return float(sp.N(model.objective.subs(subs_dict)))
+
+
 def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
     validate_config(config)
 
     h_func = model.build_h_func()
     model.reset_lambdas(0.0)
+    rect_model = build_rectangular_model_from_qropf(model)
     xk = model.build_initial_x0()
 
     alpha = config.alpha
@@ -643,9 +720,12 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
     print(f"Alpha mode: {config.alpha_mode}")
     print(f"Refine method: {canonical_refine_method(config.refine_method)}")
     if config.alpha_mode == "fixed":
-        print(f"Fixed alpha: {alpha}")
+        print(f"Fixed alpha={alpha:.6e}, rho={rho:.6e}, mu_prox={config.mu_prox:.6e}")
     else:
-        print(f"Adaptive alpha/rho start: alpha={alpha}, rho={rho}")
+        print(
+            "Adaptive alpha/rho start: "
+            f"alpha={alpha:.6e}, rho={rho:.6e}, mu_prox={config.mu_prox:.6e}"
+        )
 
     print("\n===== Start Linear ALM Loop =====\n")
     start_time = time.monotonic()
@@ -660,6 +740,7 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
     best_record = {
         "iter": None,
         "metric": float("inf"),
+        "max_abs_h": float("inf"),
         "x": None,
         "objective": None,
         "h_x": None,
@@ -685,61 +766,90 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
 
         if config.alpha_mode == "fixed":
             alpha = config.alpha
+            rho = config.rho
 
+        alpha_used = alpha
+        rho_used = rho
         print(f"\n--- Outer Iteration {k} ---")
-        print(f"alpha = {alpha:.6e}, rho = {rho:.6e}")
+        print(f"alpha = {alpha_used:.6e}, rho = {rho_used:.6e}")
 
         lagrangian, variable_list, var_bound_list = model.build_linear_ALM_Lagrangian_syms(
             x_center=xk,
-            rho=rho,
+            rho=rho_used,
             ref_bus_id=None,
             mu_prox=config.mu_prox,
         )
         validate_bounds(variable_list, var_bound_list)
 
+        x_coarse = None
+        coarse_h_val = None
+        coarse_max_abs_h = None
+        coarse_norm_h = None
+        coarse_objective_value = None
+        coarse_check_flag = None
+        allow_refine = True
+
         if config.option == 1:
-            x_coarse, x_new = solve_subproblem_qhd(
+            x_coarse = solve_subproblem_qhd(
                 lagrangian,
                 variable_list,
                 var_bound_list,
                 model=model,
                 x_center=xk,
-                rho=rho,
+                rho=rho_used,
                 config=config,
             )
+            allow_refine = bool(config.qhd_refine)
         else:
             x_coarse = solve_subproblem_gurobi(lagrangian, variable_list, var_bound_list)
-            x_new = refine_acopf_solution(
-                model,
-                x_coarse,
-                x_center=xk,
-                rho=rho,
-                config=config,
-            )
+
+        x_new = refine_acopf_solution(
+            model,
+            rect_model,
+            x_coarse,
+            x_center=xk,
+            rho=rho_used,
+            config=config,
+            allow_refine=allow_refine,
+        )
 
         coarse_h_val = h_func(x_coarse)
+        coarse_max_abs_h = float(np.max(np.abs(coarse_h_val)))
         coarse_norm_h = float(np.linalg.norm(coarse_h_val))
         coarse_objective_value = evaluate_objective(model, x_coarse)
         _, coarse_check_flag = model.check_constraints(x_coarse)
-        print(f"[coarse:LALM] ||h(x)|| = {coarse_norm_h:.6e}")
-        print(f"[coarse:LALM] objective = {coarse_objective_value:.9g}")
+        print(f"[coarse:ALM] max |h(x)| = {coarse_max_abs_h:.6e}")
+        print(f"[coarse:ALM] ||h(x)|| = {coarse_norm_h:.6e}")
+        print(f"[coarse:ALM] objective = {coarse_objective_value:.9g}")
 
         h_val = h_func(x_new)
+        vals_new = model._unpack_x(x_new)
+        pg_values = np.asarray(vals_new["P_G"], dtype=float)
+        total_pg = float(np.sum(pg_values))
+        total_load_p = float(np.sum(model.P_D))
+        max_abs_h = float(np.max(np.abs(h_val)))
         norm_h = float(np.linalg.norm(h_val))
-        print(f"[refined:{canonical_refine_method(config.refine_method)}] ||h(x)|| = {norm_h:.6e}")
+        print(f"total Pg = {total_pg:.6e}, total load P = {total_load_p:.6e}")
+        print(f"max |h(x)| = {max_abs_h:.6e}")
+        print(f"||h(x)|| = {norm_h:.6e}")
+        if total_load_p > config.pg_zero_warn_tol and np.max(np.abs(pg_values)) <= config.pg_zero_warn_tol:
+            print(
+                "[warning] All Pg values are still at zero. "
+                "Increase rho/alpha or use alpha_mode='adaptive' so the ALM penalty can overcome generation cost."
+            )
 
-        lambda_new, h_x = model.update_lambda(x_new, alpha=alpha, h_func=h_func)
+        lambda_new, h_x = model.update_lambda(x_new, alpha=alpha_used, h_func=h_func)
         h_old = h_func(xk)
         lambda_inf = float(np.max(np.abs(lambda_new)))
-        print(f"[rho-check] ||h_old||={np.linalg.norm(h_old):.3e}, ||h_new||={norm_h:.3e}, rho={rho:.3g}")
+        print(f"[rho-check] ||h_old||={np.linalg.norm(h_old):.3e}, ||h_new||={norm_h:.3e}, rho={rho_used:.3g}")
 
         alpha, rho, stable_count, plateau_count, worsen_count = adapt_alpha_rho(
             norm_h=norm_h,
             lambda_inf=lambda_inf,
             prev_norm_h=prev_norm_h,
             prev_lambda_inf=prev_lambda_inf,
-            alpha=alpha,
-            rho=rho,
+            alpha=alpha_used,
+            rho=rho_used,
             stable_count=stable_count,
             plateau_count=plateau_count,
             worsen_count=worsen_count,
@@ -748,7 +858,8 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
 
         prev_norm_h = norm_h
         prev_lambda_inf = lambda_inf
-        print(f"[adaptive] next alpha={alpha:.6e}, next rho={rho:.6e}, lambda_inf={lambda_inf:.3e}")
+        if config.alpha_mode == "adaptive":
+            print(f"[adaptive] next alpha={alpha:.6e}, next rho={rho:.6e}, lambda_inf={lambda_inf:.3e}")
 
         _, check_flag = model.check_constraints(x_new)
         print("Constraint check:", check_flag)
@@ -758,16 +869,18 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
         metric_history.append(
             {
                 "iter": k,
-                "max_abs_h": float(np.max(np.abs(h_val))),
+                "max_abs_h": max_abs_h,
                 "l2_norm_h": norm_h,
+                "coarse_max_abs_h": coarse_max_abs_h,
                 "coarse_l2_norm_h": coarse_norm_h,
-                "coarse_max_abs_h": float(np.max(np.abs(coarse_h_val))),
                 "coarse_objective": coarse_objective_value,
-                "refined_objective": objective_value,
-                "refine_method": canonical_refine_method(config.refine_method),
-                "alpha": float(alpha),
-                "rho": float(rho),
+                "alpha": float(alpha_used),
+                "rho": float(rho_used),
+                "next_alpha": float(alpha),
+                "next_rho": float(rho),
                 "lambda_inf": lambda_inf,
+                "total_pg": total_pg,
+                "total_load_p": total_load_p,
             }
         )
 
@@ -776,18 +889,19 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
                 {
                     "iter": k,
                     "metric": norm_h,
+                    "max_abs_h": max_abs_h,
                     "x": x_new.copy(),
                     "objective": objective_value,
                     "h_x": np.asarray(h_val, dtype=float).copy(),
                     "lambda_vec": np.asarray(lambda_new, dtype=float).copy(),
                     "feasible": check_flag,
-                    "rho": float(rho),
-                    "alpha": float(alpha),
+                    "rho": float(rho_used),
+                    "alpha": float(alpha_used),
                 }
             )
             print(
-                f"[best] iter={k}, l2_norm_h={norm_h:.6e}, "
-                f"objective={objective_value:.9g}"
+                f"[best] iter={k}, max_abs_h={max_abs_h:.6e}, "
+                f"l2_norm_h={norm_h:.6e}, objective={objective_value:.9g}"
             )
 
         log_file = PrintQHDACOPFResults(
@@ -797,8 +911,8 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
             iteration=k,
             folder=config.log_folder,
             print_to_console=False,
-            rho=rho,
-            alpha=alpha,
+            rho=rho_used,
+            alpha=alpha_used,
             h_x=coarse_h_val,
             lambda_vec=None,
             objective_value=coarse_objective_value,
@@ -813,8 +927,8 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
             iteration=k,
             folder=config.log_folder,
             print_to_console=config.print_to_console,
-            rho=rho,
-            alpha=alpha,
+            rho=rho_used,
+            alpha=alpha_used,
             h_x=h_val,
             lambda_vec=lambda_new,
             objective_value=objective_value,
@@ -840,15 +954,10 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
             )
             break
 
-        if check_flag:
-            print("\nConverged!")
-            xk = x_new.copy()
-            break
+        xk = x_new.copy()
 
-        step_norm = float(np.linalg.norm(x_new - xk))
-        if norm_h < config.tol and step_norm < 1e-5:
-            print("\nConverged!")
-            xk = x_new.copy()
+        if max_abs_h < config.tol:
+            print("\nConverged.")
             break
 
         if (
@@ -860,24 +969,21 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
                 "\nEarly stop: no residual improvement for "
                 f"{config.early_stop_patience} iterations."
             )
-            xk = (
-                best_record["x"].copy()
-                if config.return_best_solution and best_record["x"] is not None
-                else x_new.copy()
-            )
+            if config.return_best_solution and best_record["x"] is not None:
+                xk = best_record["x"].copy()
             break
-
-        xk = x_new.copy()
 
     print("\n===== End Loop =====\n")
     if runtime_timeout:
         print("Stopped because max_runtime_seconds was reached.")
     print("Final log file:", log_file)
+
     if best_record["iter"] is not None:
         print(
             "Best residual iteration:",
             best_record["iter"],
             f"objective={best_record['objective']:.9g}",
+            f"max_abs_h={best_record['max_abs_h']:.6e}",
             f"l2_norm_h={best_record['metric']:.6e}",
             f"rho={best_record['rho']:.6g}",
             f"alpha={best_record['alpha']:.6g}",
@@ -899,6 +1005,7 @@ def run_linear_alm(model: SympyACOPFModel, config: SolverConfig):
         )
         if config.return_best_solution:
             xk = best_record["x"].copy()
+
     save_objective_plot(
         objective_history,
         log_file,

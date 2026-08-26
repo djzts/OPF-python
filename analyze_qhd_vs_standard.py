@@ -23,15 +23,15 @@ LOG_DIR = ROOT / "logs"
 
 CASES = {
     "5bus": {
-        "standard": ROOT / "5bus-answer.txt",
+        "standard": ROOT / "case_data/5bus-answer.txt",
         "qhd_log": LOG_DIR / "Buses-5_06-07-2026_00-05-09.txt",
     },
     "9bus": {
-        "standard": ROOT / "9bus-answer.txt",
+        "standard": ROOT / "case_data/9bus-answer.txt",
         "qhd_log": LOG_DIR / "Buses-9_06-08-2026_19-48-09.txt",
     },
     "14bus": {
-        "standard": ROOT / "14bus-answer.txt",
+        "standard": ROOT / "case_data/14bus-answer.txt",
         "qhd_log": LOG_DIR / "Buses-14_06-08-2026_11-02-24.txt",
     },
 }

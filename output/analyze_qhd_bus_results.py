@@ -36,8 +36,8 @@ EXPERIMENTS = [
 REFERENCE_OBJECTIVES = {
     2: (0.609639734673, "SLSQP reference from plot_qhd_convergence_diagnostics.py case model"),
     3: (0.531710655973, "logs/QCE_result/Buses-3_06-22-2026_05-08-43_vs_44_QCE_analysis.md"),
-    5: (9.19504654127, "5bus-answer.txt / SLSQP cross-check"),
-    9: (4.09813222, "9bus-answer.txt"),
+    5: (9.19504654127, "case_data/5bus-answer.txt / SLSQP cross-check"),
+    9: (4.09813222, "case_data/9bus-answer.txt"),
 }
 
 NUM = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"

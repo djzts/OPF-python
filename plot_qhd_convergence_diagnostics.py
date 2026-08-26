@@ -334,7 +334,7 @@ def load_case(n_bus: int, base_dir: Path) -> OPFCase:
         }
         return OPFCase(n_bus, sbase, buses, lines, gens)
 
-    json_path = base_dir / f"case{n_bus}_custom.json"
+    json_path = base_dir / f"case_data/case{n_bus}_custom.json"
     with json_path.open("r", encoding="utf-8") as f:
         data = json.load(f)
     sbase = float(data["Sbase"])

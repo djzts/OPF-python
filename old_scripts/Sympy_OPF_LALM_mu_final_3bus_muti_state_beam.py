@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+Sympy_OPF_LALM_mu_final_3bus.py#!/usr/bin/env python
 # coding: utf-8
 
 import json
@@ -25,13 +25,13 @@ from Sympy_OPF_LALM_class import (
 
 @dataclass
 class SolverConfig:
-    n_bus: int = 14
+    n_bus: int = 3
     max_outer: int = 2000
     tol: float = 1e-5
     option: int = 1  # 1: QHD, 2: Gurobi
     qhd_solver: str = "simbi"  # simbi / openjij / gurobi
     refine_method: str = "TNC_orig"  # none / ipopt_orig / TNC_orig / GurobiALM / GurobiOrig
-    rho: float = 64.0
+    rho: float = 128.0
     alpha: float = 5.0
     mu_prox: float = 1 #2e-2
     alpha_mode: str = "adaptive"  # adaptive / fixed
@@ -112,7 +112,7 @@ def build_model(n_bus: int) -> SympyACOPFModel:
     if n_bus == 3:
         return SympyACOPFModel()
 
-    sbase, buses, lines, gens = load_matpower_json(f"case{n_bus}_custom.json")
+    sbase, buses, lines, gens = load_matpower_json(f"case_data/case{n_bus}_custom.json")
     return SympyACOPFModel(Sbase=sbase, buses=buses, lines=lines, gens=gens)
 
 
@@ -485,6 +485,38 @@ def format_step_vector(x_vec) -> str:
     )
 
 
+def set_model_lambda_vec(model: SympyACOPFModel, lambda_vec):
+    lambda_vec = np.asarray(lambda_vec, dtype=float).reshape(-1)
+    model.lambda_vec = lambda_vec.tolist()
+
+    nb = model.n_buses
+    na = model.n_arcs
+    idx = 0
+    model.lambda_P_bal = lambda_vec[idx:idx + nb].tolist()
+    idx += nb
+    model.lambda_Q_bal = lambda_vec[idx:idx + nb].tolist()
+    idx += nb
+    model.lambda_P_flow = lambda_vec[idx:idx + na].tolist()
+    idx += na
+    model.lambda_Q_flow = lambda_vec[idx:idx + na].tolist()
+    idx += na
+    model.lambda_Vsq = lambda_vec[idx:idx + nb].tolist()
+    idx += nb
+    model.lambda_Ssq = lambda_vec[idx:idx + na].tolist()
+    idx += na
+    model.lambda_ref_VI = float(lambda_vec[idx])
+    idx += 1
+    model.lambda_ref_VR = float(lambda_vec[idx])
+    idx += 1
+
+    if idx != lambda_vec.size:
+        raise ValueError(
+            f"lambda length mismatch while setting model state: used {idx}, "
+            f"got {lambda_vec.size}"
+        )
+    return lambda_vec
+
+
 def _clip_to_bounds(x, var_bound_list):
     x = np.asarray(x, dtype=float).reshape(-1)
     lb = np.asarray([b[0] for b in var_bound_list], dtype=float)
@@ -850,7 +882,7 @@ def save_objective_plot(
 
 
 def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
-    """Run coarse-only QCE as an N-point linearization beam search."""
+    """Run multi-state beam search with one lambda vector per active beam point."""
     validate_config(config)
 
     h_func = model.build_h_func()
@@ -860,7 +892,10 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
     objective_func = build_scalar_evaluator(objective_expr, model.variable_list)
 
     x_initial = np.asarray(model.build_initial_x0(), dtype=float)
-    linearization_points = [x_initial.copy()]
+    initial_lambda_vec = np.asarray(model.lambda_vec, dtype=float).reshape(-1)
+    beam_states = [
+        {"x": x_initial.copy(), "lambda_vec": initial_lambda_vec.copy()}
+    ]
     previous_evaluation_x = x_initial.copy()
 
     alpha = config.alpha
@@ -968,43 +1003,52 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
 
         alpha_used = alpha
         rho_used = rho
-        parent_points = [np.asarray(x, dtype=float).copy() for x in linearization_points]
+        parent_states = [
+            {
+                "x": np.asarray(state["x"], dtype=float).copy(),
+                "lambda_vec": np.asarray(state["lambda_vec"], dtype=float).reshape(-1).copy(),
+            }
+            for state in beam_states
+        ]
         all_candidates = []
         raw_solver_sample_count = 0
         local_candidate_counts = []
 
         print(f"\n--- Outer Iteration {k} ---")
         print(
-            f"linearization points = {len(parent_points)}, "
+            f"linearization points = {len(parent_states)}, "
             f"alpha = {alpha_used:.6e}, rho = {rho_used:.6e}"
         )
         log_step(
-            f"iteration_start iter={k}, parents={len(parent_points)}, "
+            f"iteration_start iter={k}, parents={len(parent_states)}, "
             f"alpha={alpha_used:.12g}, rho={rho_used:.12g}"
         )
 
-        for parent_index, x_center in enumerate(parent_points):
+        for parent_index, parent_state in enumerate(parent_states):
+            x_center = parent_state["x"]
+            parent_lambda_vec = parent_state["lambda_vec"]
+            set_model_lambda_vec(model, parent_lambda_vec)
             if (
                 config.max_runtime_seconds is not None
                 and time.monotonic() - start_time >= config.max_runtime_seconds
             ):
                 runtime_timeout = True
                 print(
-                    f"[runtime] stopped after {parent_index}/{len(parent_points)} "
+                    f"[runtime] stopped after {parent_index}/{len(parent_states)} "
                     "linearization solves in this generation."
                 )
                 log_step(
                     f"runtime_limit iter={k}, completed_parents={parent_index}/"
-                    f"{len(parent_points)}"
+                    f"{len(parent_states)}"
                 )
                 break
 
             print(
-                f"[QHD] linearization {parent_index + 1}/{len(parent_points)}"
+                f"[QHD] linearization {parent_index + 1}/{len(parent_states)}"
             )
             log_step(
                 f"qhd_start iter={k}, parent={parent_index + 1}/"
-                f"{len(parent_points)}, center={format_step_vector(x_center)}"
+                f"{len(parent_states)}, center={format_step_vector(x_center)}"
             )
             lagrangian, variable_list, var_bound_list = (
                 model.build_linear_ALM_Lagrangian_syms(
@@ -1059,6 +1103,7 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
                         "x": sample.copy(),
                         "lalm_energy": energy,
                         "parent_index": parent_index,
+                        "parent_lambda_vec": parent_lambda_vec.copy(),
                     }
                 )
 
@@ -1141,7 +1186,10 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
                 f"method={refine_method}"
             )
             for item in selected:
-                parent_center = parent_points[item["parent_index"]]
+                parent_state = parent_states[item["parent_index"]]
+                parent_center = parent_state["x"]
+                parent_lambda_vec = item["parent_lambda_vec"]
+                set_model_lambda_vec(model, parent_lambda_vec)
                 refined_x = refine_acopf_solution(
                     model,
                     item["coarse_x"],
@@ -1168,20 +1216,55 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
                 item["objective"] = item["coarse_objective"]
                 item["refined_objective"] = None
 
+        for item in selected:
+            candidate_h = np.asarray(h_func(item["x"]), dtype=float).reshape(-1)
+            parent_lambda_vec = np.asarray(
+                item["parent_lambda_vec"], dtype=float
+            ).reshape(-1)
+            if parent_lambda_vec.shape != candidate_h.shape:
+                raise ValueError(
+                    f"parent lambda shape {parent_lambda_vec.shape} does not match "
+                    f"h(x) shape {candidate_h.shape}"
+                )
+            item["h_x"] = candidate_h
+            item["norm_h"] = float(np.linalg.norm(candidate_h))
+            item["max_abs_h"] = float(np.max(np.abs(candidate_h)))
+            _, candidate_check_flag = model.check_constraints(item["x"])
+            item["check_flag"] = bool(candidate_check_flag)
+            parent_x = parent_states[item["parent_index"]]["x"]
+            item["step_norm"] = float(np.linalg.norm(item["x"] - parent_x))
+            item["lambda_vec"] = parent_lambda_vec + alpha_used * candidate_h
+            item["lambda_inf"] = float(np.max(np.abs(item["lambda_vec"])))
+
         active_candidate_count = min(config.beam_refine_keep, len(selected))
         active_candidates = sorted(
             selected,
             key=lambda item: item["objective"],
         )[:active_candidate_count]
         active_ids = {id(item) for item in active_candidates}
-        evaluation = active_candidates[0]
+        converged_active_candidates = [
+            item
+            for item in active_candidates
+            if item["check_flag"]
+            or (item["norm_h"] < config.tol and item["step_norm"] < config.tol)
+        ]
+        converged_active_ids = {id(item) for item in converged_active_candidates}
+        objective_best = active_candidates[0]
+        evaluation = (
+            min(converged_active_candidates, key=lambda item: item["objective"])
+            if converged_active_candidates
+            else objective_best
+        )
         evaluation_rank = evaluation["energy_rank"] - 1
         x_new = evaluation["x"].copy()
-        h_val = np.asarray(h_func(x_new), dtype=float).reshape(-1)
-        norm_h = float(np.linalg.norm(h_val))
+        h_val = evaluation["h_x"].copy()
+        norm_h = evaluation["norm_h"]
         objective_value = evaluation["objective"]
-        _, check_flag = model.check_constraints(x_new)
-        step_norm = float(np.linalg.norm(x_new - previous_evaluation_x))
+        check_flag = evaluation["check_flag"]
+        step_norm = evaluation["step_norm"]
+        lambda_new = evaluation["lambda_vec"].copy()
+        lambda_inf = evaluation["lambda_inf"]
+        set_model_lambda_vec(model, lambda_new)
         residual_improved = (
             prev_norm_h is not None
             and norm_h <= prev_norm_h * (1.0 - config.improve_tol)
@@ -1192,6 +1275,7 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
             f"candidate pool={len(all_candidates)}, "
             f"global distinct selected={len(selected)}, "
             f"active objective top-M={len(active_candidates)}, "
+            f"converged active={len(converged_active_candidates)}, "
             f"evaluation energy rank={evaluation_rank + 1}"
         )
         log_step(
@@ -1199,6 +1283,7 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
             f"solver_samples={raw_solver_sample_count}, "
             f"candidate_pool={len(all_candidates)}, selected={len(selected)}, "
             f"active={len(active_candidates)}, "
+            f"converged_active={len(converged_active_candidates)}, "
             f"evaluation_rank={evaluation_rank + 1}, "
             f"local_counts={local_candidate_counts}"
         )
@@ -1206,8 +1291,12 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
             marker_parts = []
             if id(item) in active_ids:
                 marker_parts.append("active")
+            if item is objective_best:
+                marker_parts.append("objective-best")
+            if id(item) in converged_active_ids:
+                marker_parts.append("converged")
             if item is evaluation:
-                marker_parts.append("objective/h(x)")
+                marker_parts.append("evaluation")
             marker = " <-- " + ", ".join(marker_parts) if marker_parts else ""
             if item["refined"]:
                 print(
@@ -1228,7 +1317,9 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
                 f"objective={item['objective']:.15g}, "
                 f"refined={item['refined']}, "
                 f"active_choice={id(item) in active_ids}, "
+                f"converged_choice={id(item) in converged_active_ids}, "
                 f"evaluation_choice={item is evaluation}, "
+                f"lambda_inf={item['lambda_inf']:.15g}, "
                 f"coarse_x={format_step_vector(item['coarse_x'])}, "
                 f"x={format_step_vector(item['x'])}"
             )
@@ -1243,15 +1334,10 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
             f"max_abs_h={float(np.max(np.abs(h_val))):.15g}, "
             f"step_norm={step_norm:.15g}, feasible={check_flag}, "
             f"active_candidates={len(active_candidates)}, "
+            f"converged_active={len(converged_active_candidates)}, "
+            f"lambda_inf={lambda_inf:.15g}, "
             f"x={format_step_vector(x_new)}"
         )
-
-        lambda_new, _ = model.update_lambda(
-            x_new,
-            alpha=alpha_used,
-            h_func=lambda _x: h_val,
-        )
-        lambda_inf = float(np.max(np.abs(lambda_new)))
 
         alpha, rho, stable_count, plateau_count, worsen_count = adapt_alpha_rho(
             norm_h=norm_h,
@@ -1276,10 +1362,12 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
         prev_norm_h = norm_h
         prev_lambda_inf = lambda_inf
 
-        # The objective-best M candidates become linearization points for the
-        # next generation. Bounds remain wide during the warm-up and only
-        # shrink after an accepted improvement in the true nonlinear residual.
-        linearization_points = [item["x"].copy() for item in active_candidates]
+        # The objective-best M candidates become full primal-dual beam states
+        # for the next generation, each carrying its own lambda vector.
+        beam_states = [
+            {"x": item["x"].copy(), "lambda_vec": item["lambda_vec"].copy()}
+            for item in active_candidates
+        ]
         shrink_bounds_this_round = (
             k >= config.bound_shrink_start_iter
             and (
@@ -1350,12 +1438,21 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
                         "objective": item["objective"],
                         "refined": item["refined"],
                         "parent_index": item["parent_index"],
+                        "parent_lambda_vec": item["parent_lambda_vec"].copy(),
+                        "lambda_vec": item["lambda_vec"].copy(),
+                        "lambda_inf": item["lambda_inf"],
+                        "l2_norm_h": item["norm_h"],
+                        "max_abs_h": item["max_abs_h"],
+                        "step_norm": item["step_norm"],
+                        "feasible": item["check_flag"],
                         "active": id(item) in active_ids,
+                        "converged_choice": id(item) in converged_active_ids,
                         "evaluation_choice": item is evaluation,
                     }
                     for item in selected
                 ],
                 "active_candidate_count": len(active_candidates),
+                "converged_active_candidate_count": len(converged_active_candidates),
                 "evaluation_rank": evaluation_rank,
             }
         )
@@ -1369,6 +1466,7 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
                 "evaluation_energy_rank": evaluation_rank + 1,
                 "selected_candidate_count": len(selected),
                 "active_candidate_count": len(active_candidates),
+                "converged_active_candidate_count": len(converged_active_candidates),
                 "beam_refine_candidates": config.beam_refine_candidates,
                 "beam_refine_keep": config.beam_refine_keep,
                 "raw_solver_sample_count": raw_solver_sample_count,
@@ -1445,11 +1543,12 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
         xk = x_new.copy()
         previous_evaluation_x = x_new.copy()
 
-        if check_flag or (norm_h < config.tol and step_norm < config.tol):
+        if converged_active_candidates:
             converged = True
             print("\nConverged!")
             log_step(
                 f"converged iter={k}, feasible={check_flag}, "
+                f"converged_active={len(converged_active_candidates)}, "
                 f"l2_norm_h={norm_h:.15g}, step_norm={step_norm:.15g}"
             )
             break
@@ -1529,7 +1628,11 @@ def run_coarse_beam_search_alm(model: SympyACOPFModel, config: SolverConfig):
 
     return {
         "x": xk,
-        "linearization_points": linearization_points,
+        "linearization_points": [state["x"].copy() for state in beam_states],
+        "beam_states": [
+            {"x": state["x"].copy(), "lambda_vec": state["lambda_vec"].copy()}
+            for state in beam_states
+        ],
         "log_file": log_file,
         "objective_history": objective_history,
         "metric_history": metric_history,
