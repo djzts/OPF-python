@@ -66,12 +66,95 @@ class Backend(ABC):
         Returns:
             TIHamiltonian: Penalty Hamiltonian
         """
-        if self.embedding_scheme == "hamming":
+        if self.embedding_scheme in ("hamming", "binary"):
+            # Binary (standard base-2) encoding needs no penalty: every
+            # computational basis state is a valid codeword, unlike
+            # unary/one-hot which reserve most of the Hilbert space for
+            # invalid patterns.
             return 0
         elif self.embedding_scheme == "unary":
             return hlist_sum(
                 [self.unary_penalty(p, qubits) for p in range(self.dimension)]
             )
+
+    def _fit_quadratic_from_callable(self, lmda, tol: float = 1e-6):
+        """
+        Recover (a, b, c) such that lmda(x) ~= a*x**2 + b*x + c on [0, 1] from
+        three samples (x=0, 0.5, 1), then verify against a fourth point
+        (x=0.25).
+
+        The binary embedding scheme builds the problem Hamiltonian directly
+        from these three coefficients (see `_binary_variable_hamiltonian`)
+        rather than from the resolution-point interpolation trick used for
+        unary/one-hot. That only works when the univariate/bivariate factor
+        supplied by `decompose_function` truly is a degree<=2 polynomial of
+        its variable -- which is what the linearized ALM Lagrangian produces
+        (objective + rho/2 * h_linearized**2 is quadratic overall). Anything
+        of higher degree raises a clear error instead of silently producing a
+        wrong Hamiltonian; use embedding_scheme="unary" for such functions.
+        """
+        y0, y1, y2 = float(lmda(0.0)), float(lmda(0.5)), float(lmda(1.0))
+        c = y0
+        a = 2.0 * y0 - 4.0 * y1 + 2.0 * y2
+        b = -3.0 * y0 + 4.0 * y1 - y2
+
+        check_x = 0.25
+        predicted = a * check_x ** 2 + b * check_x + c
+        actual = float(lmda(check_x))
+        if abs(predicted - actual) > tol * max(1.0, abs(actual)):
+            raise ValueError(
+                "embedding_scheme='binary' requires every univariate/bivariate "
+                "factor of the problem to be a degree<=2 polynomial of its "
+                "variable (as produced by the linearized ALM Lagrangian). "
+                f"Got a function with f(0)={y0:.6g}, f(0.5)={y1:.6g}, "
+                f"f(1)={y2:.6g} that does not fit a quadratic "
+                f"(predicted f(0.25)={predicted:.6g}, actual={actual:.6g}). "
+                "Use embedding_scheme='unary' instead for higher-degree or "
+                "non-polynomial functions."
+            )
+        return a, b, c
+
+    def _binary_variable_hamiltonian(
+        self, qubits: List[Qubit], d: int, a: float, b: float, c: float
+    ) -> TIHamiltonian:
+        """
+        Builds the operator a*x_d**2 + b*x_d + c for a single dimension d
+        under the binary embedding, where
+
+            x_d = sum_j w_j * n_j,   w_j = 2**j / (2**resolution - 1)
+
+        and n_j = 0.5*(I - Z_j) is the 0/1 occupation operator for bit j of
+        dimension d (bit j == 1 means qubit j is in the "one" state).
+
+        x_d**2 is expanded analytically using the boolean identity n_j**2 ==
+        n_j (n_j is a 0/1-valued diagonal operator) *before* building the
+        operator, rather than by literally squaring the SimuQ operator for
+        x_d. This avoids ever multiplying two operators that act on the same
+        qubit -- every product below is between different qubits j != k,
+        which is the same pattern the bivariate branch of `get_ham` already
+        relies on (products are only ever taken across disjoint qubit sets).
+        """
+        r = self.resolution
+        denom = float((1 << r) - 1) if r > 1 else 1.0
+        weights = [((1 << j) / denom) for j in range(r)]
+
+        def n(j):
+            qubit = qubits[(d - 1) * r + j]
+            return 0.5 * (qubit.I - qubit.Z)
+
+        H = c * qubits[(d - 1) * r].I
+
+        for j in range(r):
+            coeff = b * weights[j] + a * weights[j] ** 2
+            if coeff != 0.0:
+                H += coeff * n(j)
+
+        if a != 0.0:
+            for j in range(r):
+                for k in range(j + 1, r):
+                    H += (2.0 * a * weights[j] * weights[k]) * (n(j) * n(k))
+
+        return H
 
     def H_p(self, qubits: List[Qubit], univariate_dict: dict, bivariate_dict: dict) -> TIHamiltonian:
         """
@@ -126,6 +209,10 @@ class Backend(ABC):
                     H += eval_lmda[i] * n_j(d, self.resolution - i - 1)
 
                 return H
+
+            elif self.embedding_scheme == "binary":
+                a, b, c = self._fit_quadratic_from_callable(lmda)
+                return self._binary_variable_hamiltonian(qubits, d, a, b, c)
 
         H: TIHamiltonian = 0
         for key, value in univariate_dict.items():

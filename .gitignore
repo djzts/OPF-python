@@ -1,0 +1,10 @@
+# Local, disposable virtual environment used to validate the IBM Quantum /
+# QAOA backend (qhdopt/backend/ibmq_backend.py) with a clean, working
+# numpy+qiskit+qiskit-aer stack (see conversation notes). Never commit this;
+# recreate with:
+#   python -m venv .venv_ibmq_poc
+#   .venv_ibmq_poc/Scripts/python.exe -m pip install numpy scipy qiskit qiskit-aer qiskit-ibm-runtime simuq jax jaxlib openjij qutip gurobipy
+.venv_ibmq_poc/
+
+__pycache__/
+*.pyc

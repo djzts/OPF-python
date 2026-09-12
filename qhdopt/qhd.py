@@ -369,6 +369,69 @@ class QHD:
         self.shots = shots
         self.post_processing_method = post_processing_method
 
+    def ibmq_setup(
+            self,
+            resolution: int,
+            shots: int = 4096,
+            embedding_scheme: str = "binary",
+            penalty_coefficient: float = 0.0,
+            penalty_ratio: float = 0.75,
+            reps: int = 1,
+            optimizer: str = "COBYLA",
+            maxiter: int = 15,
+            initial_params=None,
+            seed: Optional[int] = 42,
+            use_simulator: bool = True,
+            simulator_method: str = "statevector",
+            channel: Optional[str] = None,
+            instance: Optional[str] = None,
+            token_env_var: str = "IBM_QUANTUM_TOKEN",
+            backend_name: Optional[str] = None,
+            resilience_level: int = 1,
+            max_qubits: int = 30,
+            consistency_tol: Optional[float] = None,
+            verbose_progress: bool = False,
+            post_processing_method: str = "TNC",
+    ):
+        """
+        Configures the settings for gate-model quantum optimization on IBM
+        Quantum (QAOA via Qiskit/Qiskit Aer, or real hardware via Qiskit
+        Runtime when use_simulator=False). See the
+        `qhdopt.backend.ibmq_backend` module docstring for the qubit-budget
+        and embedding-scheme caveats before using this in place of
+        simbi/openjij/gurobi -- in particular, calling this method (rather
+        than instantiating IBMQBackend directly) is what ensures the
+        problem is affine-mapped to [0, 1] via `generate_affined_func()`
+        before it is decomposed/compiled into a Hamiltonian, which the
+        decode step's `x = lb + scale * x_norm` physical mapping requires.
+        """
+        func, syms = self.generate_affined_func()
+        self.qhd_base = QHD_Base(func, syms, self.info)
+        self.qhd_base.ibmq_setup(
+            resolution=resolution,
+            shots=shots,
+            embedding_scheme=embedding_scheme,
+            penalty_coefficient=penalty_coefficient,
+            penalty_ratio=penalty_ratio,
+            reps=reps,
+            optimizer=optimizer,
+            maxiter=maxiter,
+            initial_params=initial_params,
+            seed=seed,
+            use_simulator=use_simulator,
+            simulator_method=simulator_method,
+            channel=channel,
+            instance=instance,
+            token_env_var=token_env_var,
+            backend_name=backend_name,
+            resilience_level=resilience_level,
+            max_qubits=max_qubits,
+            consistency_tol=consistency_tol,
+            verbose_progress=verbose_progress,
+        )
+        self.shots = shots
+        self.post_processing_method = post_processing_method
+
     def affine_transformation(self, x: np.ndarray) -> np.ndarray:
         """
         Applies an affine transformation to the input array.

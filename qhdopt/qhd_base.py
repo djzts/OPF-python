@@ -6,6 +6,7 @@ import jax.numpy as jnp
 
 from qhdopt.backend import dwave_backend, ionq_backend, qutip_backend
 from qhdopt.backend import openjij_backend, simbi_backend, guorbi_backend
+from qhdopt.backend import ibmq_backend
 from qhdopt.response import Response
 from qhdopt.utils.function_preprocessing_utils import decompose_function
 
@@ -276,7 +277,63 @@ class QHD_Base:
             log_to_console=log_to_console,
         )
 
-    
+    def ibmq_setup(
+        self,
+        resolution: int,
+        shots: int = 4096,
+        embedding_scheme: str = "binary",
+        penalty_coefficient: float = 0.0,
+        penalty_ratio: float = 0.75,
+        reps: int = 1,
+        optimizer: str = "COBYLA",
+        maxiter: int = 15,
+        initial_params=None,
+        seed: Optional[int] = 42,
+        use_simulator: bool = True,
+        simulator_method: str = "statevector",
+        channel: Optional[str] = None,
+        instance: Optional[str] = None,
+        token_env_var: str = "IBM_QUANTUM_TOKEN",
+        backend_name: Optional[str] = None,
+        resilience_level: int = 1,
+        max_qubits: int = 30,
+        consistency_tol: Optional[float] = None,
+        verbose_progress: bool = False,
+    ) -> None:
+        """
+        Sets up the IBM Quantum (QAOA, via Qiskit/Qiskit Aer/Qiskit Runtime)
+        backend for gate-model quantum optimization. See
+        `qhdopt.backend.ibmq_backend` module docstring before using this --
+        in particular, `resolution` here means BITS per variable under
+        `embedding_scheme="binary"` (2**resolution discretization levels),
+        not grid points as for unary/one-hot elsewhere in this repo.
+        """
+        self.backend = ibmq_backend.IBMQBackend(
+            resolution=resolution,
+            dimension=self.dimension,
+            univariate_dict=self.univariate_dict,
+            bivariate_dict=self.bivariate_dict,
+            shots=shots,
+            embedding_scheme=embedding_scheme,
+            penalty_coefficient=penalty_coefficient,
+            penalty_ratio=penalty_ratio,
+            reps=reps,
+            optimizer=optimizer,
+            maxiter=maxiter,
+            initial_params=initial_params,
+            seed=seed,
+            use_simulator=use_simulator,
+            simulator_method=simulator_method,
+            channel=channel,
+            instance=instance,
+            token_env_var=token_env_var,
+            backend_name=backend_name,
+            resilience_level=resilience_level,
+            max_qubits=max_qubits,
+            consistency_tol=consistency_tol,
+            verbose_progress=verbose_progress,
+        )
+
     def compile_only(self):
         self.backend.compile(self.info)
         return self.backend
