@@ -1,0 +1,1268 @@
+QHD ACOPF / ALM Iteration Log
+Created at: 2026-06-11 11:42:11
+Number of buses: 2
+Number of lines: 1
+Number of generators: 1
+Solver used: QHD with simbi solver
+========================================================================================================================
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:21
+Iteration: 0
+rho: 80
+alpha: 5
+objective_value: 0.38739131664
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 3.146845631150e-02
+l2_norm_h: 5.513417075483e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.002282	0.000502	1.002254	0.193625	0.068600	0.000000	0.000000
+2	0.974808	-0.040572	0.976084	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.217314	-0.268532	0.068208	-0.097405	-0.051217	-0.029197
+
+Summary
+Total Pg           : 0.193625
+Total Qg           : 0.068600
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.051217
+Total Reactive Loss: -0.029197
+Total Load Supplied: 81.614223%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:21
+Iteration: 0
+rho: 80
+alpha: 5
+objective_value: 0.38739131664
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 3.146845631150e-02
+l2_norm_h: 5.513417075483e-02
+lambda_inf_norm: 1.573422815575e-01
+lambda_l2_norm: 2.756708537742e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.002282	0.000502	1.002254	0.193625	0.068600	0.000000	0.000000
+2	0.974808	-0.040572	0.976084	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.217314	-0.268532	0.068208	-0.097405	-0.051217	-0.029197
+
+Summary
+Total Pg           : 0.193625
+Total Qg           : 0.068600
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.051217
+Total Reactive Loss: -0.029197
+Total Load Supplied: 81.614223%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:29
+Iteration: 1
+rho: 80
+alpha: 4.25
+objective_value: 0.414827452612
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 2.433300710866e-02
+l2_norm_h: 4.800490283214e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000415	0.000005	1.000442	0.207333	0.073121	0.000000	0.000000
+2	0.971554	-0.042926	0.972521	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.231041	-0.275782	0.073202	-0.099710	-0.044741	-0.026508
+
+Summary
+Total Pg           : 0.207333
+Total Qg           : 0.073121
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.044741
+Total Reactive Loss: -0.026508
+Total Load Supplied: 84.024601%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:29
+Iteration: 1
+rho: 80
+alpha: 4.25
+objective_value: 0.414827452612
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.433300710866e-02
+l2_norm_h: 4.800490283214e-02
+lambda_inf_norm: 2.784313968829e-01
+lambda_l2_norm: 5.148919110906e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000415	0.000005	1.000442	0.207333	0.073121	0.000000	0.000000
+2	0.971554	-0.042926	0.972521	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.231041	-0.275782	0.073202	-0.099710	-0.044741	-0.026508
+
+Summary
+Total Pg           : 0.207333
+Total Qg           : 0.073121
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.044741
+Total Reactive Loss: -0.026508
+Total Load Supplied: 84.024601%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:38
+Iteration: 2
+rho: 80
+alpha: 4.25
+objective_value: 0.428762737358
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 2.257815417649e-02
+l2_norm_h: 4.456628734548e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000087	-0.000024	1.000091	0.214295	0.074080	0.000000	0.000000
+2	0.970905	-0.043618	0.971864	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.236438	-0.277629	0.074110	-0.099910	-0.041192	-0.025801
+
+Summary
+Total Pg           : 0.214295
+Total Qg           : 0.074080
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.041192
+Total Reactive Loss: -0.025801
+Total Load Supplied: 85.162299%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:38
+Iteration: 2
+rho: 80
+alpha: 4.25
+objective_value: 0.428762737358
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.257815417649e-02
+l2_norm_h: 4.456628734548e-02
+lambda_inf_norm: 3.735062938011e-01
+lambda_l2_norm: 7.039800346924e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000087	-0.000024	1.000091	0.214295	0.074080	0.000000	0.000000
+2	0.970905	-0.043618	0.971864	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.236438	-0.277629	0.074110	-0.099910	-0.041192	-0.025801
+
+Summary
+Total Pg           : 0.214295
+Total Qg           : 0.074080
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.041192
+Total Reactive Loss: -0.025801
+Total Load Supplied: 85.162299%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:47
+Iteration: 3
+rho: 80
+alpha: 4.25
+objective_value: 0.438714013092
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 2.133052061267e-02
+l2_norm_h: 4.211170734481e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000028	-0.000027	1.000027	0.219267	0.074427	0.000000	0.000000
+2	0.970668	-0.044082	0.971643	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.240211	-0.278875	0.074449	-0.099940	-0.038664	-0.025491
+
+Summary
+Total Pg           : 0.219267
+Total Qg           : 0.074427
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.038664
+Total Reactive Loss: -0.025491
+Total Load Supplied: 85.976852%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:47
+Iteration: 3
+rho: 80
+alpha: 4.25
+objective_value: 0.438714013092
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.133052061267e-02
+l2_norm_h: 4.211170734481e-02
+lambda_inf_norm: 4.632890958963e-01
+lambda_l2_norm: 8.827697394771e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000028	-0.000027	1.000027	0.219267	0.074427	0.000000	0.000000
+2	0.970668	-0.044082	0.971643	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.240211	-0.278875	0.074449	-0.099940	-0.038664	-0.025491
+
+Summary
+Total Pg           : 0.219267
+Total Qg           : 0.074427
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.038664
+Total Reactive Loss: -0.025491
+Total Load Supplied: 85.976852%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:57
+Iteration: 4
+rho: 80
+alpha: 4.25
+objective_value: 0.447837621197
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 2.019226275493e-02
+l2_norm_h: 3.986119528869e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000038	-0.000025	1.000039	0.223825	0.074679	0.000000	0.000000
+2	0.970527	-0.044499	0.971523	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.243651	-0.280003	0.074699	-0.099943	-0.036351	-0.025244
+
+Summary
+Total Pg           : 0.223825
+Total Qg           : 0.074679
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.036351
+Total Reactive Loss: -0.025244
+Total Load Supplied: 86.725430%
+
+========================================================================================================================
+Update time: 2026-06-11 11:42:57
+Iteration: 4
+rho: 80
+alpha: 4.25
+objective_value: 0.447837621197
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.019226275493e-02
+l2_norm_h: 3.986119528869e-02
+lambda_inf_norm: 5.482784193491e-01
+lambda_l2_norm: 1.052063215028e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000038	-0.000025	1.000039	0.223825	0.074679	0.000000	0.000000
+2	0.970527	-0.044499	0.971523	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.243651	-0.280003	0.074699	-0.099943	-0.036351	-0.025244
+
+Summary
+Total Pg           : 0.223825
+Total Qg           : 0.074679
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.036351
+Total Reactive Loss: -0.025244
+Total Load Supplied: 86.725430%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:06
+Iteration: 5
+rho: 80
+alpha: 4.3775
+objective_value: 0.456439696909
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.912020205684e-02
+l2_norm_h: 3.773965267245e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000033	-0.000022	1.000033	0.228122	0.074921	0.000000	0.000000
+2	0.970378	-0.044891	0.971393	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.246893	-0.281067	0.074940	-0.099947	-0.034174	-0.025008
+
+Summary
+Total Pg           : 0.228122
+Total Qg           : 0.074921
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.034174
+Total Reactive Loss: -0.025008
+Total Load Supplied: 87.431977%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:06
+Iteration: 5
+rho: 80
+alpha: 4.3775
+objective_value: 0.456439696909
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.912020205684e-02
+l2_norm_h: 3.773965267245e-02
+lambda_inf_norm: 6.287453082371e-01
+lambda_l2_norm: 1.212376138726e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000033	-0.000022	1.000033	0.228122	0.074921	0.000000	0.000000
+2	0.970378	-0.044891	0.971393	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.246893	-0.281067	0.074940	-0.099947	-0.034174	-0.025008
+
+Summary
+Total Pg           : 0.228122
+Total Qg           : 0.074921
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.034174
+Total Reactive Loss: -0.025008
+Total Load Supplied: 87.431977%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:15
+Iteration: 6
+rho: 80
+alpha: 4.3775
+objective_value: 0.464583133626
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.810508288642e-02
+l2_norm_h: 3.573144375060e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000030	-0.000020	1.000030	0.232190	0.075146	0.000000	0.000000
+2	0.970240	-0.045263	0.971274	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.249962	-0.282073	0.075163	-0.099949	-0.032111	-0.024786
+
+Summary
+Total Pg           : 0.232190
+Total Qg           : 0.075146
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.032111
+Total Reactive Loss: -0.024786
+Total Load Supplied: 88.100602%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:15
+Iteration: 6
+rho: 80
+alpha: 4.3775
+objective_value: 0.464583133626
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.810508288642e-02
+l2_norm_h: 3.573144375060e-02
+lambda_inf_norm: 7.072214984179e-01
+lambda_l2_norm: 1.368730280599e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000030	-0.000020	1.000030	0.232190	0.075146	0.000000	0.000000
+2	0.970240	-0.045263	0.971274	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.249962	-0.282073	0.075163	-0.099949	-0.032111	-0.024786
+
+Summary
+Total Pg           : 0.232190
+Total Qg           : 0.075146
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.032111
+Total Reactive Loss: -0.024786
+Total Load Supplied: 88.100602%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:24
+Iteration: 7
+rho: 80
+alpha: 4.3775
+objective_value: 0.472533461014
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.711445977062e-02
+l2_norm_h: 3.377104305082e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000041	-0.000021	1.000042	0.236162	0.075369	0.000000	0.000000
+2	0.970119	-0.045627	0.971172	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.252956	-0.283054	0.075386	-0.099953	-0.030098	-0.024567
+
+Summary
+Total Pg           : 0.236162
+Total Qg           : 0.075369
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.030098
+Total Reactive Loss: -0.024567
+Total Load Supplied: 88.753504%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:24
+Iteration: 7
+rho: 80
+alpha: 4.3775
+objective_value: 0.472533461014
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.711445977062e-02
+l2_norm_h: 3.377104305082e-02
+lambda_inf_norm: 7.814011396863e-01
+lambda_l2_norm: 1.516518172916e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000041	-0.000021	1.000042	0.236162	0.075369	0.000000	0.000000
+2	0.970119	-0.045627	0.971172	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.252956	-0.283054	0.075386	-0.099953	-0.030098	-0.024567
+
+Summary
+Total Pg           : 0.236162
+Total Qg           : 0.075369
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.030098
+Total Reactive Loss: -0.024567
+Total Load Supplied: 88.753504%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:33
+Iteration: 8
+rho: 80
+alpha: 4.3775
+objective_value: 0.480065034404
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.617573421119e-02
+l2_norm_h: 3.191417398790e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000032	-0.000017	1.000031	0.239925	0.075580	0.000000	0.000000
+2	0.969984	-0.045970	0.971052	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.255795	-0.283985	0.075597	-0.099954	-0.028190	-0.024358
+
+Summary
+Total Pg           : 0.239925
+Total Qg           : 0.075580
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.028190
+Total Reactive Loss: -0.024358
+Total Load Supplied: 89.371614%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:33
+Iteration: 8
+rho: 80
+alpha: 4.3775
+objective_value: 0.480065034404
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.617573421119e-02
+l2_norm_h: 3.191417398790e-02
+lambda_inf_norm: 8.515072114470e-01
+lambda_l2_norm: 1.656187308720e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000032	-0.000017	1.000031	0.239925	0.075580	0.000000	0.000000
+2	0.969984	-0.045970	0.971052	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.255795	-0.283985	0.075597	-0.099954	-0.028190	-0.024358
+
+Summary
+Total Pg           : 0.239925
+Total Qg           : 0.075580
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.028190
+Total Reactive Loss: -0.024358
+Total Load Supplied: 89.371614%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:43
+Iteration: 9
+rho: 80
+alpha: 4.508825
+objective_value: 0.487150905772
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.528979234644e-02
+l2_norm_h: 3.016733065694e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000039	-0.000022	1.000039	0.243464	0.075782	0.000000	0.000000
+2	0.969871	-0.046299	0.970956	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.258466	-0.284858	0.075796	-0.099955	-0.026392	-0.024159
+
+Summary
+Total Pg           : 0.243464
+Total Qg           : 0.075782
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.026392
+Total Reactive Loss: -0.024159
+Total Load Supplied: 89.952053%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:43
+Iteration: 9
+rho: 80
+alpha: 4.508825
+objective_value: 0.487150905772
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.528979234644e-02
+l2_norm_h: 3.016733065694e-02
+lambda_inf_norm: 9.177912381396e-01
+lambda_l2_norm: 1.788216944496e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000039	-0.000022	1.000039	0.243464	0.075782	0.000000	0.000000
+2	0.969871	-0.046299	0.970956	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.258466	-0.284858	0.075796	-0.099955	-0.026392	-0.024159
+
+Summary
+Total Pg           : 0.243464
+Total Qg           : 0.075782
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.026392
+Total Reactive Loss: -0.024159
+Total Load Supplied: 89.952053%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:52
+Iteration: 10
+rho: 80
+alpha: 4.508825
+objective_value: 0.493848180059
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.445592125890e-02
+l2_norm_h: 2.851655404182e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000021	-0.000024	1.000019	0.246810	0.075981	0.000000	0.000000
+2	0.969739	-0.046609	0.970840	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.260990	-0.285688	0.075996	-0.099961	-0.024698	-0.023965
+
+Summary
+Total Pg           : 0.246810
+Total Qg           : 0.075981
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.024698
+Total Reactive Loss: -0.023965
+Total Load Supplied: 90.502733%
+
+========================================================================================================================
+Update time: 2026-06-11 11:43:52
+Iteration: 10
+rho: 80
+alpha: 4.508825
+objective_value: 0.493848180059
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.445592125890e-02
+l2_norm_h: 2.851655404182e-02
+lambda_inf_norm: 9.823205467209e-01
+lambda_l2_norm: 1.916769001467e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000021	-0.000024	1.000019	0.246810	0.075981	0.000000	0.000000
+2	0.969739	-0.046609	0.970840	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.260990	-0.285688	0.075996	-0.099961	-0.024698	-0.023965
+
+Summary
+Total Pg           : 0.246810
+Total Qg           : 0.075981
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.024698
+Total Reactive Loss: -0.023965
+Total Load Supplied: 90.502733%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:01
+Iteration: 11
+rho: 80
+alpha: 4.508825
+objective_value: 0.500352855355
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.364531755277e-02
+l2_norm_h: 2.691337818226e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000011	-0.000018	1.000008	0.250059	0.076174	0.000000	0.000000
+2	0.969619	-0.046902	0.970732	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.263442	-0.286493	0.076186	-0.099966	-0.023051	-0.023780
+
+Summary
+Total Pg           : 0.250059
+Total Qg           : 0.076174
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.023051
+Total Reactive Loss: -0.023780
+Total Load Supplied: 91.036653%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:01
+Iteration: 11
+rho: 80
+alpha: 4.508825
+objective_value: 0.500352855355
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.364531755277e-02
+l2_norm_h: 2.691337818226e-02
+lambda_inf_norm: 1.043222316935e+00
+lambda_l2_norm: 2.038096384715e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000011	-0.000018	1.000008	0.250059	0.076174	0.000000	0.000000
+2	0.969619	-0.046902	0.970732	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.263442	-0.286493	0.076186	-0.099966	-0.023051	-0.023780
+
+Summary
+Total Pg           : 0.250059
+Total Qg           : 0.076174
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.023051
+Total Reactive Loss: -0.023780
+Total Load Supplied: 91.036653%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:10
+Iteration: 12
+rho: 80
+alpha: 4.508825
+objective_value: 0.506511521176
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.287750325184e-02
+l2_norm_h: 2.539545870299e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000016	1.000034	0.253136	0.076342	0.000000	0.000000
+2	0.969540	-0.047183	0.970671	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.265762	-0.287252	0.076354	-0.099965	-0.021490	-0.023611
+
+Summary
+Total Pg           : 0.253136
+Total Qg           : 0.076342
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.021490
+Total Reactive Loss: -0.023611
+Total Load Supplied: 91.541863%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:10
+Iteration: 12
+rho: 80
+alpha: 4.508825
+objective_value: 0.506511521176
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.287750325184e-02
+l2_norm_h: 2.539545870299e-02
+lambda_inf_norm: 1.100699624935e+00
+lambda_l2_norm: 2.152583978686e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000016	1.000034	0.253136	0.076342	0.000000	0.000000
+2	0.969540	-0.047183	0.970671	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.265762	-0.287252	0.076354	-0.099965	-0.021490	-0.023611
+
+Summary
+Total Pg           : 0.253136
+Total Qg           : 0.076342
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.021490
+Total Reactive Loss: -0.023611
+Total Load Supplied: 91.541863%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:20
+Iteration: 13
+rho: 80
+alpha: 4.6440898
+objective_value: 0.512340511505
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.215041463296e-02
+l2_norm_h: 2.395903242881e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000036	-0.000013	1.000036	0.256047	0.076514	0.000000	0.000000
+2	0.969443	-0.047447	0.970588	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.267960	-0.287973	0.076524	-0.099967	-0.020013	-0.023443
+
+Summary
+Total Pg           : 0.256047
+Total Qg           : 0.076514
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.020013
+Total Reactive Loss: -0.023443
+Total Load Supplied: 92.020008%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:20
+Iteration: 13
+rho: 80
+alpha: 4.6440898
+objective_value: 0.512340511505
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.215041463296e-02
+l2_norm_h: 2.395903242881e-02
+lambda_inf_norm: 1.154926705553e+00
+lambda_l2_norm: 2.260597422933e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000036	-0.000013	1.000036	0.256047	0.076514	0.000000	0.000000
+2	0.969443	-0.047447	0.970588	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.267960	-0.287973	0.076524	-0.099967	-0.020013	-0.023443
+
+Summary
+Total Pg           : 0.256047
+Total Qg           : 0.076514
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.020013
+Total Reactive Loss: -0.023443
+Total Load Supplied: 92.020008%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:29
+Iteration: 14
+rho: 80
+alpha: 4.6440898
+objective_value: 0.51785706504
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.146287061800e-02
+l2_norm_h: 2.259967700043e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000048	-0.000015	1.000047	0.258803	0.076670	0.000000	0.000000
+2	0.969362	-0.047702	0.970521	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.270040	-0.288655	0.076680	-0.099967	-0.018615	-0.023287
+
+Summary
+Total Pg           : 0.258803
+Total Qg           : 0.076670
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.018615
+Total Reactive Loss: -0.023287
+Total Load Supplied: 92.472706%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:29
+Iteration: 14
+rho: 80
+alpha: 4.6440898
+objective_value: 0.51785706504
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.146287061800e-02
+l2_norm_h: 2.259967700043e-02
+lambda_inf_norm: 1.207612958468e+00
+lambda_l2_norm: 2.365540636300e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000048	-0.000015	1.000047	0.258803	0.076670	0.000000	0.000000
+2	0.969362	-0.047702	0.970521	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.270040	-0.288655	0.076680	-0.099967	-0.018615	-0.023287
+
+Summary
+Total Pg           : 0.258803
+Total Qg           : 0.076670
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.018615
+Total Reactive Loss: -0.023287
+Total Load Supplied: 92.472706%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:39
+Iteration: 15
+rho: 80
+alpha: 4.6440898
+objective_value: 0.523165041006
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.080051801738e-02
+l2_norm_h: 2.129186805815e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000014	1.000035	0.261454	0.076825	0.000000	0.000000
+2	0.969259	-0.047945	0.970430	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.272040	-0.289309	0.076836	-0.099970	-0.017269	-0.023134
+
+Summary
+Total Pg           : 0.261454
+Total Qg           : 0.076825
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.017269
+Total Reactive Loss: -0.023134
+Total Load Supplied: 92.907705%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:39
+Iteration: 15
+rho: 80
+alpha: 4.6440898
+objective_value: 0.523165041006
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.080051801738e-02
+l2_norm_h: 2.129186805815e-02
+lambda_inf_norm: 1.257264377044e+00
+lambda_l2_norm: 2.464411818913e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000014	1.000035	0.261454	0.076825	0.000000	0.000000
+2	0.969259	-0.047945	0.970430	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.272040	-0.289309	0.076836	-0.099970	-0.017269	-0.023134
+
+Summary
+Total Pg           : 0.261454
+Total Qg           : 0.076825
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.017269
+Total Reactive Loss: -0.023134
+Total Load Supplied: 92.907705%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:48
+Iteration: 16
+rho: 80
+alpha: 4.6440898
+objective_value: 0.528189956558
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 1.017410673225e-02
+l2_norm_h: 2.005388134109e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000036	-0.000014	1.000036	0.263964	0.076974	0.000000	0.000000
+2	0.969175	-0.048175	0.970359	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.273934	-0.289931	0.076983	-0.099971	-0.015997	-0.022987
+
+Summary
+Total Pg           : 0.263964
+Total Qg           : 0.076974
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.015997
+Total Reactive Loss: -0.022987
+Total Load Supplied: 93.320369%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:48
+Iteration: 16
+rho: 80
+alpha: 4.6440898
+objective_value: 0.528189956558
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.017410673225e-02
+l2_norm_h: 2.005388134109e-02
+lambda_inf_norm: 1.304026349810e+00
+lambda_l2_norm: 2.557535045388e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000036	-0.000014	1.000036	0.263964	0.076974	0.000000	0.000000
+2	0.969175	-0.048175	0.970359	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.273934	-0.289931	0.076983	-0.099971	-0.015997	-0.022987
+
+Summary
+Total Pg           : 0.263964
+Total Qg           : 0.076974
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.015997
+Total Reactive Loss: -0.022987
+Total Load Supplied: 93.320369%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:58
+Iteration: 17
+rho: 80
+alpha: 4.7834124
+objective_value: 0.53291979219
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 9.584373378752e-03
+l2_norm_h: 1.888864141609e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000009	1.000034	0.266327	0.077093	0.000000	0.000000
+2	0.969096	-0.048388	0.970291	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.275717	-0.290514	0.077102	-0.099965	-0.014797	-0.022862
+
+Summary
+Total Pg           : 0.266327
+Total Qg           : 0.077093
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.014797
+Total Reactive Loss: -0.022862
+Total Load Supplied: 93.707859%
+
+========================================================================================================================
+Update time: 2026-06-11 11:44:58
+Iteration: 17
+rho: 80
+alpha: 4.7834124
+objective_value: 0.53291979219
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 9.584373378752e-03
+l2_norm_h: 1.888864141609e-02
+lambda_inf_norm: 1.348082237756e+00
+lambda_l2_norm: 2.645248214414e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000009	1.000034	0.266327	0.077093	0.000000	0.000000
+2	0.969096	-0.048388	0.970291	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.275717	-0.290514	0.077102	-0.099965	-0.014797	-0.022862
+
+Summary
+Total Pg           : 0.266327
+Total Qg           : 0.077093
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.014797
+Total Reactive Loss: -0.022862
+Total Load Supplied: 93.707859%
+
+========================================================================================================================
+Update time: 2026-06-11 11:45:07
+Iteration: 18
+rho: 80
+alpha: 4.7834124
+objective_value: 0.537383031192
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 9.027616168882e-03
+l2_norm_h: 1.778920732128e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000041	-0.000012	1.000042	0.268556	0.077245	0.000000	0.000000
+2	0.969024	-0.048595	0.970231	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.277400	-0.291067	0.077253	-0.099974	-0.013667	-0.022721
+
+Summary
+Total Pg           : 0.268556
+Total Qg           : 0.077245
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.013667
+Total Reactive Loss: -0.022721
+Total Load Supplied: 94.074328%
+
+========================================================================================================================
+Update time: 2026-06-11 11:45:07
+Iteration: 18
+rho: 80
+alpha: 4.7834124
+objective_value: 0.537383031192
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 9.027616168882e-03
+l2_norm_h: 1.778920732128e-02
+lambda_inf_norm: 1.390814056803e+00
+lambda_l2_norm: 2.730334532450e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000041	-0.000012	1.000042	0.268556	0.077245	0.000000	0.000000
+2	0.969024	-0.048595	0.970231	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.277400	-0.291067	0.077253	-0.099974	-0.013667	-0.022721
+
+Summary
+Total Pg           : 0.268556
+Total Qg           : 0.077245
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.013667
+Total Reactive Loss: -0.022721
+Total Load Supplied: 94.074328%
+
+========================================================================================================================
+Update time: 2026-06-11 11:45:17
+Iteration: 19
+rho: 80
+alpha: 4.7834124
+objective_value: 0.541698002388
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 8.488917975548e-03
+l2_norm_h: 1.672636411724e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000035	-0.000012	1.000035	0.270712	0.077376	0.000000	0.000000
+2	0.968943	-0.048794	0.970160	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.279027	-0.291600	0.077383	-0.099976	-0.012573	-0.022592
+
+Summary
+Total Pg           : 0.270712
+Total Qg           : 0.077376
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.012573
+Total Reactive Loss: -0.022592
+Total Load Supplied: 94.428189%
+
+========================================================================================================================
+Update time: 2026-06-11 11:45:17
+Iteration: 19
+rho: 80
+alpha: 4.7834124
+objective_value: 0.541698002388
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 8.488917975548e-03
+l2_norm_h: 1.672636411724e-02
+lambda_inf_norm: 1.430996667037e+00
+lambda_l2_norm: 2.810337540189e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000035	-0.000012	1.000035	0.270712	0.077376	0.000000	0.000000
+2	0.968943	-0.048794	0.970160	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.279027	-0.291600	0.077383	-0.099976	-0.012573	-0.022592
+
+Summary
+Total Pg           : 0.270712
+Total Qg           : 0.077376
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.012573
+Total Reactive Loss: -0.022592
+Total Load Supplied: 94.428189%
+
+========================================================================================================================
+Update time: 2026-06-11 11:45:26
+Iteration: 20
+rho: 80
+alpha: 4.7834124
+objective_value: 0.545777454022
+feasible: False
+note: coarse_solution_before_refine
+max_abs_h: 7.979017682831e-03
+l2_norm_h: 1.572158857284e-02
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000027	-0.000015	1.000028	0.272749	0.077491	0.000000	0.000000
+2	0.968867	-0.048984	0.970095	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.280566	-0.292103	0.077498	-0.099974	-0.011537	-0.022476
+
+Summary
+Total Pg           : 0.272749
+Total Qg           : 0.077491
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.011537
+Total Reactive Loss: -0.022476
+Total Load Supplied: 94.762207%
+
+========================================================================================================================
+Update time: 2026-06-11 11:45:26
+Iteration: 20
+rho: 80
+alpha: 4.7834124
+objective_value: 0.545777454022
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 7.979017682831e-03
+l2_norm_h: 1.572158857284e-02
+lambda_inf_norm: 1.468770341219e+00
+lambda_l2_norm: 2.885534942210e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000027	-0.000015	1.000028	0.272749	0.077491	0.000000	0.000000
+2	0.968867	-0.048984	0.970095	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.280566	-0.292103	0.077498	-0.099974	-0.011537	-0.022476
+
+Summary
+Total Pg           : 0.272749
+Total Qg           : 0.077491
+Total Load P       : 0.300000
+Total Load Q       : 0.100000
+Total Active Loss  : -0.011537
+Total Reactive Loss: -0.022476
+Total Load Supplied: 94.762207%
+

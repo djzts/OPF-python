@@ -1,0 +1,43 @@
+amphost002.sdcc.bnl.local
+Fri Jun 12 01:49:31 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   38C    P0             75W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Model initialized with 5 buses 6 lines and 3 generators.
+Log file: QR_logs/Buses-5_06-12-2026_01-49-36.txt
+Alpha mode: adaptive
+Refine method: TNC_orig
+Adaptive alpha/rho start: alpha=5.000000e+00, rho=8.000000e+01, mu_prox=1.000000e+00
+
+===== Start Linear ALM Loop =====
+
+
+--- Outer Iteration 0 ---
+alpha = 5.000000e+00, rho = 8.000000e+01
+Invalid bound: (0, 'P_G0', 1.7, 1.275)
+Traceback (most recent call last):
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_QrOPF_ALM_mu_final_5bus.py", line 979, in <module>
+    main()
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_QrOPF_ALM_mu_final_5bus.py", line 975, in main
+    run_linear_alm(model, config)
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_QrOPF_ALM_mu_final_5bus.py", line 723, in run_linear_alm
+    validate_bounds(variable_list, var_bound_list)
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_QrOPF_ALM_mu_final_5bus.py", line 166, in validate_bounds
+    raise ValueError("var_bound_list contains invalid bounds (ub < lb).")
+ValueError: var_bound_list contains invalid bounds (ub < lb).

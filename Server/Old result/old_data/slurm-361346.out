@@ -1,0 +1,42 @@
+amphost001.sdcc.bnl.local
+Wed Jun 10 21:08:00 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   38C    P0             67W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Model initialized with 14 buses 20 lines and 5 generators.
+Log file: logs/Buses-14_06-10-2026_21-08-07.txt
+Alpha mode: adaptive
+Refine method: TNC_orig
+Adaptive alpha/rho start: alpha=5.0, rho=80.0
+
+===== Start Linear ALM Loop =====
+
+
+--- Outer Iteration 0 ---
+alpha = 5.000000e+00, rho = 8.000000e+01
+Traceback (most recent call last):
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_OPF_LALM_class_notebook_mu0605.py", line 900, in <module>
+    main()
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_OPF_LALM_class_notebook_mu0605.py", line 896, in main
+    run_linear_alm(model, config)
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_OPF_LALM_class_notebook_mu0605.py", line 685, in run_linear_alm
+    x_coarse, x_new = solve_subproblem_qhd(
+  File "/direct/sdcc+u/zzhao3/Projects/Python_Script/OPF-python/Sympy_OPF_LALM_class_notebook_mu0605.py", line 174, in solve_subproblem_qhd
+    multi_gpu=config.simbi_multi_gpu,
+AttributeError: 'SolverConfig' object has no attribute 'simbi_multi_gpu'

@@ -1,0 +1,1065 @@
+amphost001.sdcc.bnl.local
+Thu Jun 11 11:42:05 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:4B:00.0 Off |                    0 |
+| N/A   29C    P0             65W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Model initialized with 2 buses 1 lines and 1 generators.
+Log file: logs/Buses-2_06-11-2026_11-42-11.txt
+Alpha mode: adaptive
+Refine method: TNC_orig
+Adaptive alpha/rho start: alpha=5.0, rho=80.0
+
+===== Start Linear ALM Loop =====
+
+
+--- Outer Iteration 0 ---
+alpha = 5.000000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  25%|██▍       | 2497/10000 [00:00<00:01, 4993.33it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  57%|█████▋    | 5700/10000 [00:01<00:00, 5736.62it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<19:10,  1.12s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<12:06,  1.41it/s][AIterations:  89%|████████▉ | 8901/10000 [00:01<00:00, 5980.57it/s]
+Bifurcated agents:   0%|          | 4/1024 [00:01<06:28,  2.63it/s][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<04:42,  3.61it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 5979.89it/s]
+Bifurcated agents:   1%|          | 6/1024 [00:01<04:43,  3.59it/s]
+Minimizer: [0.1  0.16 0.98 0.98 0.46 0.44 0.76 0.72 0.54 0.46 0.48 0.5  0.   0.  ]
+[coarse:LALM] ||h(x)|| = 5.513417e-02
+[coarse:LALM] objective = 0.387391317
+[refined:TNC_orig] ||h(x)|| = 5.513417e-02
+[rho-check] ||h_old||=4.543e-01, ||h_new||=5.513e-02, rho=80
+[adaptive] next alpha=5.000000e+00, next rho=8.000000e+01, lambda_inf=1.573e-01
+Constraint check: False
+[best] iter=0, l2_norm_h=5.513417e-02, objective=0.387391317
+========================================================================================================================
+Update time: 2026-06-11 11:42:21
+Iteration: 0
+rho: 80
+alpha: 5
+objective_value: 0.38739131664
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 3.146845631150e-02
+l2_norm_h: 5.513417075483e-02
+lambda_inf_norm: 1.573422815575e-01
+lambda_l2_norm: 2.756708537742e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.002282	0.000502	1.002254	0.193625	0.068600	0.000000	0.000000
+2	0.974808	-0.040572	0.976084	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.217314	-0.268532	0.068208	-0.097405	-0.051217	-0.029197
+
+
+--- Outer Iteration 1 ---
+alpha = 5.000000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3097/10000 [00:00<00:01, 6192.27it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6276/10000 [00:01<00:00, 6279.13it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<06:03,  2.80it/s][AIterations:  95%|█████████▍| 9469/10000 [00:01<00:00, 6318.37it/s]
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:18,  5.13it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6314.67it/s]
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:21,  5.05it/s]
+Minimizer: [0.16 0.2  0.94 0.9  0.5  0.48 0.3  0.08 0.56 0.44 0.56 0.46 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 4.800490e-02
+[coarse:LALM] objective = 0.414827453
+[refined:TNC_orig] ||h(x)|| = 4.800490e-02
+[rho-check] ||h_old||=5.513e-02, ||h_new||=4.800e-02, rho=80
+[adaptive] Lambda growth too fast, alpha -> 4.250000e+00
+[adaptive] next alpha=4.250000e+00, next rho=8.000000e+01, lambda_inf=2.784e-01
+Constraint check: False
+[best] iter=1, l2_norm_h=4.800490e-02, objective=0.414827453
+========================================================================================================================
+Update time: 2026-06-11 11:42:29
+Iteration: 1
+rho: 80
+alpha: 4.25
+objective_value: 0.414827452612
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.433300710866e-02
+l2_norm_h: 4.800490283214e-02
+lambda_inf_norm: 2.784313968829e-01
+lambda_l2_norm: 5.148919110906e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000415	0.000005	1.000442	0.207333	0.073121	0.000000	0.000000
+2	0.971554	-0.042926	0.972521	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.231041	-0.275782	0.073202	-0.099710	-0.044741	-0.026508
+
+
+--- Outer Iteration 2 ---
+alpha = 4.250000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3064/10000 [00:00<00:01, 6127.56it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6251/10000 [00:01<00:00, 6256.27it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<19:10,  1.12s/it][A
+Bifurcated agents:   0%|          | 3/1024 [00:01<06:57,  2.45it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:34,  3.72it/s][A
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:06,  5.44it/s][AIterations:  94%|█████████▍| 9442/10000 [00:01<00:00, 6302.53it/s]
+Bifurcated agents:   1%|          | 11/1024 [00:01<02:24,  7.00it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6295.57it/s]
+Bifurcated agents:   1%|          | 11/1024 [00:01<02:26,  6.93it/s]
+Minimizer: [0.22 0.18 0.94 0.92 0.52 0.48 0.24 0.3  0.58 0.44 0.52 0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 4.456629e-02
+[coarse:LALM] objective = 0.428762737
+[refined:TNC_orig] ||h(x)|| = 4.456629e-02
+[rho-check] ||h_old||=4.800e-02, ||h_new||=4.457e-02, rho=80
+[adaptive] next alpha=4.250000e+00, next rho=8.000000e+01, lambda_inf=3.735e-01
+Constraint check: False
+[best] iter=2, l2_norm_h=4.456629e-02, objective=0.428762737
+========================================================================================================================
+Update time: 2026-06-11 11:42:38
+Iteration: 2
+rho: 80
+alpha: 4.25
+objective_value: 0.428762737358
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.257815417649e-02
+l2_norm_h: 4.456628734548e-02
+lambda_inf_norm: 3.735062938011e-01
+lambda_l2_norm: 7.039800346924e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000087	-0.000024	1.000091	0.214295	0.074080	0.000000	0.000000
+2	0.970905	-0.043618	0.971864	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.236438	-0.277629	0.074110	-0.099910	-0.041192	-0.025801
+
+
+--- Outer Iteration 3 ---
+alpha = 4.250000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3099/10000 [00:00<00:01, 6197.73it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6269/10000 [00:01<00:00, 6272.17it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:25,  1.63it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:38,  3.02it/s][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<04:02,  4.20it/s][AIterations:  95%|█████████▍| 9463/10000 [00:01<00:00, 6314.30it/s]
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:14,  5.23it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6310.02it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:13,  7.57it/s]
+Minimizer: [0.16 0.2  0.98 0.94 0.5  0.48 0.72 0.22 0.56 0.44 0.56 0.46 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 4.211171e-02
+[coarse:LALM] objective = 0.438714013
+[refined:TNC_orig] ||h(x)|| = 4.211171e-02
+[rho-check] ||h_old||=4.457e-02, ||h_new||=4.211e-02, rho=80
+[adaptive] next alpha=4.250000e+00, next rho=8.000000e+01, lambda_inf=4.633e-01
+Constraint check: False
+[best] iter=3, l2_norm_h=4.211171e-02, objective=0.438714013
+========================================================================================================================
+Update time: 2026-06-11 11:42:47
+Iteration: 3
+rho: 80
+alpha: 4.25
+objective_value: 0.438714013092
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.133052061267e-02
+l2_norm_h: 4.211170734481e-02
+lambda_inf_norm: 4.632890958963e-01
+lambda_l2_norm: 8.827697394771e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000028	-0.000027	1.000027	0.219267	0.074427	0.000000	0.000000
+2	0.970668	-0.044082	0.971643	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.240211	-0.278875	0.074449	-0.099940	-0.038664	-0.025491
+
+
+--- Outer Iteration 4 ---
+alpha = 4.250000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3101/10000 [00:00<00:01, 6201.97it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6297/10000 [00:01<00:00, 6301.44it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<20:48,  1.22s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<11:15,  1.51it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:50,  3.51it/s][AIterations:  95%|█████████▍| 9472/10000 [00:01<00:00, 6318.87it/s]
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:52,  5.89it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6316.89it/s]
+Bifurcated agents:   1%|          | 10/1024 [00:01<02:40,  6.32it/s]
+Minimizer: [0.12 0.18 0.92 0.9  0.5  0.48 0.16 0.06 0.54 0.46 0.52 0.48 0.   0.  ]
+[coarse:LALM] ||h(x)|| = 3.986120e-02
+[coarse:LALM] objective = 0.447837621
+[refined:TNC_orig] ||h(x)|| = 3.986120e-02
+[rho-check] ||h_old||=4.211e-02, ||h_new||=3.986e-02, rho=80
+[adaptive] next alpha=4.250000e+00, next rho=8.000000e+01, lambda_inf=5.483e-01
+Constraint check: False
+[best] iter=4, l2_norm_h=3.986120e-02, objective=0.447837621
+========================================================================================================================
+Update time: 2026-06-11 11:42:57
+Iteration: 4
+rho: 80
+alpha: 4.25
+objective_value: 0.447837621197
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.019226275493e-02
+l2_norm_h: 3.986119528869e-02
+lambda_inf_norm: 5.482784193491e-01
+lambda_l2_norm: 1.052063215028e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000038	-0.000025	1.000039	0.223825	0.074679	0.000000	0.000000
+2	0.970527	-0.044499	0.971523	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.243651	-0.280003	0.074699	-0.099943	-0.036351	-0.025244
+
+
+--- Outer Iteration 5 ---
+alpha = 4.250000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3086/10000 [00:00<00:01, 6171.98it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6283/10000 [00:01<00:00, 6288.42it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:24,  1.64it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:29,  3.78it/s][A
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:08,  5.38it/s][AIterations:  95%|█████████▍| 9480/10000 [00:01<00:00, 6327.01it/s]Iterations: 100%|██████████| 10000/10000 [00:01<00:00, 6321.82it/s]
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:58,  5.69it/s]
+Minimizer: [0.06 0.18 0.98 0.96 0.5  0.48 0.88 0.72 0.54 0.46 0.52 0.48 0.   0.  ]
+[coarse:LALM] ||h(x)|| = 3.773965e-02
+[coarse:LALM] objective = 0.456439697
+[refined:TNC_orig] ||h(x)|| = 3.773965e-02
+[rho-check] ||h_old||=3.986e-02, ||h_new||=3.774e-02, rho=80
+[adaptive] Stable improvement detected, alpha -> 4.377500e+00
+[adaptive] next alpha=4.377500e+00, next rho=8.000000e+01, lambda_inf=6.287e-01
+Constraint check: False
+[best] iter=5, l2_norm_h=3.773965e-02, objective=0.456439697
+========================================================================================================================
+Update time: 2026-06-11 11:43:06
+Iteration: 5
+rho: 80
+alpha: 4.3775
+objective_value: 0.456439696909
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.912020205684e-02
+l2_norm_h: 3.773965267245e-02
+lambda_inf_norm: 6.287453082371e-01
+lambda_l2_norm: 1.212376138726e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000033	-0.000022	1.000033	0.228122	0.074921	0.000000	0.000000
+2	0.970378	-0.044891	0.971393	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.246893	-0.281067	0.074940	-0.099947	-0.034174	-0.025008
+
+
+--- Outer Iteration 6 ---
+alpha = 4.377500e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  30%|███       | 3025/10000 [00:00<00:01, 6048.46it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  61%|██████    | 6101/10000 [00:01<00:00, 6100.85it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<21:27,  1.26s/it][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:47,  2.93it/s][AIterations:  92%|█████████▏| 9189/10000 [00:01<00:00, 6127.99it/s]
+Bifurcated agents:   1%|          | 7/1024 [00:01<03:38,  4.66it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6135.78it/s]
+Bifurcated agents:   1%|          | 9/1024 [00:01<03:03,  5.52it/s]
+Minimizer: [0.24 0.18 0.94 0.92 0.54 0.5  0.24 0.08 0.58 0.44 0.52 0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 3.573144e-02
+[coarse:LALM] objective = 0.464583134
+[refined:TNC_orig] ||h(x)|| = 3.573144e-02
+[rho-check] ||h_old||=3.774e-02, ||h_new||=3.573e-02, rho=80
+[adaptive] next alpha=4.377500e+00, next rho=8.000000e+01, lambda_inf=7.072e-01
+Constraint check: False
+[best] iter=6, l2_norm_h=3.573144e-02, objective=0.464583134
+========================================================================================================================
+Update time: 2026-06-11 11:43:15
+Iteration: 6
+rho: 80
+alpha: 4.3775
+objective_value: 0.464583133626
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.810508288642e-02
+l2_norm_h: 3.573144375060e-02
+lambda_inf_norm: 7.072214984179e-01
+lambda_l2_norm: 1.368730280599e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000030	-0.000020	1.000030	0.232190	0.075146	0.000000	0.000000
+2	0.970240	-0.045263	0.971274	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.249962	-0.282073	0.075163	-0.099949	-0.032111	-0.024786
+
+
+--- Outer Iteration 7 ---
+alpha = 4.377500e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3066/10000 [00:00<00:01, 6131.06it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6254/10000 [00:01<00:00, 6259.05it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:22,  1.64it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:42,  2.97it/s][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<04:05,  4.15it/s][AIterations:  94%|█████████▍| 9439/10000 [00:01<00:00, 6299.91it/s]
+Bifurcated agents:   1%|▏         | 14/1024 [00:01<01:51,  9.04it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6293.72it/s]
+Bifurcated agents:   2%|▏         | 16/1024 [00:01<01:40, 10.07it/s]
+Minimizer: [0.1  0.18 0.92 0.9  0.48 0.46 0.02 0.22 0.54 0.44 0.52 0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 3.377104e-02
+[coarse:LALM] objective = 0.472533461
+[refined:TNC_orig] ||h(x)|| = 3.377104e-02
+[rho-check] ||h_old||=3.573e-02, ||h_new||=3.377e-02, rho=80
+[adaptive] next alpha=4.377500e+00, next rho=8.000000e+01, lambda_inf=7.814e-01
+Constraint check: False
+[best] iter=7, l2_norm_h=3.377104e-02, objective=0.472533461
+========================================================================================================================
+Update time: 2026-06-11 11:43:24
+Iteration: 7
+rho: 80
+alpha: 4.3775
+objective_value: 0.472533461014
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.711445977062e-02
+l2_norm_h: 3.377104305082e-02
+lambda_inf_norm: 7.814011396863e-01
+lambda_l2_norm: 1.516518172916e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000041	-0.000021	1.000042	0.236162	0.075369	0.000000	0.000000
+2	0.970119	-0.045627	0.971172	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.252956	-0.283054	0.075386	-0.099953	-0.030098	-0.024567
+
+
+--- Outer Iteration 8 ---
+alpha = 4.377500e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3116/10000 [00:00<00:01, 6230.88it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6303/10000 [00:01<00:00, 6305.66it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:22,  1.64it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:29,  3.79it/s][A
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:06,  5.44it/s][AIterations:  95%|█████████▍| 9492/10000 [00:01<00:00, 6332.02it/s]
+Bifurcated agents:   1%|▏         | 13/1024 [00:01<02:02,  8.27it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6327.30it/s]
+Bifurcated agents:   1%|▏         | 15/1024 [00:01<01:46,  9.49it/s]
+Minimizer: [0.08 0.18 0.94 0.92 0.5  0.48 0.36 0.2  0.54 0.44 0.54 0.48 0.   0.02]
+[coarse:LALM] ||h(x)|| = 3.191417e-02
+[coarse:LALM] objective = 0.480065034
+[refined:TNC_orig] ||h(x)|| = 3.191417e-02
+[rho-check] ||h_old||=3.377e-02, ||h_new||=3.191e-02, rho=80
+[adaptive] next alpha=4.377500e+00, next rho=8.000000e+01, lambda_inf=8.515e-01
+Constraint check: False
+[best] iter=8, l2_norm_h=3.191417e-02, objective=0.480065034
+========================================================================================================================
+Update time: 2026-06-11 11:43:33
+Iteration: 8
+rho: 80
+alpha: 4.3775
+objective_value: 0.480065034404
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.617573421119e-02
+l2_norm_h: 3.191417398790e-02
+lambda_inf_norm: 8.515072114470e-01
+lambda_l2_norm: 1.656187308720e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000032	-0.000017	1.000031	0.239925	0.075580	0.000000	0.000000
+2	0.969984	-0.045970	0.971052	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.255795	-0.283985	0.075597	-0.099954	-0.028190	-0.024358
+
+
+--- Outer Iteration 9 ---
+alpha = 4.377500e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3087/10000 [00:00<00:01, 6172.25it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6287/10000 [00:01<00:00, 6291.79it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:11,  3.28it/s][A
+Bifurcated agents:   1%|          | 8/1024 [00:01<02:53,  5.84it/s][AIterations:  95%|█████████▍| 9484/10000 [00:01<00:00, 6329.10it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:08,  7.86it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6322.99it/s]
+Bifurcated agents:   1%|▏         | 14/1024 [00:01<01:54,  8.85it/s]
+Minimizer: [0.1  0.18 0.92 0.9  0.48 0.46 0.02 0.22 0.54 0.44 0.52 0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 3.016733e-02
+[coarse:LALM] objective = 0.487150906
+[refined:TNC_orig] ||h(x)|| = 3.016733e-02
+[rho-check] ||h_old||=3.191e-02, ||h_new||=3.017e-02, rho=80
+[adaptive] Stable improvement detected, alpha -> 4.508825e+00
+[adaptive] next alpha=4.508825e+00, next rho=8.000000e+01, lambda_inf=9.178e-01
+Constraint check: False
+[best] iter=9, l2_norm_h=3.016733e-02, objective=0.487150906
+========================================================================================================================
+Update time: 2026-06-11 11:43:43
+Iteration: 9
+rho: 80
+alpha: 4.508825
+objective_value: 0.487150905772
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.528979234644e-02
+l2_norm_h: 3.016733065694e-02
+lambda_inf_norm: 9.177912381396e-01
+lambda_l2_norm: 1.788216944496e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000039	-0.000022	1.000039	0.243464	0.075782	0.000000	0.000000
+2	0.969871	-0.046299	0.970956	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.258466	-0.284858	0.075796	-0.099955	-0.026392	-0.024159
+
+
+--- Outer Iteration 10 ---
+alpha = 4.508825e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███▏      | 3139/10000 [00:00<00:01, 6277.41it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6326/10000 [00:01<00:00, 6327.39it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<20:51,  1.22s/it][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<03:44,  4.53it/s][A
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:05,  8.09it/s][AIterations:  95%|█████████▌| 9504/10000 [00:01<00:00, 6337.53it/s]Iterations: 100%|██████████| 10000/10000 [00:01<00:00, 6335.41it/s]
+Bifurcated agents:   1%|▏         | 15/1024 [00:01<01:46,  9.50it/s]
+Minimizer: [0.24 0.16 0.96 0.94 0.5  0.46 0.38 0.36 0.58 0.44 0.5  0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 2.851655e-02
+[coarse:LALM] objective = 0.49384818
+[refined:TNC_orig] ||h(x)|| = 2.851655e-02
+[rho-check] ||h_old||=3.017e-02, ||h_new||=2.852e-02, rho=80
+[adaptive] next alpha=4.508825e+00, next rho=8.000000e+01, lambda_inf=9.823e-01
+Constraint check: False
+[best] iter=10, l2_norm_h=2.851655e-02, objective=0.49384818
+========================================================================================================================
+Update time: 2026-06-11 11:43:52
+Iteration: 10
+rho: 80
+alpha: 4.508825
+objective_value: 0.493848180059
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.445592125890e-02
+l2_norm_h: 2.851655404182e-02
+lambda_inf_norm: 9.823205467209e-01
+lambda_l2_norm: 1.916769001467e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000021	-0.000024	1.000019	0.246810	0.075981	0.000000	0.000000
+2	0.969739	-0.046609	0.970840	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.260990	-0.285688	0.075996	-0.099961	-0.024698	-0.023965
+
+
+--- Outer Iteration 11 ---
+alpha = 4.508825e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3098/10000 [00:00<00:01, 6194.83it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6294/10000 [00:01<00:00, 6298.36it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<19:12,  1.13s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:55,  1.56it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:42,  3.61it/s][A
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:08,  5.38it/s][AIterations:  95%|█████████▍| 9489/10000 [00:01<00:00, 6331.83it/s]Iterations: 100%|██████████| 10000/10000 [00:01<00:00, 6327.46it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:13,  7.59it/s]
+Minimizer: [0.24 0.16 0.94 0.92 0.48 0.44 0.3  0.3  0.58 0.44 0.5  0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 2.691338e-02
+[coarse:LALM] objective = 0.500352855
+[refined:TNC_orig] ||h(x)|| = 2.691338e-02
+[rho-check] ||h_old||=2.852e-02, ||h_new||=2.691e-02, rho=80
+[adaptive] next alpha=4.508825e+00, next rho=8.000000e+01, lambda_inf=1.043e+00
+Constraint check: False
+[best] iter=11, l2_norm_h=2.691338e-02, objective=0.500352855
+========================================================================================================================
+Update time: 2026-06-11 11:44:01
+Iteration: 11
+rho: 80
+alpha: 4.508825
+objective_value: 0.500352855355
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.364531755277e-02
+l2_norm_h: 2.691337818226e-02
+lambda_inf_norm: 1.043222316935e+00
+lambda_l2_norm: 2.038096384715e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000011	-0.000018	1.000008	0.250059	0.076174	0.000000	0.000000
+2	0.969619	-0.046902	0.970732	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.263442	-0.286493	0.076186	-0.099966	-0.023051	-0.023780
+
+
+--- Outer Iteration 12 ---
+alpha = 4.508825e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3077/10000 [00:00<00:01, 6152.18it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6266/10000 [00:01<00:00, 6270.95it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:26,  1.63it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:42,  2.98it/s][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<04:09,  4.08it/s][AIterations:  94%|█████████▍| 9448/10000 [00:01<00:00, 6305.05it/s]
+Bifurcated agents:   1%|          | 11/1024 [00:01<02:24,  7.00it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6298.16it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:13,  7.56it/s]
+Minimizer: [0.24 0.18 0.94 0.92 0.56 0.52 0.24 0.08 0.58 0.44 0.52 0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 2.539546e-02
+[coarse:LALM] objective = 0.506511521
+[refined:TNC_orig] ||h(x)|| = 2.539546e-02
+[rho-check] ||h_old||=2.691e-02, ||h_new||=2.540e-02, rho=80
+[adaptive] next alpha=4.508825e+00, next rho=8.000000e+01, lambda_inf=1.101e+00
+Constraint check: False
+[best] iter=12, l2_norm_h=2.539546e-02, objective=0.506511521
+========================================================================================================================
+Update time: 2026-06-11 11:44:10
+Iteration: 12
+rho: 80
+alpha: 4.508825
+objective_value: 0.506511521176
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.287750325184e-02
+l2_norm_h: 2.539545870299e-02
+lambda_inf_norm: 1.100699624935e+00
+lambda_l2_norm: 2.152583978686e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000016	1.000034	0.253136	0.076342	0.000000	0.000000
+2	0.969540	-0.047183	0.970671	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.265762	-0.287252	0.076354	-0.099965	-0.021490	-0.023611
+
+
+--- Outer Iteration 13 ---
+alpha = 4.508825e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███▏      | 3144/10000 [00:00<00:01, 6286.82it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:00<15:39,  1.09it/s][AIterations:  63%|██████▎   | 6326/10000 [00:01<00:00, 6327.00it/s]
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:04,  1.69it/s][A
+Bifurcated agents:   0%|          | 3/1024 [00:01<07:17,  2.33it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:42,  3.60it/s][A
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:47,  6.05it/s][AIterations:  95%|█████████▌| 9519/10000 [00:01<00:00, 6348.40it/s]Iterations: 100%|██████████| 10000/10000 [00:01<00:00, 6347.35it/s]
+Bifurcated agents:   1%|▏         | 13/1024 [00:01<02:02,  8.25it/s]
+Minimizer: [0.1  0.18 0.94 0.92 0.5  0.48 0.34 0.16 0.54 0.44 0.52 0.48 0.   0.02]
+[coarse:LALM] ||h(x)|| = 2.395903e-02
+[coarse:LALM] objective = 0.512340512
+[refined:TNC_orig] ||h(x)|| = 2.395903e-02
+[rho-check] ||h_old||=2.540e-02, ||h_new||=2.396e-02, rho=80
+[adaptive] Stable improvement detected, alpha -> 4.644090e+00
+[adaptive] next alpha=4.644090e+00, next rho=8.000000e+01, lambda_inf=1.155e+00
+Constraint check: False
+[best] iter=13, l2_norm_h=2.395903e-02, objective=0.512340512
+========================================================================================================================
+Update time: 2026-06-11 11:44:20
+Iteration: 13
+rho: 80
+alpha: 4.6440898
+objective_value: 0.512340511505
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.215041463296e-02
+l2_norm_h: 2.395903242881e-02
+lambda_inf_norm: 1.154926705553e+00
+lambda_l2_norm: 2.260597422933e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000036	-0.000013	1.000036	0.256047	0.076514	0.000000	0.000000
+2	0.969443	-0.047447	0.970588	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.267960	-0.287973	0.076524	-0.099967	-0.020013	-0.023443
+
+
+--- Outer Iteration 14 ---
+alpha = 4.644090e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3072/10000 [00:00<00:01, 6142.35it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6257/10000 [00:01<00:00, 6261.46it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<21:02,  1.23s/it][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:41,  2.99it/s][A
+Bifurcated agents:   1%|          | 7/1024 [00:01<03:34,  4.73it/s][AIterations:  94%|█████████▍| 9432/10000 [00:01<00:00, 6293.99it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:13,  7.59it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6288.81it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:14,  7.55it/s]
+Minimizer: [0.18 0.16 0.96 0.94 0.48 0.46 0.38 0.36 0.56 0.44 0.5  0.48 0.02 0.02]
+[coarse:LALM] ||h(x)|| = 2.259968e-02
+[coarse:LALM] objective = 0.517857065
+[refined:TNC_orig] ||h(x)|| = 2.259968e-02
+[rho-check] ||h_old||=2.396e-02, ||h_new||=2.260e-02, rho=80
+[adaptive] next alpha=4.644090e+00, next rho=8.000000e+01, lambda_inf=1.208e+00
+Constraint check: False
+[best] iter=14, l2_norm_h=2.259968e-02, objective=0.517857065
+========================================================================================================================
+Update time: 2026-06-11 11:44:29
+Iteration: 14
+rho: 80
+alpha: 4.6440898
+objective_value: 0.51785706504
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.146287061800e-02
+l2_norm_h: 2.259967700043e-02
+lambda_inf_norm: 1.207612958468e+00
+lambda_l2_norm: 2.365540636300e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000048	-0.000015	1.000047	0.258803	0.076670	0.000000	0.000000
+2	0.969362	-0.047702	0.970521	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.270040	-0.288655	0.076680	-0.099967	-0.018615	-0.023287
+
+
+--- Outer Iteration 15 ---
+alpha = 4.644090e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███▏      | 3136/10000 [00:00<00:01, 6270.20it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6312/10000 [00:01<00:00, 6312.95it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<19:09,  1.12s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<11:05,  1.53it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:58,  2.85it/s][AIterations:  95%|█████████▌| 9505/10000 [00:01<00:00, 6339.76it/s]
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:11,  5.31it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6337.65it/s]
+Bifurcated agents:   1%|          | 10/1024 [00:01<02:39,  6.34it/s]
+Minimizer: [0.06 0.16 0.96 0.96 0.56 0.54 0.62 0.54 0.52 0.46 0.5  0.5  0.   0.  ]
+[coarse:LALM] ||h(x)|| = 2.129187e-02
+[coarse:LALM] objective = 0.523165041
+[refined:TNC_orig] ||h(x)|| = 2.129187e-02
+[rho-check] ||h_old||=2.260e-02, ||h_new||=2.129e-02, rho=80
+[adaptive] next alpha=4.644090e+00, next rho=8.000000e+01, lambda_inf=1.257e+00
+Constraint check: False
+[best] iter=15, l2_norm_h=2.129187e-02, objective=0.523165041
+========================================================================================================================
+Update time: 2026-06-11 11:44:39
+Iteration: 15
+rho: 80
+alpha: 4.6440898
+objective_value: 0.523165041006
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.080051801738e-02
+l2_norm_h: 2.129186805815e-02
+lambda_inf_norm: 1.257264377044e+00
+lambda_l2_norm: 2.464411818913e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000014	1.000035	0.261454	0.076825	0.000000	0.000000
+2	0.969259	-0.047945	0.970430	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.272040	-0.289309	0.076836	-0.099970	-0.017269	-0.023134
+
+
+--- Outer Iteration 16 ---
+alpha = 4.644090e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3122/10000 [00:00<00:01, 6242.82it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6305/10000 [00:01<00:00, 6307.50it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<19:10,  1.12s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:26,  1.63it/s][A
+Bifurcated agents:   0%|          | 3/1024 [00:01<07:32,  2.26it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:51,  3.49it/s][AIterations:  95%|█████████▍| 9492/10000 [00:01<00:00, 6331.77it/s]
+Bifurcated agents:   1%|          | 11/1024 [00:01<02:21,  7.18it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6327.13it/s]
+Bifurcated agents:   1%|          | 12/1024 [00:01<02:13,  7.59it/s]
+Minimizer: [0.12 0.16 0.94 0.94 0.48 0.46 0.36 0.5  0.54 0.46 0.48 0.5  0.   0.  ]
+[coarse:LALM] ||h(x)|| = 2.005388e-02
+[coarse:LALM] objective = 0.528189957
+[refined:TNC_orig] ||h(x)|| = 2.005388e-02
+[rho-check] ||h_old||=2.129e-02, ||h_new||=2.005e-02, rho=80
+[adaptive] next alpha=4.644090e+00, next rho=8.000000e+01, lambda_inf=1.304e+00
+Constraint check: False
+[best] iter=16, l2_norm_h=2.005388e-02, objective=0.528189957
+========================================================================================================================
+Update time: 2026-06-11 11:44:48
+Iteration: 16
+rho: 80
+alpha: 4.6440898
+objective_value: 0.528189956558
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 1.017410673225e-02
+l2_norm_h: 2.005388134109e-02
+lambda_inf_norm: 1.304026349810e+00
+lambda_l2_norm: 2.557535045388e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000036	-0.000014	1.000036	0.263964	0.076974	0.000000	0.000000
+2	0.969175	-0.048175	0.970359	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.273934	-0.289931	0.076983	-0.099971	-0.015997	-0.022987
+
+
+--- Outer Iteration 17 ---
+alpha = 4.644090e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3119/10000 [00:00<00:01, 6237.42it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6301/10000 [00:01<00:00, 6300.82it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<19:11,  1.13s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<10:27,  1.63it/s][A
+Bifurcated agents:   0%|          | 4/1024 [00:01<05:39,  3.01it/s][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<04:08,  4.10it/s][AIterations:  95%|█████████▍| 9486/10000 [00:01<00:00, 6326.22it/s]
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:56,  5.75it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6322.27it/s]
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:58,  5.69it/s]
+Minimizer: [0.12 0.18 0.92 0.9  0.5  0.48 0.32 0.22 0.54 0.46 0.52 0.48 0.   0.  ]
+[coarse:LALM] ||h(x)|| = 1.888864e-02
+[coarse:LALM] objective = 0.532919792
+[refined:TNC_orig] ||h(x)|| = 1.888864e-02
+[rho-check] ||h_old||=2.005e-02, ||h_new||=1.889e-02, rho=80
+[adaptive] Stable improvement detected, alpha -> 4.783412e+00
+[adaptive] next alpha=4.783412e+00, next rho=8.000000e+01, lambda_inf=1.348e+00
+Constraint check: False
+[best] iter=17, l2_norm_h=1.888864e-02, objective=0.532919792
+========================================================================================================================
+Update time: 2026-06-11 11:44:58
+Iteration: 17
+rho: 80
+alpha: 4.7834124
+objective_value: 0.53291979219
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 9.584373378752e-03
+l2_norm_h: 1.888864141609e-02
+lambda_inf_norm: 1.348082237756e+00
+lambda_l2_norm: 2.645248214414e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000034	-0.000009	1.000034	0.266327	0.077093	0.000000	0.000000
+2	0.969096	-0.048388	0.970291	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.275717	-0.290514	0.077102	-0.099965	-0.014797	-0.022862
+
+
+--- Outer Iteration 18 ---
+alpha = 4.783412e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3108/10000 [00:00<00:01, 6215.39it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6292/10000 [00:01<00:00, 6295.17it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 3/1024 [00:01<06:55,  2.46it/s][A
+Bifurcated agents:   1%|          | 6/1024 [00:01<03:51,  4.41it/s][A
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:45,  6.15it/s][AIterations:  95%|█████████▍| 9481/10000 [00:01<00:00, 6325.26it/s]Iterations: 100%|██████████| 10000/10000 [00:01<00:00, 6320.30it/s]
+Bifurcated agents:   1%|          | 11/1024 [00:01<02:25,  6.95it/s]
+Minimizer: [0.12 0.16 0.94 0.94 0.5  0.48 0.36 0.5  0.54 0.46 0.48 0.5  0.   0.  ]
+[coarse:LALM] ||h(x)|| = 1.778921e-02
+[coarse:LALM] objective = 0.537383031
+[refined:TNC_orig] ||h(x)|| = 1.778921e-02
+[rho-check] ||h_old||=1.889e-02, ||h_new||=1.779e-02, rho=80
+[adaptive] next alpha=4.783412e+00, next rho=8.000000e+01, lambda_inf=1.391e+00
+Constraint check: False
+[best] iter=18, l2_norm_h=1.778921e-02, objective=0.537383031
+========================================================================================================================
+Update time: 2026-06-11 11:45:07
+Iteration: 18
+rho: 80
+alpha: 4.7834124
+objective_value: 0.537383031192
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 9.027616168882e-03
+l2_norm_h: 1.778920732128e-02
+lambda_inf_norm: 1.390814056803e+00
+lambda_l2_norm: 2.730334532450e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000041	-0.000012	1.000042	0.268556	0.077245	0.000000	0.000000
+2	0.969024	-0.048595	0.970231	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.277400	-0.291067	0.077253	-0.099974	-0.013667	-0.022721
+
+
+--- Outer Iteration 19 ---
+alpha = 4.783412e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  31%|███       | 3065/10000 [00:00<00:01, 6129.60it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  63%|██████▎   | 6264/10000 [00:01<00:00, 6270.72it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<20:45,  1.22s/it][A
+Bifurcated agents:   0%|          | 2/1024 [00:01<11:14,  1.52it/s][A
+Bifurcated agents:   0%|          | 5/1024 [00:01<04:49,  3.52it/s][AIterations:  95%|█████████▍| 9451/10000 [00:01<00:00, 6306.74it/s]
+Bifurcated agents:   1%|          | 8/1024 [00:01<03:15,  5.20it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6300.57it/s]
+Bifurcated agents:   1%|          | 9/1024 [00:01<02:58,  5.67it/s]
+Minimizer: [0.12 0.18 0.94 0.92 0.52 0.5  0.24 0.08 0.54 0.44 0.52 0.48 0.   0.02]
+[coarse:LALM] ||h(x)|| = 1.672636e-02
+[coarse:LALM] objective = 0.541698002
+[refined:TNC_orig] ||h(x)|| = 1.672636e-02
+[rho-check] ||h_old||=1.779e-02, ||h_new||=1.673e-02, rho=80
+[adaptive] next alpha=4.783412e+00, next rho=8.000000e+01, lambda_inf=1.431e+00
+Constraint check: False
+[best] iter=19, l2_norm_h=1.672636e-02, objective=0.541698002
+========================================================================================================================
+Update time: 2026-06-11 11:45:17
+Iteration: 19
+rho: 80
+alpha: 4.7834124
+objective_value: 0.541698002388
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 8.488917975548e-03
+l2_norm_h: 1.672636411724e-02
+lambda_inf_norm: 1.430996667037e+00
+lambda_l2_norm: 2.810337540189e+00
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.000035	-0.000012	1.000035	0.270712	0.077376	0.000000	0.000000
+2	0.968943	-0.048794	0.970160	0.000000	0.000000	0.300000	0.100000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.279027	-0.291600	0.077383	-0.099976	-0.012573	-0.022592
+
+
+--- Outer Iteration 20 ---
+alpha = 4.783412e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/10000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  30%|███       | 3042/10000 [00:00<00:01, 6082.32it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:00<?, ?it/s][AIterations:  62%|██████▏   | 6201/10000 [00:01<00:00, 6204.77it/s]
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/1024 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/1024 [00:01<21:06,  1.24s/it][A
+Bifurcated agents:   0%|          | 3/1024 [00:01<07:36,  2.24it/s][AIterations:  94%|█████████▎| 9355/10000 [00:01<00:00, 6242.22it/s]
+Bifurcated agents:   0%|          | 5/1024 [00:01<05:20,  3.18it/s][AIterations: 100%|██████████| 10000/10000 [00:01<00:00, 6237.80it/s]
+Bifurcated agents:   1%|          | 7/1024 [00:01<03:52,  4.37it/s]
+slurmstepd: error: *** JOB 361484 ON amphost001 CANCELLED AT 2026-06-11T11:45:32 ***

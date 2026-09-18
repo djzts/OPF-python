@@ -1,0 +1,734 @@
+amphost001.sdcc.bnl.local
+Thu Jun 11 11:24:20 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   33C    P0             65W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Model initialized with 14 buses 20 lines and 5 generators.
+Log file: logs/Buses-14_06-11-2026_11-24-26.txt
+Alpha mode: adaptive
+Refine method: TNC_orig
+Adaptive alpha/rho start: alpha=5.0, rho=80.0
+
+===== Start Linear ALM Loop =====
+
+
+--- Outer Iteration 0 ---
+alpha = 5.000000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/42000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][AIterations:   0%|          | 68/42000 [00:00<05:08, 135.90it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][AIterations:   0%|          | 154/42000 [00:01<04:31, 154.25it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:01<?, ?it/s][AIterations:   1%|          | 240/42000 [00:01<04:20, 160.46it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:01<?, ?it/s][AIterations:   1%|          | 326/42000 [00:02<04:15, 163.38it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][AIterations:   1%|          | 412/42000 [00:02<04:11, 165.19it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][AIterations:   1%|          | 498/42000 [00:03<04:09, 166.44it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][AIterations:   1%|▏         | 584/42000 [00:03<04:07, 167.27it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][AIterations:   2%|▏         | 670/42000 [00:04<04:06, 167.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][AIterations:   2%|▏         | 756/42000 [00:04<04:04, 168.35it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][AIterations:   2%|▏         | 842/42000 [00:05<04:03, 168.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][AIterations:   2%|▏         | 928/42000 [00:05<04:02, 169.05it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][AIterations:   2%|▏         | 1014/42000 [00:06<04:02, 169.27it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:06<?, ?it/s][AIterations:   3%|▎         | 1100/42000 [00:06<04:01, 169.51it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:06<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:06<?, ?it/s][AIterations:   3%|▎         | 1186/42000 [00:07<04:00, 169.67it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][AIterations:   3%|▎         | 1272/42000 [00:07<03:59, 169.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][AIterations:   3%|▎         | 1358/42000 [00:08<03:59, 169.92it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][AIterations:   3%|▎         | 1444/42000 [00:08<03:58, 170.06it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][AIterations:   4%|▎         | 1530/42000 [00:09<03:57, 170.14it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][AIterations:   4%|▍         | 1616/42000 [00:09<03:57, 170.22it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][AIterations:   4%|▍         | 1702/42000 [00:10<03:56, 170.27it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][AIterations:   4%|▍         | 1788/42000 [00:10<03:56, 170.36it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][AIterations:   4%|▍         | 1874/42000 [00:11<03:55, 170.39it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:11<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:11<?, ?it/s][AIterations:   5%|▍         | 1960/42000 [00:11<03:54, 170.42it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:11<?, ?it/s][AIterations:   5%|▍         | 2046/42000 [00:12<03:54, 170.48it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][AIterations:   5%|▌         | 2132/42000 [00:12<03:53, 170.50it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][AIterations:   5%|▌         | 2218/42000 [00:13<03:53, 170.51it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:13<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:13<?, ?it/s][AIterations:   5%|▌         | 2304/42000 [00:13<03:52, 170.51it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:13<?, ?it/s][AIterations:   6%|▌         | 2390/42000 [00:14<03:52, 170.56it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][AIterations:   6%|▌         | 2476/42000 [00:14<03:51, 170.57it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][AIterations:   6%|▌         | 2562/42000 [00:15<03:51, 170.58it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][AIterations:   6%|▋         | 2648/42000 [00:15<03:50, 170.63it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][AIterations:   7%|▋         | 2734/42000 [00:16<03:50, 170.63it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][AIterations:   7%|▋         | 2820/42000 [00:16<03:49, 170.41it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][AIterations:   7%|▋         | 2906/42000 [00:17<03:49, 170.44it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][AIterations:   7%|▋         | 2992/42000 [00:17<03:48, 170.50it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][AIterations:   7%|▋         | 3078/42000 [00:18<03:48, 170.52it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:18<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:18<?, ?it/s][AIterations:   8%|▊         | 3164/42000 [00:18<03:47, 170.54it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:18<?, ?it/s][AIterations:   8%|▊         | 3250/42000 [00:19<03:47, 170.59it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][AIterations:   8%|▊         | 3336/42000 [00:19<03:46, 170.60it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][AIterations:   8%|▊         | 3422/42000 [00:20<03:46, 170.61it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][AIterations:   8%|▊         | 3508/42000 [00:20<03:45, 170.62it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][AIterations:   9%|▊         | 3594/42000 [00:21<03:45, 170.66it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][AIterations:   9%|▉         | 3680/42000 [00:21<03:44, 170.66it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][AIterations:   9%|▉         | 3766/42000 [00:22<03:44, 170.66it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][AIterations:   9%|▉         | 3852/42000 [00:22<03:43, 170.66it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][AIterations:   9%|▉         | 3938/42000 [00:23<03:42, 170.69it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:23<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:23<?, ?it/s][AIterations:  10%|▉         | 4024/42000 [00:23<03:42, 170.68it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:23<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][AIterations:  10%|▉         | 4110/42000 [00:24<03:42, 170.67it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][AIterations:  10%|▉         | 4196/42000 [00:24<03:41, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][AIterations:  10%|█         | 4282/42000 [00:25<03:40, 170.70it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:25<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:25<?, ?it/s][AIterations:  10%|█         | 4368/42000 [00:25<03:40, 170.70it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:25<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][AIterations:  11%|█         | 4454/42000 [00:26<03:39, 170.69it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][AIterations:  11%|█         | 4540/42000 [00:26<03:39, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][AIterations:  11%|█         | 4626/42000 [00:27<03:38, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][AIterations:  11%|█         | 4712/42000 [00:27<03:38, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][AIterations:  11%|█▏        | 4798/42000 [00:28<03:37, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][AIterations:  12%|█▏        | 4884/42000 [00:28<03:37, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][AIterations:  12%|█▏        | 4970/42000 [00:29<03:36, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][AIterations:  12%|█▏        | 5056/42000 [00:29<03:36, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][AIterations:  12%|█▏        | 5142/42000 [00:30<03:35, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:30<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:30<?, ?it/s][AIterations:  12%|█▏        | 5228/42000 [00:30<03:35, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:30<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][AIterations:  13%|█▎        | 5314/42000 [00:31<03:34, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][AIterations:  13%|█▎        | 5400/42000 [00:31<03:34, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][AIterations:  13%|█▎        | 5486/42000 [00:32<03:33, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][AIterations:  13%|█▎        | 5572/42000 [00:32<03:33, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][AIterations:  13%|█▎        | 5658/42000 [00:33<03:32, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][AIterations:  14%|█▎        | 5744/42000 [00:33<03:32, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][AIterations:  14%|█▍        | 5830/42000 [00:34<03:31, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][AIterations:  14%|█▍        | 5916/42000 [00:34<03:31, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:35<?, ?it/s][AIterations:  14%|█▍        | 6002/42000 [00:35<03:30, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:35<?, ?it/s][AIterations:  14%|█▍        | 6088/42000 [00:35<03:30, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:35<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:36<?, ?it/s][AIterations:  15%|█▍        | 6174/42000 [00:36<03:29, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:36<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:36<?, ?it/s][AIterations:  15%|█▍        | 6260/42000 [00:36<03:29, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:37<?, ?it/s][AIterations:  15%|█▌        | 6346/42000 [00:37<03:28, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:37<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:37<?, ?it/s][AIterations:  15%|█▌        | 6432/42000 [00:37<03:28, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:37<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:38<?, ?it/s][AIterations:  16%|█▌        | 6518/42000 [00:38<03:27, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:38<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:38<?, ?it/s][AIterations:  16%|█▌        | 6604/42000 [00:38<03:27, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:39<?, ?it/s][AIterations:  16%|█▌        | 6690/42000 [00:39<03:26, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:39<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:39<?, ?it/s][AIterations:  16%|█▌        | 6776/42000 [00:39<03:26, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:39<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:40<?, ?it/s][AIterations:  16%|█▋        | 6862/42000 [00:40<03:25, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:40<?, ?it/s][AIterations:  17%|█▋        | 6948/42000 [00:40<03:25, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:40<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:41<?, ?it/s][AIterations:  17%|█▋        | 7034/42000 [00:41<03:24, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:41<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:41<?, ?it/s][AIterations:  17%|█▋        | 7120/42000 [00:41<03:24, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:41<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:42<?, ?it/s][AIterations:  17%|█▋        | 7206/42000 [00:42<03:23, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:42<?, ?it/s][AIterations:  17%|█▋        | 7292/42000 [00:42<03:23, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:42<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:43<?, ?it/s][AIterations:  18%|█▊        | 7378/42000 [00:43<03:22, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:43<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:43<?, ?it/s][AIterations:  18%|█▊        | 7464/42000 [00:43<03:22, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:44<?, ?it/s][AIterations:  18%|█▊        | 7550/42000 [00:44<03:21, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:44<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:44<?, ?it/s][AIterations:  18%|█▊        | 7636/42000 [00:44<03:21, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:44<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:45<?, ?it/s][AIterations:  18%|█▊        | 7722/42000 [00:45<03:20, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:45<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:45<?, ?it/s][AIterations:  19%|█▊        | 7808/42000 [00:45<03:20, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:46<?, ?it/s][AIterations:  19%|█▉        | 7894/42000 [00:46<03:19, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:46<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:46<?, ?it/s][AIterations:  19%|█▉        | 7980/42000 [00:46<03:19, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:46<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:47<?, ?it/s][AIterations:  19%|█▉        | 8066/42000 [00:47<03:18, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:47<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:47<?, ?it/s][AIterations:  19%|█▉        | 8152/42000 [00:47<03:18, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:48<?, ?it/s][AIterations:  20%|█▉        | 8238/42000 [00:48<03:17, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:48<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:48<?, ?it/s][AIterations:  20%|█▉        | 8324/42000 [00:48<03:17, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:49<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:49<?, ?it/s][AIterations:  20%|██        | 8410/42000 [00:49<03:16, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:49<?, ?it/s][AIterations:  20%|██        | 8496/42000 [00:49<03:16, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:49<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:50<?, ?it/s][AIterations:  20%|██        | 8582/42000 [00:50<03:15, 170.70it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:50<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:50<?, ?it/s][AIterations:  21%|██        | 8668/42000 [00:50<03:15, 170.69it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:51<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:51<?, ?it/s][AIterations:  21%|██        | 8754/42000 [00:51<03:14, 170.68it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:51<?, ?it/s][AIterations:  21%|██        | 8840/42000 [00:51<03:14, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:51<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:52<?, ?it/s][AIterations:  21%|██▏       | 8926/42000 [00:52<03:13, 170.70it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:52<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:52<?, ?it/s][AIterations:  21%|██▏       | 9012/42000 [00:52<03:13, 170.69it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:53<?, ?it/s][AIterations:  22%|██▏       | 9098/42000 [00:53<03:12, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:53<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:53<?, ?it/s][AIterations:  22%|██▏       | 9184/42000 [00:53<03:12, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:53<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:54<?, ?it/s][AIterations:  22%|██▏       | 9270/42000 [00:54<03:11, 170.70it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:54<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:54<?, ?it/s][AIterations:  22%|██▏       | 9356/42000 [00:54<03:11, 170.70it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:55<?, ?it/s][AIterations:  22%|██▏       | 9442/42000 [00:55<03:10, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:55<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:55<?, ?it/s][AIterations:  23%|██▎       | 9528/42000 [00:55<03:10, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:56<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:56<?, ?it/s][AIterations:  23%|██▎       | 9614/42000 [00:56<03:09, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:56<?, ?it/s][AIterations:  23%|██▎       | 9700/42000 [00:56<03:09, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:56<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:57<?, ?it/s][AIterations:  23%|██▎       | 9786/42000 [00:57<03:08, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:57<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:57<?, ?it/s][AIterations:  24%|██▎       | 9872/42000 [00:57<03:08, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:58<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:58<?, ?it/s][AIterations:  24%|██▎       | 9958/42000 [00:58<03:07, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:58<?, ?it/s][AIterations:  24%|██▍       | 10044/42000 [00:58<03:07, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:58<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:59<?, ?it/s][AIterations:  24%|██▍       | 10130/42000 [00:59<03:06, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:59<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:59<?, ?it/s][AIterations:  24%|██▍       | 10216/42000 [00:59<03:06, 170.72it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:00<?, ?it/s][AIterations:  25%|██▍       | 10302/42000 [01:00<03:05, 170.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:00<?, ?it/s][AIterations:  25%|██▍       | 10388/42000 [01:00<03:05, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:01<?, ?it/s][AIterations:  25%|██▍       | 10474/42000 [01:01<03:04, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:01<?, ?it/s][AIterations:  25%|██▌       | 10560/42000 [01:01<03:04, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:02<?, ?it/s][AIterations:  25%|██▌       | 10646/42000 [01:02<03:03, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:02<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:02<?, ?it/s][AIterations:  26%|██▌       | 10732/42000 [01:02<03:03, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:03<?, ?it/s][AIterations:  26%|██▌       | 10818/42000 [01:03<03:02, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:03<?, ?it/s][AIterations:  26%|██▌       | 10904/42000 [01:03<03:02, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:04<?, ?it/s][AIterations:  26%|██▌       | 10990/42000 [01:04<03:01, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:04<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:04<?, ?it/s][AIterations:  26%|██▋       | 11076/42000 [01:04<03:01, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:05<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:05<?, ?it/s][AIterations:  27%|██▋       | 11162/42000 [01:05<03:00, 170.74it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:05<?, ?it/s][AIterations:  27%|██▋       | 11248/42000 [01:05<03:00, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:05<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:06<?, ?it/s][AIterations:  27%|██▋       | 11334/42000 [01:06<02:59, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:06<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:06<?, ?it/s][AIterations:  27%|██▋       | 11420/42000 [01:06<02:59, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:07<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:07<?, ?it/s][AIterations:  27%|██▋       | 11506/42000 [01:07<02:58, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:07<?, ?it/s][AIterations:  28%|██▊       | 11592/42000 [01:07<02:58, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:08<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:08<?, ?it/s][AIterations:  28%|██▊       | 11678/42000 [01:08<02:57, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:08<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:08<?, ?it/s][AIterations:  28%|██▊       | 11764/42000 [01:09<02:57, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:09<?, ?it/s][AIterations:  28%|██▊       | 11850/42000 [01:09<02:56, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:09<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:09<?, ?it/s][AIterations:  28%|██▊       | 11936/42000 [01:10<02:56, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:10<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:10<?, ?it/s][AIterations:  29%|██▊       | 12022/42000 [01:10<02:55, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:10<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:10<?, ?it/s][AIterations:  29%|██▉       | 12108/42000 [01:11<02:55, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:11<?, ?it/s][AIterations:  29%|██▉       | 12194/42000 [01:11<02:54, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:11<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:11<?, ?it/s][AIterations:  29%|██▉       | 12280/42000 [01:12<02:54, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:12<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:12<?, ?it/s][AIterations:  29%|██▉       | 12366/42000 [01:12<02:53, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:12<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:13<?, ?it/s][AIterations:  30%|██▉       | 12452/42000 [01:13<02:53, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:13<?, ?it/s][AIterations:  30%|██▉       | 12538/42000 [01:13<02:52, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:13<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:13<?, ?it/s][AIterations:  30%|███       | 12624/42000 [01:14<02:51, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:14<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:14<?, ?it/s][AIterations:  30%|███       | 12710/42000 [01:14<02:51, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:14<?, ?it/s][AIterations:  30%|███       | 12796/42000 [01:15<02:50, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:15<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:15<?, ?it/s][AIterations:  31%|███       | 12882/42000 [01:15<02:50, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:15<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:15<?, ?it/s][AIterations:  31%|███       | 12968/42000 [01:16<02:49, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:16<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:16<?, ?it/s][AIterations:  31%|███       | 13054/42000 [01:16<02:49, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:16<?, ?it/s][AIterations:  31%|███▏      | 13140/42000 [01:17<02:48, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:17<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:17<?, ?it/s][AIterations:  31%|███▏      | 13226/42000 [01:17<02:48, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:17<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:17<?, ?it/s][AIterations:  32%|███▏      | 13312/42000 [01:18<02:47, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:18<?, ?it/s][AIterations:  32%|███▏      | 13398/42000 [01:18<02:47, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:18<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:18<?, ?it/s][AIterations:  32%|███▏      | 13484/42000 [01:19<02:46, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:19<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:19<?, ?it/s][AIterations:  32%|███▏      | 13570/42000 [01:19<02:46, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:19<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:20<?, ?it/s][AIterations:  33%|███▎      | 13656/42000 [01:20<02:45, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:20<?, ?it/s][AIterations:  33%|███▎      | 13742/42000 [01:20<02:45, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:20<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:20<?, ?it/s][AIterations:  33%|███▎      | 13828/42000 [01:21<02:44, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:21<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:21<?, ?it/s][AIterations:  33%|███▎      | 13914/42000 [01:21<02:44, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:21<?, ?it/s][AIterations:  33%|███▎      | 14000/42000 [01:22<02:43, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:22<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:22<?, ?it/s][AIterations:  34%|███▎      | 14086/42000 [01:22<02:43, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:22<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:22<?, ?it/s][AIterations:  34%|███▎      | 14172/42000 [01:23<02:42, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:23<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:23<?, ?it/s][AIterations:  34%|███▍      | 14258/42000 [01:23<02:42, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:23<?, ?it/s][AIterations:  34%|███▍      | 14344/42000 [01:24<02:41, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:24<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:24<?, ?it/s][AIterations:  34%|███▍      | 14430/42000 [01:24<02:41, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:24<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:25<?, ?it/s][AIterations:  35%|███▍      | 14516/42000 [01:25<02:40, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:25<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:25<?, ?it/s][AIterations:  35%|███▍      | 14602/42000 [01:25<02:40, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:25<?, ?it/s][AIterations:  35%|███▍      | 14688/42000 [01:26<02:39, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:26<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:26<?, ?it/s][AIterations:  35%|███▌      | 14774/42000 [01:26<02:39, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:26<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:27<?, ?it/s][AIterations:  35%|███▌      | 14860/42000 [01:27<02:38, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:27<?, ?it/s][AIterations:  36%|███▌      | 14946/42000 [01:27<02:38, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:27<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:27<?, ?it/s][AIterations:  36%|███▌      | 15032/42000 [01:28<02:37, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:28<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:28<?, ?it/s][AIterations:  36%|███▌      | 15118/42000 [01:28<02:37, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:28<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:29<?, ?it/s][AIterations:  36%|███▌      | 15204/42000 [01:29<02:36, 170.76it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:29<?, ?it/s][AIterations:  36%|███▋      | 15290/42000 [01:29<02:36, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:29<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:30<?, ?it/s][AIterations:  37%|███▋      | 15376/42000 [01:30<02:35, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:30<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:30<?, ?it/s][AIterations:  37%|███▋      | 15462/42000 [01:30<02:35, 170.78it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:30<?, ?it/s][AIterations:  37%|███▋      | 15548/42000 [01:31<02:34, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:31<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:31<?, ?it/s][AIterations:  37%|███▋      | 15634/42000 [01:31<02:34, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:31<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:32<?, ?it/s][AIterations:  37%|███▋      | 15720/42000 [01:32<02:33, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:32<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:32<?, ?it/s][AIterations:  38%|███▊      | 15806/42000 [01:32<02:33, 170.79it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:32<?, ?it/s][AIterations:  38%|███▊      | 15892/42000 [01:33<02:32, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:33<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:33<?, ?it/s][AIterations:  38%|███▊      | 15978/42000 [01:33<02:32, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:33<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:34<?, ?it/s][AIterations:  38%|███▊      | 16064/42000 [01:34<02:31, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:34<?, ?it/s][AIterations:  38%|███▊      | 16150/42000 [01:34<02:31, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:34<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:34<?, ?it/s][AIterations:  39%|███▊      | 16236/42000 [01:35<02:30, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:35<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:35<?, ?it/s][AIterations:  39%|███▉      | 16322/42000 [01:35<02:30, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:35<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:36<?, ?it/s][AIterations:  39%|███▉      | 16408/42000 [01:36<02:29, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:36<?, ?it/s][AIterations:  39%|███▉      | 16494/42000 [01:36<02:29, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:36<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:37<?, ?it/s][AIterations:  39%|███▉      | 16580/42000 [01:37<02:28, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:37<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:37<?, ?it/s][AIterations:  40%|███▉      | 16666/42000 [01:37<02:28, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:37<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:38<?, ?it/s][AIterations:  40%|███▉      | 16752/42000 [01:38<02:27, 170.80it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:38<?, ?it/s][AIterations:  40%|████      | 16838/42000 [01:38<02:27, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:38<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:39<?, ?it/s][AIterations:  40%|████      | 16924/42000 [01:39<02:26, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:39<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:39<?, ?it/s][AIterations:  40%|████      | 17010/42000 [01:39<02:26, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:39<?, ?it/s][AIterations:  41%|████      | 17096/42000 [01:40<02:25, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:40<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:40<?, ?it/s][AIterations:  41%|████      | 17182/42000 [01:40<02:25, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:40<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:41<?, ?it/s][AIterations:  41%|████      | 17268/42000 [01:41<02:24, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:41<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:41<?, ?it/s][AIterations:  41%|████▏     | 17354/42000 [01:41<02:24, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:42<?, ?it/s][AIterations:  42%|████▏     | 17440/42000 [01:42<02:23, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:42<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:42<?, ?it/s][AIterations:  42%|████▏     | 17526/42000 [01:42<02:23, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:42<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:43<?, ?it/s][AIterations:  42%|████▏     | 17612/42000 [01:43<02:22, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:43<?, ?it/s][AIterations:  42%|████▏     | 17698/42000 [01:43<02:22, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:43<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:44<?, ?it/s][AIterations:  42%|████▏     | 17784/42000 [01:44<02:21, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:44<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:44<?, ?it/s][AIterations:  43%|████▎     | 17870/42000 [01:44<02:21, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:44<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:45<?, ?it/s][AIterations:  43%|████▎     | 17956/42000 [01:45<02:20, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:45<?, ?it/s][AIterations:  43%|████▎     | 18042/42000 [01:45<02:20, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:45<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:46<?, ?it/s][AIterations:  43%|████▎     | 18128/42000 [01:46<02:19, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:46<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:46<?, ?it/s][AIterations:  43%|████▎     | 18214/42000 [01:46<02:19, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:46<?, ?it/s][AIterations:  44%|████▎     | 18300/42000 [01:47<02:18, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:47<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:47<?, ?it/s][AIterations:  44%|████▍     | 18386/42000 [01:47<02:18, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:47<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:48<?, ?it/s][AIterations:  44%|████▍     | 18472/42000 [01:48<02:17, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:48<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:48<?, ?it/s][AIterations:  44%|████▍     | 18558/42000 [01:48<02:17, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:49<?, ?it/s][AIterations:  44%|████▍     | 18644/42000 [01:49<02:16, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:49<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:49<?, ?it/s][AIterations:  45%|████▍     | 18730/42000 [01:49<02:16, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:49<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:50<?, ?it/s][AIterations:  45%|████▍     | 18816/42000 [01:50<02:15, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:50<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:50<?, ?it/s][AIterations:  45%|████▌     | 18902/42000 [01:50<02:15, 170.81it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:51<?, ?it/s][AIterations:  45%|████▌     | 18988/42000 [01:51<02:14, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:51<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:51<?, ?it/s][AIterations:  45%|████▌     | 19074/42000 [01:51<02:14, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:51<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:52<?, ?it/s][AIterations:  46%|████▌     | 19160/42000 [01:52<02:13, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:52<?, ?it/s][AIterations:  46%|████▌     | 19246/42000 [01:52<02:13, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:52<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:53<?, ?it/s][AIterations:  46%|████▌     | 19332/42000 [01:53<02:12, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:53<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:53<?, ?it/s][AIterations:  46%|████▌     | 19418/42000 [01:53<02:12, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:54<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:54<?, ?it/s][AIterations:  46%|████▋     | 19504/42000 [01:54<02:11, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:54<?, ?it/s][AIterations:  47%|████▋     | 19590/42000 [01:54<02:11, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:54<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:55<?, ?it/s][AIterations:  47%|████▋     | 19676/42000 [01:55<02:10, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:55<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:55<?, ?it/s][AIterations:  47%|████▋     | 19762/42000 [01:55<02:10, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:56<?, ?it/s][AIterations:  47%|████▋     | 19848/42000 [01:56<02:09, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:56<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:56<?, ?it/s][AIterations:  47%|████▋     | 19934/42000 [01:56<02:09, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:56<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:57<?, ?it/s][AIterations:  48%|████▊     | 20020/42000 [01:57<02:08, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:57<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:57<?, ?it/s][AIterations:  48%|████▊     | 20106/42000 [01:57<02:08, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:58<?, ?it/s][AIterations:  48%|████▊     | 20192/42000 [01:58<02:07, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:58<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:58<?, ?it/s][AIterations:  48%|████▊     | 20278/42000 [01:58<02:07, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:58<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [01:59<?, ?it/s][AIterations:  48%|████▊     | 20364/42000 [01:59<02:06, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:59<?, ?it/s][AIterations:  49%|████▊     | 20450/42000 [01:59<02:06, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [01:59<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:00<?, ?it/s][AIterations:  49%|████▉     | 20536/42000 [02:00<02:05, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:00<?, ?it/s][AIterations:  49%|████▉     | 20622/42000 [02:00<02:05, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:01<?, ?it/s][AIterations:  49%|████▉     | 20708/42000 [02:01<02:04, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:01<?, ?it/s][AIterations:  50%|████▉     | 20794/42000 [02:01<02:04, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:02<?, ?it/s][AIterations:  50%|████▉     | 20880/42000 [02:02<02:03, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:02<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:02<?, ?it/s][AIterations:  50%|████▉     | 20966/42000 [02:02<02:03, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:03<?, ?it/s][AIterations:  50%|█████     | 21052/42000 [02:03<02:02, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:03<?, ?it/s][AIterations:  50%|█████     | 21138/42000 [02:03<02:02, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:04<?, ?it/s][AIterations:  51%|█████     | 21224/42000 [02:04<02:01, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:04<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:04<?, ?it/s][AIterations:  51%|█████     | 21310/42000 [02:04<02:01, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:05<?, ?it/s][AIterations:  51%|█████     | 21396/42000 [02:05<02:00, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:05<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:05<?, ?it/s][AIterations:  51%|█████     | 21482/42000 [02:05<02:00, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:06<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:06<?, ?it/s][AIterations:  51%|█████▏    | 21568/42000 [02:06<01:59, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:06<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:06<?, ?it/s][AIterations:  52%|█████▏    | 21654/42000 [02:06<01:59, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:07<?, ?it/s][AIterations:  52%|█████▏    | 21740/42000 [02:07<01:58, 170.87it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:07<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:07<?, ?it/s][AIterations:  52%|█████▏    | 21826/42000 [02:07<01:58, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:08<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:08<?, ?it/s][AIterations:  52%|█████▏    | 21912/42000 [02:08<01:57, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:08<?, ?it/s][AIterations:  52%|█████▏    | 21998/42000 [02:08<01:57, 170.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:08<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [02:09<?, ?it/s][AIterations:  53%|█████▎    | 22084/42000 [02:09<01:56, 170.87it/s]
+Bifurcated agents:   0%|          | 0/4096 [02:09<?, ?it/s][A
+Bifurcated agents:   0%|          | 1/4096 [02:09<147:39:12, 129.81s/it][AIterations:  53%|█████▎    | 22170/42000 [02:09<01:56, 170.84it/s]Iterations:  53%|█████▎    | 22256/42000 [02:10<01:55, 170.84it/s]Iterations:  53%|█████▎    | 22342/42000 [02:10<01:55, 170.87it/s]Iterations:  53%|█████▎    | 22428/42000 [02:11<01:54, 170.87it/s]Iterations:  54%|█████▎    | 22514/42000 [02:11<01:54, 170.87it/s]Iterations:  54%|█████▍    | 22600/42000 [02:12<01:53, 170.87it/s]Iterations:  54%|█████▍    | 22686/42000 [02:12<01:53, 170.83it/s]Iterations:  54%|█████▍    | 22772/42000 [02:13<01:52, 170.83it/s]Iterations:  54%|█████▍    | 22858/42000 [02:13<01:52, 170.83it/s]Iterations:  55%|█████▍    | 22944/42000 [02:14<01:51, 170.86it/s]Iterations:  55%|█████▍    | 23030/42000 [02:14<01:51, 170.86it/s]Iterations:  55%|█████▌    | 23116/42000 [02:15<01:50, 170.86it/s]
+Bifurcated agents:   0%|          | 2/4096 [02:15<77:18:10, 67.98s/it]  [AIterations:  55%|█████▌    | 23202/42000 [02:15<01:50, 170.85it/s]Iterations:  55%|█████▌    | 23288/42000 [02:16<01:49, 170.88it/s]Iterations:  56%|█████▌    | 23374/42000 [02:16<01:49, 170.87it/s]
+Bifurcated agents:   0%|          | 3/4096 [02:17<51:57:58, 45.71s/it][AIterations:  56%|█████▌    | 23460/42000 [02:17<01:48, 170.87it/s]Iterations:  56%|█████▌    | 23546/42000 [02:17<01:47, 170.89it/s]Iterations:  56%|█████▋    | 23632/42000 [02:18<01:47, 170.89it/s]Iterations:  56%|█████▋    | 23718/42000 [02:18<01:46, 170.89it/s]
+Bifurcated agents:   0%|          | 4/4096 [02:19<39:37:48, 34.87s/it][AIterations:  57%|█████▋    | 23804/42000 [02:19<01:46, 170.88it/s]Iterations:  57%|█████▋    | 23890/42000 [02:19<01:45, 170.90it/s]Iterations:  57%|█████▋    | 23976/42000 [02:20<01:45, 170.87it/s]Iterations:  57%|█████▋    | 24062/42000 [02:20<01:44, 170.87it/s]Iterations:  57%|█████▋    | 24148/42000 [02:21<01:44, 170.89it/s]Iterations:  58%|█████▊    | 24234/42000 [02:21<01:43, 170.88it/s]
+Bifurcated agents:   0%|          | 5/4096 [02:22<32:17:41, 28.42s/it][A
+Bifurcated agents:   0%|          | 6/4096 [02:22<26:57:40, 23.73s/it][AIterations:  58%|█████▊    | 24320/42000 [02:22<01:43, 170.87it/s]
+Bifurcated agents:   0%|          | 7/4096 [02:22<23:11:56, 20.42s/it][AIterations:  58%|█████▊    | 24406/42000 [02:23<01:42, 170.87it/s]Iterations:  58%|█████▊    | 24492/42000 [02:23<01:42, 170.90it/s]Iterations:  59%|█████▊    | 24578/42000 [02:24<01:41, 170.90it/s]Iterations:  59%|█████▊    | 24664/42000 [02:24<01:41, 170.88it/s]Iterations:  59%|█████▉    | 24750/42000 [02:25<01:40, 170.91it/s]Iterations:  59%|█████▉    | 24836/42000 [02:25<01:40, 170.91it/s]Iterations:  59%|█████▉    | 24922/42000 [02:26<01:39, 170.90it/s]Iterations:  60%|█████▉    | 25008/42000 [02:26<01:39, 170.90it/s]Iterations:  60%|█████▉    | 25094/42000 [02:27<01:38, 170.93it/s]Iterations:  60%|█████▉    | 25180/42000 [02:27<01:38, 170.93it/s]
+Bifurcated agents:   0%|          | 8/4096 [02:27<20:59:59, 18.49s/it][AIterations:  60%|██████    | 25266/42000 [02:28<01:37, 170.92it/s]
+Bifurcated agents:   0%|          | 10/4096 [02:28<16:49:29, 14.82s/it][AIterations:  60%|██████    | 25352/42000 [02:28<01:37, 170.91it/s]Iterations:  61%|██████    | 25438/42000 [02:29<01:36, 170.91it/s]Iterations:  61%|██████    | 25524/42000 [02:29<01:36, 170.89it/s]Iterations:  61%|██████    | 25610/42000 [02:30<01:35, 170.87it/s]Iterations:  61%|██████    | 25696/42000 [02:30<01:35, 170.90it/s]
+Bifurcated agents:   0%|          | 14/4096 [02:30<12:13:09, 10.78s/it][AIterations:  61%|██████▏   | 25782/42000 [02:31<01:34, 170.89it/s]Iterations:  62%|██████▏   | 25868/42000 [02:31<01:34, 170.87it/s]
+Bifurcated agents:   0%|          | 18/4096 [02:32<9:34:05,  8.45s/it] [AIterations:  62%|██████▏   | 25954/42000 [02:32<01:33, 170.87it/s]Iterations:  62%|██████▏   | 26040/42000 [02:32<01:33, 170.90it/s]Iterations:  62%|██████▏   | 26126/42000 [02:33<01:32, 170.90it/s]Iterations:  62%|██████▏   | 26212/42000 [02:33<01:32, 170.88it/s]
+Bifurcated agents:   1%|          | 22/4096 [02:33<7:54:40,  6.99s/it][AIterations:  63%|██████▎   | 26298/42000 [02:34<01:31, 170.90it/s]Iterations:  63%|██████▎   | 26384/42000 [02:34<01:31, 170.90it/s]Iterations:  63%|██████▎   | 26470/42000 [02:35<01:30, 170.90it/s]
+Bifurcated agents:   1%|          | 26/4096 [02:35<6:45:49,  5.98s/it][AIterations:  63%|██████▎   | 26556/42000 [02:35<01:30, 170.90it/s]Iterations:  63%|██████▎   | 26642/42000 [02:36<01:29, 170.91it/s]
+Bifurcated agents:   1%|          | 30/4096 [02:36<5:52:41,  5.20s/it][AIterations:  64%|██████▎   | 26728/42000 [02:36<01:29, 170.88it/s]Iterations:  64%|██████▍   | 26814/42000 [02:37<01:28, 170.88it/s]Iterations:  64%|██████▍   | 26900/42000 [02:37<01:28, 170.91it/s]Iterations:  64%|██████▍   | 26986/42000 [02:38<01:27, 170.89it/s]
+Bifurcated agents:   1%|          | 37/4096 [02:38<4:49:13,  4.28s/it][AIterations:  64%|██████▍   | 27072/42000 [02:38<01:27, 170.88it/s]Iterations:  65%|██████▍   | 27158/42000 [02:39<01:26, 170.85it/s]Iterations:  65%|██████▍   | 27244/42000 [02:39<01:26, 170.87it/s]
+Bifurcated agents:   1%|          | 45/4096 [02:39<3:59:58,  3.55s/it][AIterations:  65%|██████▌   | 27330/42000 [02:40<01:25, 170.87it/s]Iterations:  65%|██████▌   | 27416/42000 [02:40<01:25, 170.85it/s]Iterations:  65%|██████▌   | 27502/42000 [02:41<01:24, 170.85it/s]Iterations:  66%|██████▌   | 27588/42000 [02:41<01:24, 170.89it/s]
+Bifurcated agents:   1%|▏         | 54/4096 [02:41<3:22:05,  3.00s/it][AIterations:  66%|██████▌   | 27674/42000 [02:42<01:23, 170.88it/s]Iterations:  66%|██████▌   | 27760/42000 [02:42<01:23, 170.87it/s]Iterations:  66%|██████▋   | 27846/42000 [02:43<01:22, 170.90it/s]
+Bifurcated agents:   2%|▏         | 63/4096 [02:43<2:54:04,  2.59s/it][AIterations:  67%|██████▋   | 27932/42000 [02:43<01:22, 170.89it/s]
+Bifurcated agents:   2%|▏         | 72/4096 [02:44<2:32:47,  2.28s/it][AIterations:  67%|██████▋   | 28018/42000 [02:44<01:21, 170.89it/s]Iterations:  67%|██████▋   | 28104/42000 [02:44<01:21, 170.89it/s]Iterations:  67%|██████▋   | 28190/42000 [02:45<01:20, 170.91it/s]
+Bifurcated agents:   2%|▏         | 82/4096 [02:45<2:14:47,  2.01s/it][AIterations:  67%|██████▋   | 28276/42000 [02:45<01:20, 170.91it/s]Iterations:  68%|██████▊   | 28362/42000 [02:46<01:19, 170.90it/s]
+Bifurcated agents:   2%|▏         | 93/4096 [02:46<1:59:21,  1.79s/it][AIterations:  68%|██████▊   | 28448/42000 [02:46<01:19, 170.92it/s]Iterations:  68%|██████▊   | 28534/42000 [02:47<01:18, 170.92it/s]Iterations:  68%|██████▊   | 28620/42000 [02:47<01:18, 170.91it/s]
+Bifurcated agents:   3%|▎         | 106/4096 [02:47<1:45:17,  1.58s/it][AIterations:  68%|██████▊   | 28706/42000 [02:48<01:17, 170.90it/s]Iterations:  69%|██████▊   | 28792/42000 [02:48<01:17, 170.93it/s]Iterations:  69%|██████▉   | 28878/42000 [02:49<01:16, 170.92it/s]
+Bifurcated agents:   3%|▎         | 120/4096 [02:49<1:33:29,  1.41s/it][AIterations:  69%|██████▉   | 28964/42000 [02:49<01:16, 170.91it/s]Iterations:  69%|██████▉   | 29050/42000 [02:50<01:15, 170.94it/s]
+Bifurcated agents:   3%|▎         | 137/4096 [02:50<1:21:57,  1.24s/it][AIterations:  69%|██████▉   | 29136/42000 [02:50<01:15, 170.93it/s]Iterations:  70%|██████▉   | 29222/42000 [02:51<01:14, 170.92it/s]
+Bifurcated agents:   4%|▍         | 155/4096 [02:51<1:12:36,  1.11s/it][AIterations:  70%|██████▉   | 29308/42000 [02:51<01:14, 170.91it/s]Iterations:  70%|██████▉   | 29394/42000 [02:52<01:13, 170.93it/s]Iterations:  70%|███████   | 29480/42000 [02:52<01:13, 170.93it/s]Iterations:  70%|███████   | 29566/42000 [02:53<01:12, 170.92it/s]
+Bifurcated agents:   4%|▍         | 180/4096 [02:53<1:02:58,  1.04it/s][AIterations:  71%|███████   | 29652/42000 [02:53<01:12, 170.91it/s]Iterations:  71%|███████   | 29738/42000 [02:54<01:11, 170.94it/s]Iterations:  71%|███████   | 29824/42000 [02:54<01:11, 170.93it/s]Iterations:  71%|███████   | 29910/42000 [02:55<01:10, 170.92it/s]
+Bifurcated agents:   5%|▌         | 206/4096 [02:55<55:13,  1.17it/s]  [AIterations:  71%|███████▏  | 29996/42000 [02:55<01:10, 170.93it/s]Iterations:  72%|███████▏  | 30082/42000 [02:56<01:09, 170.93it/s]Iterations:  72%|███████▏  | 30168/42000 [02:56<01:09, 170.92it/s]
+Bifurcated agents:   6%|▌         | 234/4096 [02:56<48:39,  1.32it/s][AIterations:  72%|███████▏  | 30254/42000 [02:57<01:08, 170.91it/s]Iterations:  72%|███████▏  | 30340/42000 [02:57<01:08, 170.94it/s]Iterations:  72%|███████▏  | 30426/42000 [02:58<01:07, 170.93it/s]
+Bifurcated agents:   7%|▋         | 267/4096 [02:58<42:42,  1.49it/s][AIterations:  73%|███████▎  | 30512/42000 [02:58<01:07, 170.92it/s]Iterations:  73%|███████▎  | 30598/42000 [02:59<01:06, 170.95it/s]Iterations:  73%|███████▎  | 30684/42000 [02:59<01:06, 170.94it/s]
+Bifurcated agents:   7%|▋         | 300/4096 [03:00<37:59,  1.67it/s][AIterations:  73%|███████▎  | 30770/42000 [03:00<01:05, 170.93it/s]Iterations:  73%|███████▎  | 30856/42000 [03:00<01:05, 170.93it/s]Iterations:  74%|███████▎  | 30942/42000 [03:01<01:04, 170.95it/s]Iterations:  74%|███████▍  | 31028/42000 [03:01<01:04, 170.95it/s]
+Bifurcated agents:   8%|▊         | 340/4096 [03:02<33:32,  1.87it/s][AIterations:  74%|███████▍  | 31114/42000 [03:02<01:03, 170.94it/s]Iterations:  74%|███████▍  | 31200/42000 [03:02<01:03, 170.97it/s]Iterations:  74%|███████▍  | 31286/42000 [03:03<01:02, 170.96it/s]Iterations:  75%|███████▍  | 31372/42000 [03:03<01:02, 170.95it/s]Iterations:  75%|███████▍  | 31458/42000 [03:04<01:01, 170.94it/s]Iterations:  75%|███████▌  | 31544/42000 [03:04<01:01, 170.97it/s]
+Bifurcated agents:   9%|▉         | 383/4096 [03:04<29:51,  2.07it/s][AIterations:  75%|███████▌  | 31630/42000 [03:05<01:00, 170.95it/s]Iterations:  76%|███████▌  | 31716/42000 [03:05<01:00, 170.95it/s]Iterations:  76%|███████▌  | 31802/42000 [03:06<00:59, 170.95it/s]Iterations:  76%|███████▌  | 31888/42000 [03:06<00:59, 170.95it/s]
+Bifurcated agents:  11%|█         | 435/4096 [03:06<26:12,  2.33it/s][AIterations:  76%|███████▌  | 31974/42000 [03:07<00:58, 170.94it/s]Iterations:  76%|███████▋  | 32060/42000 [03:07<00:58, 170.92it/s]Iterations:  77%|███████▋  | 32146/42000 [03:08<00:57, 170.91it/s]Iterations:  77%|███████▋  | 32232/42000 [03:08<00:57, 170.90it/s]
+Bifurcated agents:  12%|█▏        | 487/4096 [03:08<23:19,  2.58it/s][AIterations:  77%|███████▋  | 32318/42000 [03:09<00:56, 170.90it/s]Iterations:  77%|███████▋  | 32404/42000 [03:09<00:56, 170.89it/s]Iterations:  77%|███████▋  | 32490/42000 [03:10<00:55, 170.92it/s]Iterations:  78%|███████▊  | 32576/42000 [03:10<00:55, 170.89it/s]
+Bifurcated agents:  13%|█▎        | 551/4096 [03:11<20:30,  2.88it/s][AIterations:  78%|███████▊  | 32662/42000 [03:11<00:54, 170.89it/s]Iterations:  78%|███████▊  | 32748/42000 [03:11<00:54, 170.92it/s]Iterations:  78%|███████▊  | 32834/42000 [03:12<00:53, 170.92it/s]Iterations:  78%|███████▊  | 32920/42000 [03:12<00:53, 170.92it/s]Iterations:  79%|███████▊  | 33006/42000 [03:13<00:52, 170.89it/s]Iterations:  79%|███████▉  | 33092/42000 [03:13<00:52, 170.92it/s]
+Bifurcated agents:  15%|█▌        | 623/4096 [03:13<18:00,  3.21it/s][AIterations:  79%|███████▉  | 33178/42000 [03:14<00:51, 170.92it/s]Iterations:  79%|███████▉  | 33264/42000 [03:14<00:51, 170.92it/s]Iterations:  79%|███████▉  | 33350/42000 [03:15<00:50, 170.95it/s]Iterations:  80%|███████▉  | 33436/42000 [03:15<00:50, 170.90it/s]Iterations:  80%|███████▉  | 33522/42000 [03:16<00:49, 170.90it/s]
+Bifurcated agents:  17%|█▋        | 699/4096 [03:16<15:56,  3.55it/s][AIterations:  80%|████████  | 33608/42000 [03:16<00:49, 170.89it/s]Iterations:  80%|████████  | 33694/42000 [03:17<00:48, 170.92it/s]Iterations:  80%|████████  | 33780/42000 [03:17<00:48, 170.92it/s]Iterations:  81%|████████  | 33866/42000 [03:18<00:47, 170.92it/s]Iterations:  81%|████████  | 33952/42000 [03:18<00:47, 170.91it/s]Iterations:  81%|████████  | 34038/42000 [03:19<00:46, 170.94it/s]
+Bifurcated agents:  19%|█▉        | 776/4096 [03:19<14:13,  3.89it/s][AIterations:  81%|████████  | 34124/42000 [03:19<00:46, 170.93it/s]Iterations:  81%|████████▏ | 34210/42000 [03:20<00:45, 170.92it/s]Iterations:  82%|████████▏ | 34296/42000 [03:20<00:45, 170.94it/s]Iterations:  82%|████████▏ | 34382/42000 [03:21<00:44, 170.93it/s]
+Bifurcated agents:  21%|██        | 855/4096 [03:21<12:43,  4.24it/s][AIterations:  82%|████████▏ | 34468/42000 [03:21<00:44, 170.90it/s]Iterations:  82%|████████▏ | 34554/42000 [03:22<00:43, 170.90it/s]Iterations:  82%|████████▏ | 34640/42000 [03:22<00:43, 170.93it/s]Iterations:  83%|████████▎ | 34726/42000 [03:23<00:42, 170.92it/s]
+Bifurcated agents:  23%|██▎       | 937/4096 [03:23<11:26,  4.60it/s][AIterations:  83%|████████▎ | 34812/42000 [03:23<00:42, 170.91it/s]Iterations:  83%|████████▎ | 34898/42000 [03:24<00:41, 170.94it/s]Iterations:  83%|████████▎ | 34984/42000 [03:24<00:41, 170.92it/s]Iterations:  84%|████████▎ | 35070/42000 [03:25<00:40, 170.87it/s]
+Bifurcated agents:  25%|██▍       | 1023/4096 [03:25<10:18,  4.97it/s][AIterations:  84%|████████▎ | 35156/42000 [03:25<00:40, 170.87it/s]Iterations:  84%|████████▍ | 35242/42000 [03:26<00:39, 170.90it/s]Iterations:  84%|████████▍ | 35328/42000 [03:26<00:39, 170.89it/s]Iterations:  84%|████████▍ | 35414/42000 [03:27<00:38, 170.89it/s]Iterations:  85%|████████▍ | 35500/42000 [03:27<00:38, 170.90it/s]
+Bifurcated agents:  27%|██▋       | 1114/4096 [03:28<09:17,  5.35it/s][AIterations:  85%|████████▍ | 35586/42000 [03:28<00:37, 170.89it/s]Iterations:  85%|████████▍ | 35672/42000 [03:28<00:37, 170.87it/s]Iterations:  85%|████████▌ | 35758/42000 [03:29<00:36, 170.88it/s]Iterations:  85%|████████▌ | 35844/42000 [03:29<00:36, 170.91it/s]Iterations:  86%|████████▌ | 35930/42000 [03:30<00:35, 170.90it/s]Iterations:  86%|████████▌ | 36016/42000 [03:30<00:35, 170.90it/s]
+Bifurcated agents:  30%|██▉       | 1214/4096 [03:31<08:21,  5.74it/s][AIterations:  86%|████████▌ | 36102/42000 [03:31<00:34, 170.89it/s]Iterations:  86%|████████▌ | 36188/42000 [03:31<00:34, 170.92it/s]Iterations:  86%|████████▋ | 36274/42000 [03:32<00:33, 170.92it/s]Iterations:  87%|████████▋ | 36360/42000 [03:32<00:33, 170.88it/s]Iterations:  87%|████████▋ | 36446/42000 [03:33<00:32, 170.87it/s]Iterations:  87%|████████▋ | 36532/42000 [03:33<00:32, 170.87it/s]
+Bifurcated agents:  32%|███▏      | 1317/4096 [03:34<07:31,  6.15it/s][AIterations:  87%|████████▋ | 36618/42000 [03:34<00:31, 170.87it/s]Iterations:  87%|████████▋ | 36704/42000 [03:34<00:30, 170.86it/s]Iterations:  88%|████████▊ | 36790/42000 [03:35<00:30, 170.85it/s]Iterations:  88%|████████▊ | 36876/42000 [03:35<00:29, 170.81it/s]Iterations:  88%|████████▊ | 36962/42000 [03:36<00:29, 170.78it/s]Iterations:  88%|████████▊ | 37048/42000 [03:36<00:28, 170.80it/s]
+Bifurcated agents:  35%|███▍      | 1422/4096 [03:36<06:48,  6.55it/s][AIterations:  88%|████████▊ | 37134/42000 [03:37<00:28, 170.77it/s]Iterations:  89%|████████▊ | 37220/42000 [03:37<00:27, 170.74it/s]Iterations:  89%|████████▉ | 37306/42000 [03:38<00:27, 170.72it/s]Iterations:  89%|████████▉ | 37392/42000 [03:38<00:26, 170.76it/s]Iterations:  89%|████████▉ | 37478/42000 [03:39<00:26, 170.77it/s]Iterations:  89%|████████▉ | 37564/42000 [03:39<00:25, 170.79it/s]
+Bifurcated agents:  38%|███▊      | 1541/4096 [03:40<06:05,  7.00it/s][AIterations:  90%|████████▉ | 37650/42000 [03:40<00:25, 170.82it/s]Iterations:  90%|████████▉ | 37736/42000 [03:41<00:24, 170.83it/s]Iterations:  90%|█████████ | 37822/42000 [03:41<00:24, 170.83it/s]Iterations:  90%|█████████ | 37908/42000 [03:42<00:23, 170.84it/s]Iterations:  90%|█████████ | 37994/42000 [03:42<00:23, 170.87it/s]Iterations:  91%|█████████ | 38080/42000 [03:43<00:22, 170.86it/s]
+Bifurcated agents:  41%|████      | 1663/4096 [03:43<05:26,  7.45it/s][AIterations:  91%|█████████ | 38166/42000 [03:43<00:22, 170.84it/s]Iterations:  91%|█████████ | 38252/42000 [03:44<00:21, 170.84it/s]Iterations:  91%|█████████▏| 38338/42000 [03:44<00:21, 170.88it/s]Iterations:  91%|█████████▏| 38424/42000 [03:45<00:20, 170.87it/s]Iterations:  92%|█████████▏| 38510/42000 [03:45<00:20, 170.85it/s]Iterations:  92%|█████████▏| 38596/42000 [03:46<00:19, 170.88it/s]
+Bifurcated agents:  44%|████▍     | 1792/4096 [03:46<04:51,  7.92it/s][AIterations:  92%|█████████▏| 38682/42000 [03:46<00:19, 170.86it/s]Iterations:  92%|█████████▏| 38768/42000 [03:47<00:18, 170.84it/s]Iterations:  93%|█████████▎| 38854/42000 [03:47<00:18, 170.85it/s]Iterations:  93%|█████████▎| 38940/42000 [03:48<00:17, 170.87it/s]Iterations:  93%|█████████▎| 39026/42000 [03:48<00:17, 170.87it/s]Iterations:  93%|█████████▎| 39112/42000 [03:49<00:16, 170.87it/s]Iterations:  93%|█████████▎| 39198/42000 [03:49<00:16, 170.90it/s]
+Bifurcated agents:  47%|████▋     | 1923/4096 [03:49<04:19,  8.38it/s][AIterations:  94%|█████████▎| 39284/42000 [03:50<00:15, 170.89it/s]Iterations:  94%|█████████▎| 39370/42000 [03:50<00:15, 170.89it/s]Iterations:  94%|█████████▍| 39456/42000 [03:51<00:14, 170.89it/s]Iterations:  94%|█████████▍| 39542/42000 [03:51<00:14, 170.88it/s]Iterations:  94%|█████████▍| 39628/42000 [03:52<00:13, 170.86it/s]Iterations:  95%|█████████▍| 39714/42000 [03:52<00:13, 170.83it/s]Iterations:  95%|█████████▍| 39800/42000 [03:53<00:12, 170.82it/s]
+Bifurcated agents:  50%|█████     | 2063/4096 [03:53<03:49,  8.85it/s][AIterations:  95%|█████████▍| 39886/42000 [03:53<00:12, 170.76it/s]Iterations:  95%|█████████▌| 39972/42000 [03:54<00:11, 170.75it/s]Iterations:  95%|█████████▌| 40058/42000 [03:54<00:11, 170.74it/s]Iterations:  96%|█████████▌| 40144/42000 [03:55<00:10, 170.77it/s]Iterations:  96%|█████████▌| 40230/42000 [03:55<00:10, 170.72it/s]Iterations:  96%|█████████▌| 40316/42000 [03:56<00:09, 170.72it/s]
+Bifurcated agents:  54%|█████▍    | 2204/4096 [03:56<03:23,  9.32it/s][AIterations:  96%|█████████▌| 40402/42000 [03:56<00:09, 170.67it/s]Iterations:  96%|█████████▋| 40488/42000 [03:57<00:08, 170.66it/s]Iterations:  97%|█████████▋| 40574/42000 [03:57<00:08, 170.66it/s]Iterations:  97%|█████████▋| 40660/42000 [03:58<00:07, 170.60it/s]Iterations:  97%|█████████▋| 40746/42000 [03:58<00:07, 170.62it/s]Iterations:  97%|█████████▋| 40832/42000 [03:59<00:06, 170.59it/s]Iterations:  97%|█████████▋| 40918/42000 [03:59<00:06, 170.60it/s]
+Bifurcated agents:  57%|█████▋    | 2348/4096 [03:59<02:58,  9.79it/s][AIterations:  98%|█████████▊| 41004/42000 [04:00<00:05, 170.56it/s]Iterations:  98%|█████████▊| 41090/42000 [04:00<00:05, 170.58it/s]Iterations:  98%|█████████▊| 41176/42000 [04:01<00:04, 170.53it/s]Iterations:  98%|█████████▊| 41262/42000 [04:01<00:04, 170.48it/s]Iterations:  98%|█████████▊| 41348/42000 [04:02<00:03, 170.49it/s]Iterations:  99%|█████████▊| 41434/42000 [04:02<00:03, 170.44it/s]Iterations:  99%|█████████▉| 41520/42000 [04:03<00:02, 170.39it/s]Iterations:  99%|█████████▉| 41606/42000 [04:03<00:02, 170.39it/s]Iterations:  99%|█████████▉| 41692/42000 [04:04<00:01, 170.40it/s]
+Bifurcated agents:  61%|██████    | 2499/4096 [04:04<02:36, 10.22it/s][AIterations:  99%|█████████▉| 41778/42000 [04:04<00:01, 170.42it/s]Iterations: 100%|█████████▉| 41864/42000 [04:05<00:00, 170.42it/s]Iterations: 100%|█████████▉| 41950/42000 [04:05<00:00, 170.44it/s]Iterations: 100%|██████████| 42000/42000 [04:05<00:00, 170.73it/s]
+Bifurcated agents:  62%|██████▏   | 2551/4096 [04:05<02:28, 10.37it/s]
+/sdcc/u/zzhao3/Software/miniforge3/envs/qhd_linux/lib/python3.10/site-packages/qhdopt/qhd.py:568: RuntimeWarning: TNC_orig refine did not report success: Max. number of function evaluations reached
+  warnings.warn(f"TNC_orig refine did not report success: {result.message}", RuntimeWarning)
+Minimizer: [0.   0.15 0.9  0.5  0.75 0.8  0.   0.   0.3  1.   0.8  0.75 0.75 0.8
+ 0.8  0.85 0.85 0.9  0.85 0.8  0.8  0.9  0.85 0.85 0.4  0.4  0.4  0.35
+ 0.35 0.3  0.4  0.45 0.4  0.35 0.3  0.25 0.25 0.35 0.   0.   0.   0.05
+ 0.   0.   0.   0.35 0.   0.05 0.1  0.55 0.05 0.   0.45 0.55 0.55 0.5
+ 0.45 0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.55 0.5  0.4  0.6  0.5  0.5
+ 0.5  0.45 0.55 0.5  0.5  0.5  0.55 0.45 0.4  0.6  0.5  0.45 0.65 0.35
+ 0.45 0.45 0.6  0.45 0.5  0.5  0.5  0.55 0.65 0.4  0.4  0.55 0.55 0.55
+ 0.45 0.6  0.45 0.6  0.4  0.6  0.5  0.45 0.4  0.55 0.45 0.5  0.4  0.6
+ 0.55 0.45 0.4  0.55 0.45 0.55 0.45 0.55 0.5  0.5  0.55 0.5  0.45 0.55
+ 0.5  0.55 0.5  0.45 0.5  0.45 0.   0.   0.   0.   0.   0.   0.   0.
+ 0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+ 0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+ 0.   0.   0.   0.  ]
+[coarse:LALM] ||h(x)|| = 1.707623e-01
+[coarse:LALM] objective = 2.70108097
+[refined:TNC_orig] ||h(x)|| = 1.707623e-01
+[rho-check] ||h_old||=3.517e+00, ||h_new||=1.708e-01, rho=80
+[adaptive] next alpha=5.000000e+00, next rho=8.000000e+01, lambda_inf=1.415e-01
+Constraint check: False
+[best] iter=0, l2_norm_h=1.707623e-01, objective=2.70108097
+========================================================================================================================
+Update time: 2026-06-11 11:29:35
+Iteration: 0
+rho: 80
+alpha: 5
+objective_value: 2.70108096994
+feasible: False
+note: refined_solution_TNC_orig
+max_abs_h: 2.830661552229e-02
+l2_norm_h: 1.707622606740e-01
+lambda_inf_norm: 1.415330776115e-01
+lambda_l2_norm: 8.538113033699e-01
+------------------------------------------------------------------------------------------------------------------------
+Bus Results
+BusID	V_R		V_I		Vmag		Pg		Qg		Pl		Ql
+1	1.025121	-0.028307	1.025953	0.361394	0.000000	0.000000	0.000000
+2	1.015423	-0.041852	1.016630	0.277362	-0.054505	0.217000	0.127000
+3	0.990841	-0.073298	0.993768	0.618191	0.000000	0.942000	0.190000
+4	1.007020	-0.068130	1.009438	0.000000	0.000000	0.478000	-0.039000
+5	1.013169	-0.059841	1.014993	0.000000	0.000000	0.076000	0.016000
+6	1.017555	-0.070065	1.020584	0.089908	0.240000	0.112000	0.075000
+7	1.001406	-0.061265	1.004024	0.000000	0.000000	0.000000	0.000000
+8	1.016232	-0.046415	1.018220	0.049446	0.080866	0.000000	0.000000
+9	0.987921	-0.076650	0.991703	0.000000	0.000000	0.295000	0.166000
+10	0.989607	-0.073990	0.993120	0.000000	0.000000	0.090000	0.058000
+11	1.003847	-0.068657	1.006828	0.000000	0.000000	0.035000	0.018000
+12	1.010141	-0.072508	1.013269	0.000000	0.000000	0.061000	0.016000
+13	1.003354	-0.074077	1.006651	0.000000	0.000000	0.135000	0.058000
+14	0.982950	-0.083527	0.987117	0.000000	0.000000	0.149000	0.050000
+
+Branch Results
+LineID	From	To	Pik		Pki		Qik		Qki		LossP		LossQ
+1	1	2	0.244790	-0.280479	0.025155	-0.121041	-0.035688	-0.095886
+2	1	5	0.132220	-0.166979	-0.030912	-0.057165	-0.034759	-0.088077
+3	2	3	0.160428	-0.207089	0.032450	-0.110183	-0.046662	-0.077733
+4	2	4	0.127286	-0.173478	-0.039687	-0.022166	-0.046193	-0.061853
+5	2	5	0.075105	-0.116193	-0.055819	-0.007913	-0.041088	-0.063732
+6	3	4	-0.089323	0.036985	-0.079129	0.055221	-0.052338	-0.023908
+7	4	5	-0.250279	0.205158	-0.059887	0.065419	-0.045122	0.005532
+8	4	7	-0.057334	0.009437	0.030286	-0.030541	-0.047896	-0.000255
+9	4	9	-0.007707	-0.042972	0.034865	-0.037824	-0.050679	-0.002959
+10	5	6	0.022331	-0.062186	-0.018891	0.021186	-0.039856	0.002295
+11	6	11	0.005409	-0.046019	0.057093	-0.060263	-0.040610	-0.003170
+12	6	12	0.000707	-0.040925	0.018025	-0.020893	-0.040218	-0.002869
+13	6	13	0.054026	-0.095168	0.069287	-0.071633	-0.041142	-0.002346
+14	7	8	-0.110510	0.069058	-0.079389	0.080763	-0.041452	0.001374
+15	7	9	0.123519	-0.170626	0.111261	-0.113265	-0.047108	-0.002004
+16	9	10	-0.058841	0.010433	-0.008881	-0.000376	-0.048408	-0.009257
+17	9	14	0.002645	-0.052235	-0.001503	-0.007911	-0.049590	-0.009414
+18	10	11	-0.076542	0.032371	-0.052666	0.045561	-0.044170	-0.007105
+19	12	13	0.000679	-0.042966	0.007415	-0.012918	-0.042287	-0.005503
+20	13	14	0.025391	-0.071676	0.029692	-0.036885	-0.046286	-0.007193
+
+
+--- Outer Iteration 1 ---
+alpha = 5.000000e+00, rho = 8.000000e+01
+Iterations:   0%|          | 0/42000 [00:00<?, ?it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][AIterations:   0%|          | 84/42000 [00:00<04:11, 166.71it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:00<?, ?it/s][AIterations:   0%|          | 170/42000 [00:01<04:07, 168.91it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:01<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:01<?, ?it/s][AIterations:   1%|          | 256/42000 [00:01<04:06, 169.57it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:01<?, ?it/s][AIterations:   1%|          | 342/42000 [00:02<04:04, 170.06it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][AIterations:   1%|          | 428/42000 [00:02<04:04, 170.26it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:02<?, ?it/s][AIterations:   1%|          | 514/42000 [00:03<04:03, 170.33it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][AIterations:   1%|▏         | 600/42000 [00:03<04:03, 170.35it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:03<?, ?it/s][AIterations:   2%|▏         | 686/42000 [00:04<04:02, 170.32it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][AIterations:   2%|▏         | 772/42000 [00:04<04:02, 170.34it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:04<?, ?it/s][AIterations:   2%|▏         | 858/42000 [00:05<04:01, 170.42it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][AIterations:   2%|▏         | 944/42000 [00:05<04:00, 170.53it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:05<?, ?it/s][AIterations:   2%|▏         | 1030/42000 [00:06<04:00, 170.59it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:06<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:06<?, ?it/s][AIterations:   3%|▎         | 1116/42000 [00:06<03:59, 170.62it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:06<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][AIterations:   3%|▎         | 1202/42000 [00:07<03:59, 170.66it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][AIterations:   3%|▎         | 1288/42000 [00:07<03:58, 170.73it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:07<?, ?it/s][AIterations:   3%|▎         | 1374/42000 [00:08<03:57, 170.75it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][AIterations:   3%|▎         | 1460/42000 [00:08<03:57, 170.77it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:08<?, ?it/s][AIterations:   4%|▎         | 1546/42000 [00:09<03:56, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][AIterations:   4%|▍         | 1632/42000 [00:09<03:56, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:09<?, ?it/s][AIterations:   4%|▍         | 1718/42000 [00:10<03:55, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][AIterations:   4%|▍         | 1804/42000 [00:10<03:55, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:10<?, ?it/s][AIterations:   4%|▍         | 1890/42000 [00:11<03:54, 170.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:11<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:11<?, ?it/s][AIterations:   5%|▍         | 1976/42000 [00:11<03:54, 170.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:11<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][AIterations:   5%|▍         | 2062/42000 [00:12<03:53, 170.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][AIterations:   5%|▌         | 2148/42000 [00:12<03:53, 170.91it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:12<?, ?it/s][AIterations:   5%|▌         | 2234/42000 [00:13<03:52, 170.91it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:13<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:13<?, ?it/s][AIterations:   6%|▌         | 2320/42000 [00:13<03:52, 170.91it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:13<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][AIterations:   6%|▌         | 2406/42000 [00:14<03:51, 170.91it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][AIterations:   6%|▌         | 2492/42000 [00:14<03:51, 170.95it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:14<?, ?it/s][AIterations:   6%|▌         | 2578/42000 [00:15<03:50, 170.94it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][AIterations:   6%|▋         | 2664/42000 [00:15<03:50, 170.94it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:15<?, ?it/s][AIterations:   7%|▋         | 2750/42000 [00:16<03:49, 170.97it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][AIterations:   7%|▋         | 2836/42000 [00:16<03:49, 170.95it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:16<?, ?it/s][AIterations:   7%|▋         | 2922/42000 [00:17<03:48, 170.94it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][AIterations:   7%|▋         | 3008/42000 [00:17<03:48, 170.94it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:17<?, ?it/s][AIterations:   7%|▋         | 3094/42000 [00:18<03:47, 170.96it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:18<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:18<?, ?it/s][AIterations:   8%|▊         | 3180/42000 [00:18<03:47, 170.96it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:18<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][AIterations:   8%|▊         | 3266/42000 [00:19<03:46, 170.95it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][AIterations:   8%|▊         | 3352/42000 [00:19<03:46, 170.94it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:19<?, ?it/s][AIterations:   8%|▊         | 3438/42000 [00:20<03:45, 170.97it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][AIterations:   8%|▊         | 3524/42000 [00:20<03:45, 170.96it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:20<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][AIterations:   9%|▊         | 3610/42000 [00:21<03:44, 170.94it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][AIterations:   9%|▉         | 3696/42000 [00:21<03:44, 170.95it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:21<?, ?it/s][AIterations:   9%|▉         | 3782/42000 [00:22<03:43, 170.91it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][AIterations:   9%|▉         | 3868/42000 [00:22<03:43, 170.90it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:22<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:23<?, ?it/s][AIterations:   9%|▉         | 3954/42000 [00:23<03:42, 170.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:23<?, ?it/s][AIterations:  10%|▉         | 4040/42000 [00:23<03:42, 170.90it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:23<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][AIterations:  10%|▉         | 4126/42000 [00:24<03:41, 170.88it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][AIterations:  10%|█         | 4212/42000 [00:24<03:41, 170.87it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:24<?, ?it/s][AIterations:  10%|█         | 4298/42000 [00:25<03:40, 170.89it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:25<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:25<?, ?it/s][AIterations:  10%|█         | 4384/42000 [00:25<03:40, 170.87it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:25<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][AIterations:  11%|█         | 4470/42000 [00:26<03:39, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][AIterations:  11%|█         | 4556/42000 [00:26<03:39, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:26<?, ?it/s][AIterations:  11%|█         | 4642/42000 [00:27<03:38, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][AIterations:  11%|█▏        | 4728/42000 [00:27<03:38, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:27<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][AIterations:  11%|█▏        | 4814/42000 [00:28<03:37, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][AIterations:  12%|█▏        | 4900/42000 [00:28<03:37, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:28<?, ?it/s][AIterations:  12%|█▏        | 4986/42000 [00:29<03:36, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][AIterations:  12%|█▏        | 5072/42000 [00:29<03:36, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:29<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:30<?, ?it/s][AIterations:  12%|█▏        | 5158/42000 [00:30<03:35, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:30<?, ?it/s][AIterations:  12%|█▏        | 5244/42000 [00:30<03:35, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:30<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][AIterations:  13%|█▎        | 5330/42000 [00:31<03:34, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][AIterations:  13%|█▎        | 5416/42000 [00:31<03:34, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:31<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][AIterations:  13%|█▎        | 5502/42000 [00:32<03:33, 170.82it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][AIterations:  13%|█▎        | 5588/42000 [00:32<03:33, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:32<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][AIterations:  14%|█▎        | 5674/42000 [00:33<03:32, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][AIterations:  14%|█▎        | 5760/42000 [00:33<03:32, 170.83it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:33<?, ?it/s][AIterations:  14%|█▍        | 5846/42000 [00:34<03:31, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][AIterations:  14%|█▍        | 5932/42000 [00:34<03:31, 170.85it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:34<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:35<?, ?it/s][AIterations:  14%|█▍        | 6018/42000 [00:35<03:30, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:35<?, ?it/s][A
+Bifurcated agents:   0%|          | 0/4096 [00:35<?, ?it/s][AIterations:  15%|█▍        | 6104/42000 [00:35<03:30, 170.84it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:36<?, ?it/s][AIterations:  15%|█▍        | 6190/42000 [00:36<03:29, 170.86it/s]
+Bifurcated agents:   0%|          | 0/4096 [00:36<?, ?it/s][Aslurmstepd: error: *** JOB 361480 ON amphost001 CANCELLED AT 2026-06-11T11:31:01 ***
